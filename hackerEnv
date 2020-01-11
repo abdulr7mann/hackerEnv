@@ -12,8 +12,8 @@ self_update() {
 	git fetch > a.txt 1> /dev/null 2> /dev/null
 	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
 	git pull >> a.txt 1> /dev/null 2> /dev/null
-	chmod +x "$(basename $0)"
 	rm a.txt
+	chmod +x "$(basename $0)"
 	cd - 1> /dev/null 2> /dev/null
 }
 function cleanning(){
