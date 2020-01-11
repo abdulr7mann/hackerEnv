@@ -7,31 +7,13 @@
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
-
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=$(dirname "$SCRIPT")
-SCRIPTNAME="$0"
-ARGS="$@"
-BRANCH="master"
-
 self_update() {
-    cd $SCRIPTPATH
-    git fetch --all
-
-    [ -n $(git diff --name-only origin/$BRANCH | grep $SCRIPTNAME) ] && {
-        echo "Found a new version of me, updating myself..."
-	git reset --hard
-        git pull --force
-        git checkout $BRANCH
-        git pull --force
-        echo "Running the new version..."
-	chmod +x "$SCRIPTNAME"
-        exec "$SCRIPTNAME" "$@"
-
-        # Now exit this old instance
-        exit 1
-    }
-    echo "Already the latest version."
+	cd $(dirname $0)
+	git fetch
+	git reset -hard
+	git pull
+	chmod +x $(basename $0)
+	cd -
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
@@ -480,7 +462,6 @@ function report3(){
 	echo "Report was generated => $(pwd=$(pwd); echo "file://$pwd/report.html")"
 }
 ############################### Program starts here #####################
-self_update
 if ! command -v figlet 2> /dev/null 1> /dev/null
 then
 	apt install figlet -y 2> /dev/null 1> /dev/null
@@ -1419,3 +1400,4 @@ do
 	echo "########################################"
 done
 report3
+self_update
