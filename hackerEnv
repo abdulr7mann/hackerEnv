@@ -10,10 +10,10 @@
 #####################################################################################
 function self_update(){
 	cd $(dirname $0)
-	git remote add upstream https://github.com/abdulr7mann/hackerEnv.git
-	git pull upstream master
-	git reset --hard
-	git pull
+	git remote add upstream https://github.com/abdulr7mann/hackerEnv.git 2> /dev/null 1> /dev/null
+	git pull upstream master 2> /dev/null 1> /dev/null
+	git reset --hard 2> /dev/null 1> /dev/null
+	git pull 2> /dev/null 1> /dev/null
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
