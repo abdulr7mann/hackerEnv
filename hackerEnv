@@ -6,7 +6,7 @@
 #Performed only when you have authorization to do.                                  #
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
-#####################################################################################
+####################################################################################
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
 then
