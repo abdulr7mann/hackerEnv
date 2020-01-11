@@ -11,7 +11,7 @@
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 SCRIPTNAME="$0"
-ARGS="$@"
+ARGS=( "$@" )
 function self_update(){
 	cd $(dirname $0)
 	git fetch
@@ -21,7 +21,7 @@ function self_update(){
 		git checkout master
 		git pull --force
 		echo "Running the new version"
-		exec "$SCRIPTNAME" "$@"
+		exec "$SCRIPTNAME" "${ARGS[@]}"
 		exit 1
 	}
 	echo "Already the latest version"
