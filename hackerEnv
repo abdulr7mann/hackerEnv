@@ -12,7 +12,7 @@ self_update() {
 	cd $(dirname $0)
 	git fetch 1> /dev/null
 	git reset --hard 1> /dev/null
-	git pull 1> /dev/null
+	git pull 1> /dev/null 2> /dev/null
 	chmod +x "$(basename $0)"
 	cd - 1> /dev/null
 }
