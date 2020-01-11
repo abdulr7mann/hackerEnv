@@ -14,7 +14,7 @@ function self_update(){
 	git pull upstream master 2> /dev/null 1> /dev/null
 	git reset --hard 2> /dev/null 1> /dev/null
 	git pull 2> /dev/null 1> /dev/null
-	exit 0
+	exec "$0"
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
