@@ -6,6 +6,7 @@
 #Performed only when you have authorization to do.                                  #
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
+
 #####################################################################################
 function self_update(){
 	cd $(dirname $0)
@@ -543,7 +544,7 @@ else
 		ips="$(cat $(dirname $0)/online.txt)"
 	fi
 fi
-echo "Performing a ping sweep is in process"
+echo "Performing a ping sweep is in process LOL"
 echo -e "Your ip address is \e[1m$ip\e[0m"
 grep -vxFf $(dirname $0)/urIp.txt $(dirname $0)/online.txt > $(dirname $0)/tmp.txt; cat $(dirname $0)/tmp.txt > $(dirname $0)/online.txt; rm $(dirname $0)/tmp.txt
 for ips in $(cat $(dirname $0)/online.txt)
