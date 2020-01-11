@@ -6,14 +6,15 @@
 #Performed only when you have authorization to do.                                  #
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
+
 #####################################################################################
 self_update() {
 	cd $(dirname $0)
-	git fetch 1> /dev/null 2> /dev/null
-	git reset --hard 1> /dev/null 2> /dev/null
-	git pull 1> /dev/null 2> /dev/null
+	git fetch > a.txt 1> /dev/null 2> /dev/null
+	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
+	git pull >> a.txt 1> /dev/null 2> /dev/null
 	chmod +x "$(basename $0)"
-	cd - 1> /dev/null 2> /dev/null
+	cd - >> a.txt 1> /dev/null 2> /dev/null
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
