@@ -10,11 +10,11 @@
 #####################################################################################
 self_update() {
 	cd $(dirname $0)
-	git fetch
-	git reset --hard
-	git pull
+	git fetch 1> /dev/null
+	git reset --hard 1> /dev/null
+	git pull 1> /dev/null
 	chmod +x "$(basename $0)"
-	cd -
+	cd - 1> /dev/null
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
