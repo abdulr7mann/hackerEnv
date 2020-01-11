@@ -8,16 +8,20 @@
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 
 #####################################################################################
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+SCRIPTNAME="$0"
+ARGS="$@"
 function self_update(){
 	cd $(dirname $0)
 	git fetch
-	[ -n $( git diff --name-only origin/master | $(basename $0) ) ] && {
+	[ -n $( git diff --name-only origin/master | grep $SCRIPTNAME ) ] && {
 		echo "Found new version"
 		git pull --force
 		git checkout master
 		git pull --force
 		echo "Running the new version"
-		bash $(basename $0)
+		exec "$SCRIPTNAME" "$@"
 		exit 1
 	}
 	echo "Already the latest version"
