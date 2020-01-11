@@ -481,7 +481,7 @@ fi
 while getopts 'ht:i:a:s:e' OPTION; do
   case "$OPTION" in
   	h)
-      echo "Usage: LOL"
+      echo "Usage:"
       echo "    $(basename $0) -h             Display this help message."
       echo "    $(basename $0)                Scan the entire network."
       echo "    $(basename $0) -t <ip>        Pass a specific target's IP."
