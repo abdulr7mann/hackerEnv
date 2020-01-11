@@ -13,7 +13,8 @@ self_update() {
 	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
 	git pull >> a.txt 1> /dev/null 2> /dev/null
 	chmod +x "$(basename $0)"
-	cd - >> a.txt 1> /dev/null 2> /dev/null; rm a.txt
+	rm a.txt
+	cd - 1> /dev/null 2> /dev/null
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
