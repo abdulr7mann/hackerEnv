@@ -17,7 +17,7 @@ function self_update(){
 		git checkout master
 		git pull --force
 		echo "Running the new version"
-		exec $(basename $0)
+		exec "$(basename $0)"
 		exit 1
 	}
 	echo "Already the latest version"
