@@ -17,7 +17,7 @@ BRANCH="master"
 
 self_update() {
     cd $SCRIPTPATH
-    git fetch -all
+    git fetch --all
 
     [ -n $(git diff --name-only origin/$BRANCH | grep $SCRIPTNAME) ] && {
         echo "Found a new version of me, updating myself..."
