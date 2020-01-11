@@ -10,9 +10,9 @@
 self_update() {
 	cd $(dirname $0)
 	git fetch
-	git reset -hard
+	git reset --hard
 	git pull
-	chmod +x $(basename $0)
+	chmod +x "$(basename $0)"
 	cd -
 }
 function cleanning(){
