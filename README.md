@@ -1,3 +1,6 @@
+
+# Plz add our HackerEnv.com community server on discord: https://discord.gg/sB5ruJ6
+
 # hackerEnv
 This tool uses other tools in kali linux and it performs ip sweep, port, vulernablities scan, exploit vulernablities and generates a report
 This tool, was NOT coded by a professional{I do not know what i am doing}, works in Kali Linux ONLY and you must be root.
@@ -22,5 +25,3 @@ bash hackerEnv
 ```
 bash hackerEnv -h
 ```
-
-# Plz add our HackerEnv.com community server on discord: https://discord.gg/sB5ruJ6
