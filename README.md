@@ -26,5 +26,5 @@ bash /opt/hackerEnv -t <'ip\nip'>  Pass mutipule targets' IPs. Ex: '10.10.10.10\
 bash /opt/hackerEnv -i <eth0>      To specify an interface.
 bash /opt/hackerEnv -a <ip>        Pass attacker's IP.
 bash /opt/hackerEnv -s </24>       To specify subNetwork 10.10.10.10/24 or /23 etc.
-bash /opt/hackerEnv -e              Enable aggressive port scan
+bash /opt/hackerEnv -e             Enable aggressive port scan
 ```
