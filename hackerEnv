@@ -346,7 +346,8 @@ function ms17_010_eternalblue(){
 	references="https://www.rapid7.com/db/modules/exploit/windows/smb/ms17_010_eternalblue"
 	report2
 	notEternal=$(grep "but no session" $ips/notEternalBlue.txt|cut -f5-5 -d' ')
-	if [ "$notEternal" = "but no session" ]
+	notrternal=$(grep -oP '=\K[^-]+' $ips/notEternalBlue.txt|sed -n '/FAIL/p;1q')
+	if [ "$notEternal" = "but no session" ] || [ "$notrternal" = "FAIL" ]
 	then
 		cat <<- ms17_010_psexec > $(dirname $0)/exploits/smb/ms17_010_psexec.rc
 			use exploit/windows/smb/ms17_010_psexec
