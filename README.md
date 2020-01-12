@@ -6,15 +6,15 @@ Performed only when you have authorization to do.
 #Update Kali
 apt update; apt dist-upgrade -y
 
-#Donwload hackerEnv
+# Donwload hackerEnv
 cd /opt/
 git clone https://github.com/abdulr7mann/hackerEnv.git
 
-#Usage
+# Usage
 cd /opt/hackerEnv
 bash hackerEnv
 
-#help
+# help
 bash hackerEnv -h
 
 # Plz add our HackerEnv.com community server on discord: https://discord.gg/sB5ruJ6
