@@ -14,14 +14,17 @@ apt update; apt dist-upgrade -y
 ```
 cd /opt/
 git clone https://github.com/abdulr7mann/hackerEnv.git
-```
-# Usage
-```
-cd /opt/hackerEnv
-bash hackerEnv
+chmod +x hackerEnv
 ```
 
-# help
+# Usage:
 ```
-bash hackerEnv -h
+    bash /opt/hackerEnv -h             Display this help message.
+    bash /opt/hackerEnv                Scan the entire network.
+    bash /opt/hackerEnv -t <ip>        Pass a specific target's IP.
+    bash /opt/hackerEnv -t <'ip\nip'>  Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'
+    bash /opt/hackerEnv -i <eth0>      To specify an interface.
+    bash /opt/hackerEnv -a <ip>        Pass attacker's IP.
+    bash /opt/hackerEnv -s </24>       To specify subNetwork 10.10.10.10/24 or /23 etc.
+    bash /opt/hackerEnv -e		         Enable aggressive port scan
 ```
