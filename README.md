@@ -17,6 +17,11 @@ git clone https://github.com/abdulr7mann/hackerEnv.git
 chmod +x hackerEnv
 ```
 
+# If you want to use it anywhere on the system, create a shortcut using:
+```
+ln -s /opt/hackerEnv /usr/local/bin/
+```
+
 # Usage:
 ```
 bash /opt/hackerEnv -h             Display this help message.
@@ -27,9 +32,4 @@ bash /opt/hackerEnv -i <eth0>      To specify an interface.
 bash /opt/hackerEnv -a <ip>        Pass attacker's IP.
 bash /opt/hackerEnv -s </24>       To specify subNetwork 10.10.10.10/24 or /23 etc.
 bash /opt/hackerEnv -e             Enable aggressive port scan
-```
-
-# If you want to use it anywhere on the system, create a shortcut using:
-```
-ln -s /opt/hackerEnv /usr/local/bin/
 ```
