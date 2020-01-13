@@ -33,9 +33,10 @@ bash /opt/hackerEnv -a <ip>        Pass attacker's IP.
 bash /opt/hackerEnv -s </24>       To specify subNetwork 10.10.10.10/24 or /23 etc.
 bash /opt/hackerEnv -e             Enable aggressive port scan
 ```
+# in Gnome terminal
 ![alt text](https://i.imgur.com/uHk0Ypt.png)
-
+# Report
 ![alt text](https://i.imgur.com/CCbcKMJ.png)
 
-# tmux
+# in tmux
 ![alt text](https://i.imgur.com/ppCLMUw.png)
