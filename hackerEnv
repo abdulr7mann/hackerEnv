@@ -20,7 +20,7 @@ self_update() {
 	cd - 1> /dev/null 2> /dev/null
 	echo "updated1"
 	exec bash "$(dirname $0)"/"$(basename $0)" "${args[@]}"
-	exit 0
+	exit 1
 	
 }
 function cleanning(){
