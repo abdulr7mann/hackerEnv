@@ -6,7 +6,6 @@
 #Performed only when you have authorization to do.                                  #
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
-
 #####################################################################################
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
@@ -17,7 +16,7 @@ self_update() {
     cd $SCRIPTPATH
     git fetch
 
-    [ -n $(git diff --name-only origin/$BRANCH | grep $SCRIPTNAME) ] || {
+    [ -n $(git diff --name-only origin/$BRANCH | grep $SCRIPTNAME) ] && {
         echo "Found a new version of me, updating myself..."
 	git reset --hard
         git pull --force
