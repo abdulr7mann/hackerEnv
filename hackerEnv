@@ -6,9 +6,16 @@
 #Performed only when you have authorization to do.                                  #
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
-
 #####################################################################################
-
+self_update() {
+	cd $(dirname $0)
+	git fetch > a.txt 1> /dev/null 2> /dev/null
+	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
+	git pull >> a.txt 1> /dev/null 2> /dev/null
+	rm a.txt
+	chmod +x "$(basename $0)"
+	cd - 1> /dev/null 2> /dev/null
+}
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
 then
@@ -596,7 +603,6 @@ function report3(){
 	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
 }
 ############################### Program starts here #####################
-#self_update
 if ! command -v figlet 2> /dev/null 1> /dev/null
 then
 	apt install figlet -y 2> /dev/null 1> /dev/null
@@ -1567,3 +1573,4 @@ do
 	echo "########################################"
 done
 report3
+self_update
