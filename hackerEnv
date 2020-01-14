@@ -22,6 +22,7 @@ self_update() {
         git pull --force
         git checkout $BRANCH
         git pull --force
+	chmod +x "$SCRIPTNAME"
         echo "Running the new version..."
         exec bash "$SCRIPTNAME" "${ARGS[@]}"
         exit 1
