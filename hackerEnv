@@ -23,7 +23,7 @@ self_update() {
         git pull --force
         echo "Running the new version..."
         exec bash "$SCRIPTNAME" "${ARGS[@]}"
-        exit 0
+        exit 1
     }
 }
 function cleanning(){
