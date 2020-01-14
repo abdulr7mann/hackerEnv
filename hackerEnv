@@ -10,6 +10,9 @@
 args=( "$@" )
 tn="$0"
 version="1.0"
+updatet(){
+	return
+}
 self_update() {
 	cd $(dirname $0)
 	git fetch > a.txt 1> /dev/null 2> /dev/null
@@ -19,7 +22,9 @@ self_update() {
 	chmod +x "$(basename $0)"
 	cd - 1> /dev/null 2> /dev/null
 	echo "updated1"
-	exec bash "$(dirname $0)"/"$(basename $0)" "${args[@]}"
+#	exec bash "$(dirname $0)"/"$(basename $0)" "${args[@]}"
+	exec $0 "$@"
+	updatet
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
