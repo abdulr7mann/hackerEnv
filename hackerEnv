@@ -15,7 +15,7 @@ self_update() {
 	#rm a.txt
 	chmod +x "$(basename $0)"
 	cd - 1> /dev/null 2> /dev/null
-	echo "updated2"
+	echo "updated1"
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
