@@ -12,25 +12,28 @@ SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 SCRIPTNAME="$0"
 ARGS="( $@ )"
-BRANCH="master"
 self_update() {
-cd $SCRIPTPATH
+    cd $SCRIPTPATH
     git fetch
-
-    [ -n $(git diff --name-only origin/master | grep $SCRIPTNAME) ] && {
-        echo "Found a new version of me, updating myself..."
-	git reset --hard
-        git pull --force
-        git checkout master
-        git pull --force
+    diff="$(git diff --name-only origin/master | grep $SCRIPTNAME)"
+   if [ $diff != "" ]
+   then
+   	echo "Found a new version of me, updating myself..."
+	git fetch > a.txt 1> /dev/null 2> /dev/null
+	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
+	git pull >> a.txt 1> /dev/null 2> /dev/null
+	rm a.txt
+	chmod +x "$SCRIPTNAME"
         echo "Running the new version..."
 	chmod +x "$SCRIPTNAME"
         exec "$SCRIPTNAME" "${ARGS[@]}"
+	cd -
 
         # Now exit this old instance
         exit 1
-    }
-    echo "Already the latest version."
+    else
+    	echo "Already the latest version."
+    fi
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
