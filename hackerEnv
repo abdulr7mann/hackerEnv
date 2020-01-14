@@ -7,7 +7,7 @@
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
-args=( "$@" )
+#args=( "$@" )
 tn="$0"
 version="1.0"
 updatet(){
@@ -20,7 +20,7 @@ self_update() {
 	updatet
 	git pull >> a.txt 1> /dev/null 2> /dev/null
 	#rm a.txt
-	chmod +x "$tn"
+	chmod +x /opt/hackerEnv/hackerEnv
 	cd - 1> /dev/null 2> /dev/null
 	echo "updated1"
 #	exec bash "$(dirname $0)"/"$(basename $0)" "${args[@]}"
