@@ -6,7 +6,6 @@
 #Performed only when you have authorization to do.                                  #
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
-
 #####################################################################################
 self_update() {
 	cd $(dirname $0)
@@ -604,6 +603,7 @@ function report3(){
 	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
 }
 ############################### Program starts here #####################
+self_update
 if ! command -v figlet 2> /dev/null 1> /dev/null
 then
 	apt install figlet -y 2> /dev/null 1> /dev/null
@@ -662,46 +662,61 @@ done
 shift "$(($OPTIND -1))"
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $(dirname $0)/urIp.txt
 ip="$(cat $(dirname $0)/urIp.txt)"
-if [ "$target" != "" ] && [ "$attacker" != "" ]
+if [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
+then
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
+	ip="$(cat $(dirname $0)/urIp.txt)"
+	fping -a -g $target$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+	target=""
+	interface=""
+	subNetwork=""
+elif [ "$target" != "" ] && [ "$attacker" != "" ]
 then
 	echo -e "$target" > $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
 	echo -e "$attacker" > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
+	target=""
+	attacker=""
 elif [ "$target" != "" ] && [ "$interface" != "" ]
 then
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
 	echo -e "$target" > $(dirname $0)/online.txt
-elif [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
-then
-	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
-	ip="$(cat $(dirname $0)/urIp.txt)"
-	fping -a -g $target$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+	target=""
+	interface=""
 elif [ "$subNetwork" != "" ] && [ "$interface" != "" ]
 then
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
 	fping -a -g $ip$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+	subNetwork=""
+	interface=""
 elif [ "$subNetwork" != "" ] && [ "$attacker" != "" ]
 then
 	ip="$(cat $(dirname $0)/urIp.txt)"
 	fping -a -g $attacker$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+	subNetwork=""
+	attacker=""
 elif [ "$interface" != "" ] && [ "$attacker" != "" ]
 then
 	echo -e "$attacker" > $(dirname $0)/urIp.txt
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
 	fping -a -g $ips/24 2> /dev/null > $(dirname $0)/online.txt
+	interface=""
+	attacker=""
 elif [ "$interface" != "" ]
 then
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
 	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
+	interface=""
 elif [ "$target" != "" ]
 then
 	echo -e "$target" > $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
+	target=""
 else
 	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
@@ -759,8 +774,11 @@ do
 	if [ "$smbOS" != "ERROR: Script execution failed (use -d to debug)" ] && [ "$smbOS" != "" ]
 	then
 		echo -e "OS type: \e[1;34m$smbOS\e[0m"
-	else
+	elif [ "$ostype" != "" ]
+	then
 		echo -e "OS type: \e[1;34m$ostype: $osgen\e[0m"
+	else
+		echo -e "OS type: \e[1;34mUnknown\e[0m"
 	fi
 	echo -e "Performing vulnerability scan on \e[1m$ips\e[0m"
 	while read name
@@ -1556,4 +1574,3 @@ do
 	echo "########################################"
 done
 report3
-self_update
