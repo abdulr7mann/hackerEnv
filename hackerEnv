@@ -22,6 +22,7 @@ cd $SCRIPTPATH
         git checkout master
         git pull --force
         echo "Running the new version..."
+	chmod +x "$SCRIPTNAME"
         exec "$SCRIPTNAME" "${ARGS[@]}"
 
         # Now exit this old instance
