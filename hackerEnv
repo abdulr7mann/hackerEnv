@@ -616,6 +616,7 @@ function report3(){
 	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
 }
 ############################### Program starts here #####################
+self_update
 if ! command -v figlet 2> /dev/null 1> /dev/null
 then
 	apt install figlet -y 2> /dev/null 1> /dev/null
@@ -1586,4 +1587,4 @@ do
 	echo "########################################"
 done
 report3
-self_update
+#self_update
