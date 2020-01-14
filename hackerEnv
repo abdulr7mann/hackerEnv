@@ -12,9 +12,10 @@ self_update() {
 	git fetch > a.txt 1> /dev/null 2> /dev/null
 	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
 	git pull >> a.txt 1> /dev/null 2> /dev/null
-	rm a.txt
+	#rm a.txt
 	chmod +x "$(basename $0)"
 	cd - 1> /dev/null 2> /dev/null
+	echo "updated2"
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
@@ -604,7 +605,7 @@ function report3(){
 }
 ############################### Program starts here #####################
 self_update
-echo "updated"
+echo "updated2"
 if ! command -v figlet 2> /dev/null 1> /dev/null
 then
 	apt install figlet -y 2> /dev/null 1> /dev/null
