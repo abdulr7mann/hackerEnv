@@ -12,8 +12,12 @@ SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 SCRIPTNAME="$0"
 ARGS="( $@ )"
+pwd="$(pwd)"
+echo $pwd
 self_update() {
 	cd $SCRIPTPATH
+	pwd="$(pwd)"
+	echo $pwd
 	diff="$(git diff --name-only master)"
 	if [ "$diff" != "" ]
 	then
