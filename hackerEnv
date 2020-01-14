@@ -17,6 +17,7 @@ self_update() {
 	cd /opt/hackerEnv
 	git fetch > a.txt 1> /dev/null 2> /dev/null
 	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
+	echo "a"
 	updatet
 	git pull >> a.txt 1> /dev/null 2> /dev/null
 	#rm a.txt
