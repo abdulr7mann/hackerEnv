@@ -7,8 +7,9 @@
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
-args="$@"
+args=( "$@" )
 tn="$0"
+version="1.0"
 self_update() {
 	cd $(dirname $0)
 	git fetch > a.txt 1> /dev/null 2> /dev/null
@@ -18,7 +19,7 @@ self_update() {
 	chmod +x "$(basename $0)"
 	cd - 1> /dev/null 2> /dev/null
 	echo "updated1"
-	exec "$tn" "$@"
+	exec bash "$(basename $0)" "${args[@]}"
 	exit 1
 	
 }
