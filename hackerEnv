@@ -7,37 +7,14 @@
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
-
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=$(dirname "$SCRIPT")
-SCRIPTNAME="$0"
-ARGS="( $@ )"
-pwd="$(pwd)"
-echo $pwd
 self_update() {
-	cd $SCRIPTPATH
-	pwd="$(pwd)"
-	echo $pwd
-	diff="$(git diff --name-only master)"
-	if [ "$diff" != "" ]
-	then
-   		echo "Found a new version of me, updating myself..."
-		git fetch > a.txt 1> /dev/null 2> /dev/null
-		git reset --hard >> a.txt 1> /dev/null 2> /dev/null
-		git pull >> a.txt 1> /dev/null 2> /dev/null
-		rm a.txt
-        	echo "Running the new version..."
-		chmod +x "$SCRIPTNAME"
-        	exec "$SCRIPTNAME" "${ARGS[@]}"
-		cd -
-		pwd="$(pwd)"
-		echo $pwd
-
-        	# Now exit this old instance
-        	exit 0
-    	else
-    		echo "Already the latest version."
-    	fi
+	cd $(dirname $0)
+	git fetch > a.txt 1> /dev/null 2> /dev/null
+	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
+	git pull >> a.txt 1> /dev/null 2> /dev/null
+	rm a.txt
+	chmod +x "$(basename $0)"
+	cd - 1> /dev/null 2> /dev/null
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
