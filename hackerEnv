@@ -28,6 +28,7 @@ self_update() {
 	rm a.txt
 	cd -
         echo "Running the new version..."
+	echo "updated"
 	chmod +x "$SCRIPTNAME"
         exec "$SCRIPTNAME" "${ARGS[@]}"
 	
