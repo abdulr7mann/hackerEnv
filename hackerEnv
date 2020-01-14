@@ -7,6 +7,8 @@
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
+args="$@"
+tn="$0"
 self_update() {
 	cd $(dirname $0)
 	git fetch > a.txt 1> /dev/null 2> /dev/null
@@ -16,6 +18,9 @@ self_update() {
 	chmod +x "$(basename $0)"
 	cd - 1> /dev/null 2> /dev/null
 	echo "updated1"
+	exec "$tn" "$@"
+	exit 1
+	
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
@@ -606,7 +611,6 @@ function report3(){
 ############################### Program starts here #####################
 self_update
 echo "updated2"
-echo "updated3"
 if ! command -v figlet 2> /dev/null 1> /dev/null
 then
 	apt install figlet -y 2> /dev/null 1> /dev/null
