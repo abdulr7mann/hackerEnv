@@ -604,6 +604,7 @@ function report3(){
 }
 ############################### Program starts here #####################
 self_update
+echo "updated"
 if ! command -v figlet 2> /dev/null 1> /dev/null
 then
 	apt install figlet -y 2> /dev/null 1> /dev/null
