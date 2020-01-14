@@ -26,6 +26,7 @@ self_update() {
         git pull --force
 	cd -
         echo "Running the new version..."
+	chmod +x "$SCRIPTNAME"
         exec "$SCRIPTNAME" "${ARGS[@]}"
 	
         # Now exit this old instance
