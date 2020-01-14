@@ -11,10 +11,10 @@
 self_update() {
 	pwd="$(pwd)"
 	cd $(dirname $0)
-	git fetch > a.txt 1> /dev/null 2> /dev/null
-	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
-	git pull >> a.txt 1> /dev/null 2> /dev/null
-	rm a.txt
+	git fetch > /dev/null 2>&1
+	git reset --hard > /dev/null 2>&1
+	git pull > /dev/null 2>&1
+#	rm a.txt
 	chmod +x "$(basename $0)"
 	cd $pwd
 }
