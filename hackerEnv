@@ -24,7 +24,7 @@ self_update() {
 	cd - 1> /dev/null 2> /dev/null
 	echo "updated1"
 #	exec bash "$(dirname $0)"/"$(basename $0)" "${args[@]}"
-	exec /opt/hackerEnv/"$tn" "$@"
+	exec /opt/hackerEnv/"$0" "$@"
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
