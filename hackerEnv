@@ -30,7 +30,7 @@ self_update() {
 		cd -
 
         	# Now exit this old instance
-        	exit 1
+        	exit 0
     	else
     		echo "Already the latest version."
     	fi
