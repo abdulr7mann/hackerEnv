@@ -15,7 +15,7 @@ self_update() {
 	cd $SCRIPTPATH
 	git fetch
 	diff="$(git diff --name-only origin/master | grep $SCRIPTNAME)"
-	if [ $diff != "" ]
+	if [ "$diff" != "" ]
 	then
    		echo "Found a new version of me, updating myself..."
 		git fetch > a.txt 1> /dev/null 2> /dev/null
