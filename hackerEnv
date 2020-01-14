@@ -22,9 +22,10 @@ self_update() {
 
     [ -n $(git diff --name-only origin/$BRANCH | grep $SCRIPTNAME) ] && {
         echo "Found a new version of me, updating myself..."
-        git pull --force
-        git checkout $BRANCH
-        git pull --force
+	git fetch > a.txt 1> /dev/null 2> /dev/null
+	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
+	git pull >> a.txt 1> /dev/null 2> /dev/null
+	rm a.txt
 	cd -
         echo "Running the new version..."
 	chmod +x "$SCRIPTNAME"
