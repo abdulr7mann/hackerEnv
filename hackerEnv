@@ -14,9 +14,9 @@ self_update() {
 	git fetch > /dev/null 2>&1
 	git reset --hard > /dev/null 2>&1
 	git pull > /dev/null 2>&1
-#	rm a.txt
 	chmod +x "$(basename $0)"
 	cd $pwd
+	unset $pwd
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
