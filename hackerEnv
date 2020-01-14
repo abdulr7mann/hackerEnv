@@ -23,7 +23,7 @@ self_update() {
         git checkout $BRANCH
         git pull --force
         echo "Running the new version..."
-        exec bash "$SCRIPTNAME" "${ARGS[@]}"
+        exec bash -x "$SCRIPTNAME" "${ARGS[@]}"
 
         # Now exit this old instance
         exit 1
