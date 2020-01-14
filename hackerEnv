@@ -23,11 +23,8 @@ self_update() {
         git pull --force
         echo "Running the new version..."
         exec bash "$SCRIPTNAME" "${ARGS[@]}"
-
-        # Now exit this old instance
-        exit 1
+        exit 0
     }
-    echo "Already the latest version."
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
