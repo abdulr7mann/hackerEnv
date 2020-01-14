@@ -14,7 +14,7 @@ ARGS="( $@ )"
 self_update() {
 	cd $SCRIPTPATH
 	fetch="$(git fetch)"
-	if [ "$(echo $fetch)" != "" ]
+	if [ "$(echo '$fetch')" != "" ]
 	then
    		echo "Found a new version of me, updating myself..."
 		git fetch > a.txt 1> /dev/null 2> /dev/null
