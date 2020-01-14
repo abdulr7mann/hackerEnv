@@ -14,18 +14,18 @@ updatet(){
 	return
 }
 self_update() {
-	cd /opt/hackerEnv
+#	cd /opt/hackerEnv
 	git fetch > a.txt 1> /dev/null 2> /dev/null
 	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
 	echo "a"
 	updatet
 	git pull >> a.txt 1> /dev/null 2> /dev/null
 	#rm a.txt
-	chmod +x /opt/hackerEnv/hackerEnv
+	chmod +x hackerEnv
 	cd - 1> /dev/null 2> /dev/null
 	echo "updated1"
 #	exec bash "$(dirname $0)"/"$(basename $0)" "${args[@]}"
-	exec /opt/hackerEnv/"$0" "$@"
+	exec $0 "$@"
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
