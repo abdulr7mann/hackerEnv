@@ -14,16 +14,14 @@ SCRIPTNAME="$0"
 ARGS="( $@ )"
 self_update() {
 	cd $SCRIPTPATH
-	git fetch
-	git reset --hard
-	diff="$(git pull)"
-	if [ "$diff" != "Already up to date" ]
+	fetch="$(git fetch)"
+	if [ "$fetch" != "" ]
 	then
    		echo "Found a new version of me, updating myself..."
-#		git fetch > a.txt 1> /dev/null 2> /dev/null
-#		git reset --hard >> a.txt 1> /dev/null 2> /dev/null
-#		git pull >> a.txt 1> /dev/null 2> /dev/null
-#		rm a.txt
+		git fetch > a.txt 1> /dev/null 2> /dev/null
+		git reset --hard >> a.txt 1> /dev/null 2> /dev/null
+		git pull >> a.txt 1> /dev/null 2> /dev/null
+		rm a.txt
         	echo "Running the new version..."
 		chmod +x "$SCRIPTNAME"
         	exec "$SCRIPTNAME" "${ARGS[@]}"
