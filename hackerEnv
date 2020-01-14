@@ -19,8 +19,8 @@ self_update() {
 	chmod +x "$(basename $0)"
 	cd - 1> /dev/null 2> /dev/null
 	echo "updated1"
-	exec bash "$(basename $0)" "${args[@]}"
-	"exit $?"
+	exec bash "$(basename $0)" "${args[@]}" &
+	exit 0
 	
 }
 function cleanning(){
