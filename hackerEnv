@@ -30,6 +30,8 @@ self_update() {
 		chmod +x "$SCRIPTNAME"
         	exec "$SCRIPTNAME" "${ARGS[@]}"
 		cd -
+		pwd="$(pwd)"
+		echo $pwd
 
         	# Now exit this old instance
         	exit 0
