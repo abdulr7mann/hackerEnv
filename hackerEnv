@@ -8,34 +8,14 @@
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 
 #####################################################################################
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=$(dirname "$SCRIPT")
-SCRIPTNAME="$0"
-ARGS="( $@ )"
-BRANCH="master"
 self_update() {
-    [ "$UPDATE_GUARD" ] && return
-    export UPDATE_GUARD=YES
-
-    cd $SCRIPTPATH
-    git fetch
-
-    [ -n $(git diff --name-only origin/$BRANCH | grep $SCRIPTNAME) ] && {
-        echo "Found a new version of me, updating myself..."
-	git fetch > a.txt 1> /dev/null 2> /dev/null
-	git reset --hard >> a.txt 1> /dev/null 2> /dev/null
-	git pull >> a.txt 1> /dev/null 2> /dev/null
-	rm a.txt
-	cd -
-        echo "Running the new version..."
-	echo "updated"
-	chmod +x "$SCRIPTNAME"
-        exec "$SCRIPTNAME" "${ARGS[@]}"
-	
-        # Now exit this old instance
-        exit 1
-    }
-    echo "Already the latest version."
+    cd $(dirname $0)
+    git fetch > a.txt 1> /dev/null 2> /dev/null
+    git reset --hard >> a.txt 1> /dev/null 2> /dev/null
+    git pull >> a.txt 1> /dev/null 2> /dev/null
+    rm a.txt
+    chmod +x "$(basename $0)"
+    cd -
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
