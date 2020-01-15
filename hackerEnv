@@ -8,32 +8,32 @@
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 
 #####################################################################################
+#!/bin/bash
                                                # Here I remark changes
 SCRIPTFILE="$(basename "$(readlink -f "$0")")" # get name of the file (not full path)
-SCRIPTPATH="$(dirname "$SCRIPTFILE")"
+SCRIPTPATH="$(dirname "$SCRIPT")"
 SCRIPTNAME="$0"
 ARGS=( "$@" )                                  # fixed to make array of args (see below)
 BRANCH="master"
-echo "$(dirname $0) $(basename $0)"
+
 self_update() {
     cd "$SCRIPTPATH"
-    git fetch origin master
+    git fetch
 
                                                # in the next line
                                                # 1. added double-quotes (see below)
                                                # 2. removed grep expression so
                                                # git-diff will check only script
                                                # file
-    [ -n git diff --name-only origin/master "$(basename "$SCRIPTNAME")" | grep -q . && ] {
+    [ -n "$(git diff --name-only "origin/$BRANCH" "$SCRIPTFILE")" ] && {
         echo "Found a new version of me, updating myself..."
 	git reset --hard
         git pull --force
         git checkout "$BRANCH"
         git pull --force
         echo "Running the new version..."
-	chmod +x "$(dirname $0)/$(basename $0)"
         cd -                                   # return to original working dir
-        exec "$(dirname $0)/$(basename $0)" "${ARGS[@]}"
+        exec "$SCRIPTNAME" "${ARGS[@]}"
 
         # Now exit this old instance
         exit 1
