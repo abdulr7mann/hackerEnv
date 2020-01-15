@@ -638,39 +638,37 @@ else
 	tmux rename-session Pentesting
 	tmux rename-window -t 0 hackerEnv
 fi
-while getopts 'hut:i:a:s:e' OPTION; do
-  case "$OPTION" in
-  	h)
-      echo "Usage:"
-      echo "    $(basename $0) -h             Display this help message."
-      echo "    $(basename $0) -u             Update tool."
-      echo "    $(basename $0)                Scan the entire network."
-      echo "    $(basename $0) -t <ip>        Pass a specific target's IP."
-      echo "    $(basename $0) -t <'ip\nip'>  Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
-      echo "    $(basename $0) -i <eth0>      To specify an interface."
-      echo "    $(basename $0) -a <ip>        Pass attacker's IP."
-      echo "    $(basename $0) -s </24>       To specify subNetwork 10.10.10.10/24 or /23 etc."
-      echo "    $(basename $0) -e	      Enable aggressive port scan"
-      exit 0;;
-    u)
-      updateOptWithVerbose; exit;;
-    t)
-      target="$OPTARG";;
-    i)
-      interface="$OPTARG";;
-    a)
-      attacker="$OPTARG";;
-    s)
-      subNetwork="$OPTARG";;
-    e)
-      aggressive=true;;
- 	\?)
-     echo "Invalid Option: -$OPTION" 1>&2
-     echo "Display help message: $(basename $0) -h" 1>&2
-     exit 1;;
+
+###############################################
+###############################################
+###############################################
+
+# Transform long options to short ones
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "-h") set -- "$@" "--help" ;;
+    *)        set -- "$@" "$arg"
   esac
 done
-shift "$(($OPTIND -1))"
+
+# Default behavior
+rest=false; ws=false
+
+# Parse short options
+OPTIND=1
+while getopts "hrw" opt
+do
+  case "$opt" in
+    "help") print_usage; exit 0 ;;
+    "?") print_usage >&2; exit 1 ;;
+  esac
+done
+shift $(expr $OPTIND - 1) # remove options from positional parameters
+
+###############################################
+###############################################
+###############################################
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $(dirname $0)/urIp.txt
 ip="$(cat $(dirname $0)/urIp.txt)"
 if [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
