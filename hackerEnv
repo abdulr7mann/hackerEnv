@@ -9,7 +9,7 @@
 #####################################################################################
                                                # Here I remark changes
 SCRIPTFILE="$(basename "$(readlink -f "$0")")" # get name of the file (not full path)
-SCRIPTNAME="$0"
+#SCRIPTNAME="$0"
 SCRIPTPATH="$(dirname "$SCRIPTFILE")"
 ARGS=( "$@" )                                  # fixed to make array of args (see below)
 BRANCH="master"
