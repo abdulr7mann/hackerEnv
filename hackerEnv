@@ -7,6 +7,8 @@
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
+
+SCRIPT=$(readlink -f "$0")
                                                # Here I remark changes
 SCRIPTFILE="$(basename "$(readlink -f "$0")")" # get name of the file (not full path)
 SCRIPTPATH="$(dirname "$SCRIPT")"
@@ -29,6 +31,7 @@ self_update() {
         git checkout "$BRANCH"
         git pull --force
         echo "Running the new version..."
+	chmod +x "$SCRIPTNAME"
         cd -                                   # return to original working dir
         exec "$SCRIPTNAME" "${ARGS[@]}"
 
