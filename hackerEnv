@@ -15,7 +15,7 @@ SCRIPTPATH="$(dirname "$SCRIPT")"
 SCRIPTNAME="$0"
 ARGS=( "$@" )                                  # fixed to make array of args (see below)
 BRANCH="master"
-
+echo "$(dirname $0) $(basename $0)"
 self_update() {
     cd "$SCRIPTPATH"
     git fetch
@@ -33,7 +33,7 @@ self_update() {
         echo "Running the new version..."
 	chmod +x "$SCRIPTNAME"
         cd -                                   # return to original working dir
-        exec "$SCRIPTNAME" "${ARGS[@]}"
+        exec "$()" "${ARGS[@]}"
 
         # Now exit this old instance
         exit 1
