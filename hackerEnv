@@ -654,7 +654,7 @@ while getopts 'hut:i:a:s:e' OPTION; do
       echo "    $(basename $0) -e	      Enable aggressive port scan"
       exit 0;;
     u)
-      updateOptWithVerbose; echo "Updated completed"; exit;;
+      updateOptWithVerbose; exit;;
     t)
       target="$OPTARG";;
     i)
