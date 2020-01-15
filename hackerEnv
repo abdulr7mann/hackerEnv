@@ -24,7 +24,7 @@ self_update() {
                                                # 2. removed grep expression so
                                                # git-diff will check only script
                                                # file
-    [ -n "$(git diff --name-only origin/master "$(basename "$SCRIPTNAME")" | grep -q . &&)" ] && {
+    [ -n git diff --name-only origin/master "$(basename "$SCRIPTNAME")" | grep -q . && ] {
         echo "Found a new version of me, updating myself..."
 	git reset --hard
         git pull --force
