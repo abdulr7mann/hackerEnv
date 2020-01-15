@@ -13,7 +13,8 @@ SCRIPTPATH="$(dirname "$SCRIPTFILE")"
 SCRIPTNAME="$0"
 ARGS=( "$@" )                                  # fixed to make array of args (see below)
 BRANCH="master"
-
+echo "$SCRIPTPATH/$SCRIPTFILE"
+echo "$SCRIPTNAME/$SCRIPTFILE"
 self_update() {
     cd "$SCRIPTPATH"
     git fetch
