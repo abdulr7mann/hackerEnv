@@ -15,7 +15,6 @@ self_update() {
 	git pull > /dev/null 2>&1
 	chmod +x "$(basename $0)"
 	cd $pwd
-	unset $pwd
 }
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
@@ -604,10 +603,9 @@ function report3(){
 	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
 }
 ############################### Program starts here #####################
-self_update
-if ! command -v figlet 2> /dev/null 1> /dev/null
+if ! command -v figlet > /dev/null 2>&1
 then
-	apt install figlet -y 2> /dev/null 1> /dev/null
+	apt install figlet -y > /dev/null 2>&1
 else
 	figlet -t -f slant "hackerEnv"
 fi
@@ -631,19 +629,22 @@ else
 	tmux rename-session Pentesting
 	tmux rename-window -t 0 hackerEnv
 fi
-while getopts 'ht:i:a:s:e' OPTION; do
+while getopts 'hut:i:a:s:e' OPTION; do
   case "$OPTION" in
   	h)
       echo "Usage:"
       echo "    $(basename $0) -h             Display this help message."
+      echo "    $(basename $0) -u             Update tool."
       echo "    $(basename $0)                Scan the entire network."
       echo "    $(basename $0) -t <ip>        Pass a specific target's IP."
       echo "    $(basename $0) -t <'ip\nip'>  Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
       echo "    $(basename $0) -i <eth0>      To specify an interface."
       echo "    $(basename $0) -a <ip>        Pass attacker's IP."
       echo "    $(basename $0) -s </24>       To specify subNetwork 10.10.10.10/24 or /23 etc."
-      echo "    $(basename $0) -e		Enable aggressive port scan"
+      echo "    $(basename $0) -e	      Enable aggressive port scan"
       exit 0;;
+    u)
+      self_update; echo "Updated completed"; exit;;
     t)
       target="$OPTARG";;
     i)
@@ -656,7 +657,7 @@ while getopts 'ht:i:a:s:e' OPTION; do
       aggressive=true;;
  	\?)
      echo "Invalid Option: -$OPTION" 1>&2
-     echo "For usage info: $(basename $0) -h" 1>&2
+     echo "Display help message: $(basename $0) -h" 1>&2
      exit 1;;
   esac
 done
@@ -748,9 +749,9 @@ do
 	echo -e "Performing port scan on \e[1m$ips\e[0m"
 	if [ "$aggressive" == true ]
 	then
-		nmap -v0 -sV -n -Pn -p- -T4 -A -O --open --script nmap-vulners,vulscan --script-args vulscandb=exploitdb.csv -oA "$ips"/"$ips" $ips 1> /dev/null
+		nmap -v0 -sV -n -Pn -p- -T4 -A -O --open --script nmap-vulners,vulscan --script-args vulscandb=exploitdb.csv -oA "$ips"/"$ips" $ips > /dev/null 2>&1
 	else
-		nmap -v0 -Pn -n -sV -T4 -A -O -oA "$ips"/"$ips" $ips 1> /dev/null
+		nmap -v0 -Pn -n -sV -T4 -A -O -oA "$ips"/"$ips" $ips > /dev/null 2>&1
 	fi
 	echo "PORT	 STATE SERVICE	   VERSION"
 	grep "open" $ips/$ips.nmap |sed '1d'
@@ -1575,4 +1576,4 @@ do
 	echo "########################################"
 done
 report3
-#self_update
+self_update
