@@ -27,13 +27,14 @@ self_update() {
                                                # file
     [ -n "$(git diff --name-only "origin/$BRANCH" "$SCRIPTFILE")" ] && {
         echo "Found a new version of me, updating myself..."
-	git reset --hard
-        git pull --force
-        git checkout "$BRANCH"
-        git pull --force
+	pwd="$(pwd)"
+	cd $(dirname $0)
+	git fetch > /dev/null 2>&1
+	git reset --hard > /dev/null 2>&1
+	git pull > /dev/null 2>&1
+	chmod +x "$(basename $0)"
+	cd $pwd
         echo "Running the new version..."
-        cd -                                   # return to original working dir
-	chmod +x "$SCRIPTNAME"
         exec "$SCRIPTNAME" "${ARGS[@]}"
 
         # Now exit this old instance
