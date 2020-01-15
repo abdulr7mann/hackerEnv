@@ -33,9 +33,9 @@ self_update() {
         git checkout "$BRANCH"
         git pull --force
         echo "Running the new version..."
-	chmod +x "$SCRIPTNAME"
+	chmod +x "$(dirname $0)/$(basename $0)"
         cd -                                   # return to original working dir
-        exec "$()" "${ARGS[@]}"
+        exec "$(dirname $0)/$(basename $0)" "${ARGS[@]}"
 
         # Now exit this old instance
         exit 1
