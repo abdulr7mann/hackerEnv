@@ -33,7 +33,7 @@ self_update() {
         echo "Running the new version..."
         cd -                                   # return to original working dir
 	chmod +x "$SCRIPTNAME"
-        exec "$SCRIPTNAME" "${ARGS[@]}"
+        exec "$(dirname $0)""$SCRIPTNAME" "${ARGS[@]}"
 
         # Now exit this old instance
         exit 1
