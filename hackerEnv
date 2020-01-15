@@ -8,11 +8,9 @@
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 
 #####################################################################################
-
-SCRIPT=$(readlink -f "$0")
                                                # Here I remark changes
 SCRIPTFILE="$(basename "$(readlink -f "$0")")" # get name of the file (not full path)
-SCRIPTPATH="$(dirname "$SCRIPT")"
+SCRIPTPATH="$(dirname "$SCRIPTFILE")"
 SCRIPTNAME="$0"
 ARGS=( "$@" )                                  # fixed to make array of args (see below)
 BRANCH="master"
