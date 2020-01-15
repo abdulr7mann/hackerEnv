@@ -8,6 +8,15 @@
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 
 #####################################################################################
+updateOptWithVerbose() {
+	pwd="$(pwd)"
+	cd $(dirname $0)
+	git fetch
+	git reset --hard > /dev/null 2>&1
+	git pull
+	chmod +x "$(basename $0)"
+	cd $pwd
+}
 self_update() {
 	pwd="$(pwd)"
 	cd $(dirname $0)
@@ -645,7 +654,7 @@ while getopts 'hut:i:a:s:e' OPTION; do
       echo "    $(basename $0) -e	      Enable aggressive port scan"
       exit 0;;
     u)
-      self_update; echo "Updated completed"; exit;;
+      updateOptWithVerbose; echo "Updated completed"; exit;;
     t)
       target="$OPTARG";;
     i)
