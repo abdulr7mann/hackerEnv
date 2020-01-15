@@ -19,7 +19,7 @@ chmod +x hackerEnv
 
 # If you want to use it anywhere on the system, create a shortcut using:
 ```
-ln -s /opt/hackerEnv /usr/local/bin/
+ln -s /opt/hackerEnv/hackerEnv /usr/local/bin/
 ```
 
 # Usage:
