@@ -10,7 +10,7 @@
                                                # Here I remark changes
 SCRIPTFILE="$(basename "$(readlink -f "$0")")" # get name of the file (not full path)
 SCRIPTNAME="$0"
-SCRIPTPATH="$(dirname "$SCRIPTNAME")"
+SCRIPTPATH="$(dirname "$SCRIPTFILE")"
 ARGS=( "$@" )                                  # fixed to make array of args (see below)
 BRANCH="master"
 echo "$SCRIPTPATH/$SCRIPTFILE"
@@ -32,8 +32,8 @@ self_update() {
         git pull --force
         echo "Running the new version..."
         cd -                                   # return to original working dir
-	chmod +x "$SCRIPTNAME"
-        exec "$(dirname $0)""$SCRIPTNAME" "${ARGS[@]}"
+	chmod +x "$SCRIPTPATH/$SCRIPTFILE"
+        exec "$SCRIPTPATH/$SCRIPTFILE" "${ARGS[@]}"
 
         # Now exit this old instance
         exit 1
