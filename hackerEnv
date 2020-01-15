@@ -7,15 +7,38 @@
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
+                                               # Here I remark changes
+SCRIPTFILE="$(basename "$(readlink -f "$0")")" # get name of the file (not full path)
+SCRIPTPATH="$(dirname "$SCRIPT")"
+SCRIPTNAME="$0"
+ARGS=( "$@" )                                  # fixed to make array of args (see below)
+BRANCH="master"
+
 self_update() {
-	pwd="$(pwd)"
-	cd $(dirname $0)
-	git fetch > /dev/null 2>&1
-	git reset --hard > /dev/null 2>&1
-	git pull > /dev/null 2>&1
-	chmod +x "$(basename $0)"
-	cd $pwd
+    cd "$SCRIPTPATH"
+    git fetch
+
+                                               # in the next line
+                                               # 1. added double-quotes (see below)
+                                               # 2. removed grep expression so
+                                               # git-diff will check only script
+                                               # file
+    [ -n "$(git diff --name-only "origin/$BRANCH" "$SCRIPTFILE")" ] && {
+        echo "Found a new version of me, updating myself..."
+        git pull --force
+        git checkout "$BRANCH"
+        git pull --force
+        echo "Running the new version..."
+        cd -                                   # return to original working dir
+        exec "$SCRIPTNAME" "${ARGS[@]}"
+
+        # Now exit this old instance
+        exit 1
+    }
+    echo "Already the latest version."
 }
+self_update
+echo “some code”
 function cleanning(){
 if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
 then
