@@ -775,8 +775,8 @@ fi
 echo "Performing a ping sweep is in progress"
 echo -e "Your ip address is \e[1m$ip\e[0m"
 grep -vxFf $(dirname $0)/urIp.txt $(dirname $0)/online.txt > $(dirname $0)/tmp.txt; cat $(dirname $0)/tmp.txt > $(dirname $0)/online.txt; rm $(dirname $0)/tmp.txt
-for ips in $(cat $(dirname $0)/online.txt)
-do	
+while read ips
+do
 	packets=$(ping -c 1 $ips|grep 64|cut -f1-2 -d' ')
 	if [ "$packets" = "64 bytes" ]
 	then
@@ -785,8 +785,7 @@ do
 		echo -e "\e[1m$ips\e[0m is \e[1;91mOffline\e[0m"
 		sed -i "/$ips/d" $(dirname $0)/online.txt
 	fi
-	
-done
+done < $(dirname $0)/online.txt
 echo "########################################"
 #sed -i 's/\,/\n/g' $(dirname $0)/online.txt
 for ips in $(cat $(dirname $0)/online.txt)
