@@ -714,10 +714,14 @@ then
 	subNetwork=""
 elif [ "$target" != "" ] && [ "$attacker" != "" ]
 then
-	while read multip
-	do
-		echo -e "${multip}" | sed -i 's/\,/\n/g' >> $(dirname $0)/online.txt
-	done < "${target[@]}"
+	len=${#target[@]}
+	i=0
+	while [ $i -lt $len ]; do
+		echo -e "${target[$i]}" | sed -z 's/\,/\n/g' >> $(dirname $0)/online.txt
+		ips="$(cat $(dirname $0)/online.txt)"
+		target=""
+		let i++
+	done
 	ips="$(cat $(dirname $0)/online.txt)"
 	echo -e "$attacker" > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
@@ -725,9 +729,13 @@ then
 	attacker=""
 elif [ "$target" != "" ] && [ "$interface" != "" ]
 then
-	for multip in "${target[@]}"
-	do
-		echo -e "${multip}," >> $(dirname $0)/online.txt
+	len=${#target[@]}
+	i=0
+	while [ $i -lt $len ]; do
+		echo -e "${target[$i]}" | sed -z 's/\,/\n/g' >> $(dirname $0)/online.txt
+		ips="$(cat $(dirname $0)/online.txt)"
+		target=""
+		let i++
 	done
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
@@ -765,12 +773,11 @@ then
 	len=${#target[@]}
 	i=0
 	while [ $i -lt $len ]; do
-	echo -e "${target[$i]}" | sed -z 's/\,/\n/g' >> $(dirname $0)/online.txt
-	ips="$(cat $(dirname $0)/online.txt)"
-	target=""
-	let i++
-done
-
+		echo -e "${target[$i]}" | sed -z 's/\,/\n/g' >> $(dirname $0)/online.txt
+		ips="$(cat $(dirname $0)/online.txt)"
+		target=""
+		let i++
+	done
 else
 	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
@@ -790,7 +797,6 @@ do
 	fi
 done < $(dirname $0)/online.txt
 echo "########################################"
-#sed -i 's/\,/\n/g' $(dirname $0)/online.txt
 while read ips
 do
 	if [ -d "$ips" ]
