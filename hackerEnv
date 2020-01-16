@@ -668,21 +668,21 @@ while getopts 'hzt:i:a:s:e' OPTION; do
   case "$OPTION" in
     h)
       echo "Usage:"
-      echo "    $full_path <flag> <argument>"
+      echo "    $(basename $0) <flag> <argument>"
       echo ""
       echo "Example:"
-      echo "    $full_path -t 10.10.10.10"
+      echo "    $(basename $0) -t 10.10.10.10"
       echo ""
       echo "Flages:"
-      echo "    $full_path -h, --help     	  Display this help message."
-      echo "    $full_path --update       	  Update tool."
-      echo "    $full_path                	  Scan the entire network."
-      echo "    $full_path -t		  Pass a specific target's IP."
-      echo "    $full_path -t	          Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
-      echo "    $full_path -i                  To specify an interface."
-      echo "    $full_path -a		  Pass attacker's IP."
-      echo "    $full_path -s	          To specify subNetwork 10.10.10.10/24 or /23 etc."
-      echo "    $full_path -e, --aggressive	  Enable aggressive port scan"
+      echo "    $(basename $0) -h, --help     	  Display this help message."
+      echo "    $(basename $0) --update       	  Update tool."
+      echo "    $(basename $0)                	  Scan the entire network."
+      echo "    $(basename $0) -t		  Pass a specific target's IP."
+      echo "    $(basename $0) -t	          Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
+      echo "    $(basename $0) -i                  To specify an interface."
+      echo "    $(basename $0) -a		  Pass attacker's IP."
+      echo "    $(basename $0) -s	          To specify subNetwork 10.10.10.10/24 or /23 etc."
+      echo "    $(basename $0) -e, --aggressive	  Enable aggressive port scan"
       exit 0;;
     z)
       updateOptWithVerbose; exit;;
