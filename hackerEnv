@@ -671,7 +671,7 @@ while getopts 'hzt:i:a:s:e' OPTION; do
       echo "    $(basename $0) --update       	  Update tool."
       echo "    $(basename $0)                	  Scan the entire network."
       echo "    $(basename $0) -t		  Pass a specific target's IP."
-      echo "    $(basename $0) -t	          Pass mutipule targets' IPs. Ex: $(basename $0) -t '10.10.10.10\n20.20.20.20'"
+      echo "    $(basename $0) -t	          Pass mutipule targets' IPs separated by comma Ex: $(basename $0) -t 10.10.10.10,20.20.20.20"
       echo "    $(basename $0) -i                  To specify an interface."
       echo "    $(basename $0) -a		  Pass attacker's IP."
       echo "    $(basename $0) -s	          To specify subNetwork 10.10.10.10/24 or /23 etc."
@@ -715,9 +715,9 @@ then
 elif [ "$target" != "" ] && [ "$attacker" != "" ]
 then
 	touch $(dirname $0)/online.txt
-	for ip in "${target[@]}"
+	for multip in "${target[@]}"
 	do
-		echo -e "${ip}," >> $(dirname $0)/online.txt
+		echo -e "${multip}," >> $(dirname $0)/online.txt
 	done
 	ips="$(cat $(dirname $0)/online.txt)"
 	echo -e "$attacker" > $(dirname $0)/urIp.txt
