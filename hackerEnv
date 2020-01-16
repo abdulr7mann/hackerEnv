@@ -648,6 +648,7 @@ for arg in "$@"; do
   shift
   case "$arg" in
     "--help") set -- "$@" "-h" ;;
+    "--update") set -- "$@" "-z" ;;
     *)        set -- "$@" "$arg"
   esac
 done
@@ -655,21 +656,25 @@ done
 # Default behavior
 rest=false; ws=false
 
-while getopts 'hut:i:a:s:e' OPTION; do
+while getopts 'hzt:i:a:s:e' OPTION; do
   case "$OPTION" in
   	h)
       echo "Usage:"
-      echo "    $(basename $0) -h             Display this help message."
-      echo "    $(basename $0) -u             Update tool."
-      echo "    $(basename $0)                Scan the entire network."
-      echo "    $(basename $0) -t <ip>        Pass a specific target's IP."
-      echo "    $(basename $0) -t <'ip\nip'>  Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
-      echo "    $(basename $0) -i <eth0>      To specify an interface."
-      echo "    $(basename $0) -a <ip>        Pass attacker's IP."
-      echo "    $(basename $0) -s </24>       To specify subNetwork 10.10.10.10/24 or /23 etc."
-      echo "    $(basename $0) -e	      Enable aggressive port scan"
+      echo "    $(basename $0) <flag> <argument>"
+      echo "Example:"
+      echo "    $(basename $0) -t 10.10.10.10"
+      echo "Flage:"
+      echo "    $(basename $0) -h, --help     		Display this help message."
+      echo "    $(basename $0) --update       		Update tool."
+      echo "    $(basename $0)                		Scan the entire network."
+      echo "    $(basename $0) -t <ip>			Pass a specific target's IP."
+      echo "    $(basename $0) -t <'ip\nip'>		Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
+      echo "    $(basename $0) -i <eth0>		To specify an interface."
+      echo "    $(basename $0) -a <ip>			Pass attacker's IP."
+      echo "    $(basename $0) -s </24>			To specify subNetwork 10.10.10.10/24 or /23 etc."
+      echo "    $(basename $0) -e, --aggressive		Enable aggressive port scan"
       exit 0;;
-    u)
+    z)
       updateOptWithVerbose; exit;;
     t)
       target="$OPTARG";;
