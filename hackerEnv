@@ -714,7 +714,6 @@ then
 	subNetwork=""
 elif [ "$target" != "" ] && [ "$attacker" != "" ]
 then
-	touch $(dirname $0)/online.txt
 	for multip in "${target[@]}"
 	do
 		echo -e "${multip}," >> $(dirname $0)/online.txt
@@ -726,7 +725,6 @@ then
 	attacker=""
 elif [ "$target" != "" ] && [ "$interface" != "" ]
 then
-	touch $(dirname $0)/online.txt
 	for multip in "${target[@]}"
 	do
 		echo -e "${multip}," >> $(dirname $0)/online.txt
@@ -767,7 +765,7 @@ then
 	#touch $(dirname $0)/online.txt
 	for multip in "${target[@]}"
 	do
-		echo -e "${multip}," >> $(dirname $0)/online.txt
+		echo -e "${multip}\n" >> $(dirname $0)/online.txt
 	done
 	ips="$(cat $(dirname $0)/online.txt)"
 	target=""
