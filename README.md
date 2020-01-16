@@ -14,6 +14,7 @@ apt update; apt dist-upgrade -y
 ```
 cd /opt/
 git clone https://github.com/abdulr7mann/hackerEnv.git
+cd /opt/hackerEnv
 chmod +x hackerEnv
 ```
 
