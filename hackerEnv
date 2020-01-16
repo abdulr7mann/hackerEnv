@@ -1574,22 +1574,22 @@ do
 				trans2open
 			fi
 ##################   smb Windows      ####################################################################
-				if [ "$ostype" = "Windows" ] || [ "$ostype" = "windows" ] || [ "$ostype" = "embedded" ]
+			if [ "$ostype" = "Windows" ] || [ "$ostype" = "windows" ] || [ "$ostype" = "embedded" ]
+			then
+				if [ "$name" = "netbios-ssn" ] && [ "$product" = "Microsoft Windows netbios-ssn" ]
 				then
-					if [ "$name" = "netbios-ssn" ] && [ "$product" = "Microsoft Windows netbios-ssn" ]
-					then
-						while read smbvulnID
-						do
-							if [ "$smbvulnID" = "ms08-067" ] || [ "$smbvulnID" = "MS08-067" ]
-							then
-								ms08_067_netapi
-							elif [ "$smbvulnID" = "ms17-010" ] || [ "$smbvulnID" = "MS17-010" ]
-							then
-								ms17_010_eternalblue
-							fi
-						done <$ips/nmapSMBVuln.txt
-					fi
+					while read smbvulnID
+					do
+						if [ "$smbvulnID" = "ms08-067" ] || [ "$smbvulnID" = "MS08-067" ]
+						then
+							ms08_067_netapi
+						elif [ "$smbvulnID" = "ms17-010" ] || [ "$smbvulnID" = "MS17-010" ]
+						then
+							ms17_010_eternalblue
+						fi
+					done <$ips/nmapSMBVuln.txt
 				fi
+			fi
         done <$ips/product.txt
 		if [ "$name" = "rpcbind" ]
 		then
