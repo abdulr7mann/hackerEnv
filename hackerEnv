@@ -1578,22 +1578,20 @@ do
 						report2
 					fi
 				fi
-#################   smb       ####################################################################
+#################   smb Linux      ####################################################################
 				if [ "$ostype" = "Linux" ] || [ "$ostype" = "linux" ] || [ "$ostype" = "embedded" ]
 				then
-					if [ "$name" = "netbios-ssn" ] && [ "$product" = "Samba smbd" ]
+					if [ "$smbVersion" = "Samba 3.0.20-Debian" ] && [ "$version" = "3.X - 4.X" ]
 					then
-						if [ "$smbVersion" = "Samba 2.2.1a" ]
-						then
-							trans2open
-						elif [ "$smbVersion" = "Samba 3.0.20-Debian" ] && [ "$version" = "3.X - 4.X" ]
-						then
-							usermap_script
-						fi
+						usermap_script
 					fi
 				fi
 			done <$ips/version.txt
-##################   smb       ####################################################################
+			if [ "$name" = "netbios-ssn" ] && [ "$product" = "Samba smbd" ] && [ "$smbVersion" = "Samba 2.2.1a" ]
+			then
+				trans2open
+			fi
+##################   smb Windows      ####################################################################
 				if [ "$ostype" = "Windows" ] || [ "$ostype" = "windows" ] || [ "$ostype" = "embedded" ]
 				then
 					if [ "$name" = "netbios-ssn" ] && [ "$product" = "Microsoft Windows netbios-ssn" ]
