@@ -8,17 +8,13 @@
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
 function updateOptWithVerbose() {
-#	pwd="$(pwd)"
-#	cd $SCRIPTPATH
-#	echo "$SCRIPT"
-#	echo "$SCRIPTPATH"
-#	DIRECTORY="$(cd `dirname $0` && $pwd)"
-	echo "$(dirname $0)"
-	cd $(dirname $0)
+	echo $full_path
+	echo $dir_path
+	cd $dir_path
 	git fetch
 	git reset --hard
 	git pull
-	chmod +x "$(basename $0)"
+	chmod +x $full_path
 	cd -
 }
 function self_update() {
@@ -617,10 +613,12 @@ function report3(){
 	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
 }
 ############################### Program starts here #####################
-# Absolute path to this script. /home/user/bin/foo.sh
-SCRIPT="$(readlink -f $0)"
-# Absolute path this script is in. /home/user/bin
-SCRIPTPATH="$(dirname $SCRIPT)"
+#/home/gabor/work/code-maven.com/examples/shell/absolute.sh
+full_path=$(realpath $0)
+
+#/home/gabor/work/code-maven.com/examples/shell
+dir_path=$(dirname $full_path)
+
 if ! command -v figlet > /dev/null 2>&1
 then
 	apt install figlet -y > /dev/null 2>&1
