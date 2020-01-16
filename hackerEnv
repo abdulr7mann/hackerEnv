@@ -762,12 +762,15 @@ then
 	interface=""
 elif [ "$target" != "" ]
 then
-	while read multip
-	do
-		echo -e "${multip}" | sed -z 's/\,/\n/g' >> $(dirname $0)/online.txt
-	done < "${target[@]}"
+	len=${#target[@]}
+	i=0
+	while [ $i -lt $len ]; do
+	echo -e "${target[$i]}" | sed -z 's/\,/\n/g' >> $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
 	target=""
+	let i++
+done
+
 else
 	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
