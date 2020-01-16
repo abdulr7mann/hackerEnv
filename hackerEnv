@@ -9,14 +9,16 @@
 #####################################################################################
 function updateOptWithVerbose() {
 	pwd="$(pwd)"
-	cd $SCRIPTPATH
-	echo "$SCRIPT"
-	echo "$SCRIPTPATH"
+#	cd $SCRIPTPATH
+#	echo "$SCRIPT"
+#	echo "$SCRIPTPATH"
 #	DIRECTORY="$(cd `dirname $0` && $pwd)"
-	git fetch
+	pwd="$(pwd)"
+	cd $(dirname $0)
+	git fetch > /dev/null 2>&1
 	git reset --hard > /dev/null 2>&1
-	git pull
-	chmod +x "$SCRIPT"
+	git pull > /dev/null 2>&1
+	chmod +x "$(basename $0)"
 	cd $pwd
 }
 function self_update() {
@@ -678,7 +680,7 @@ while getopts 'hzt:i:a:s:e' OPTION; do
       echo "    $(basename $0) --update       	  Update tool."
       echo "    $(basename $0)                	  Scan the entire network."
       echo "    $(basename $0) -t		  Pass a specific target's IP."
-      echo "    $(basename $0) -t	          Pass mutipule targets' IPs separated by comma Ex: $(basename $0) -t 10.10.10.10,20.20.20.20"
+      echo "    $(basename $0) -t	          Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
       echo "    $(basename $0) -i                  To specify an interface."
       echo "    $(basename $0) -a		  Pass attacker's IP."
       echo "    $(basename $0) -s	          To specify subNetwork 10.10.10.10/24 or /23 etc."
@@ -687,9 +689,7 @@ while getopts 'hzt:i:a:s:e' OPTION; do
     z)
       updateOptWithVerbose; exit;;
     t)
-      set -f # disable glob
-      IFS=, # split on delimiter
-      target=("$OPTARG");;
+      target="$OPTARG";;
     i)
       interface="$OPTARG";;
     a)
@@ -705,10 +705,6 @@ while getopts 'hzt:i:a:s:e' OPTION; do
   esac
 done
 shift "$(($OPTIND -1))"
-
-###############################################
-###############################################
-###############################################
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $(dirname $0)/urIp.txt
 ip="$(cat $(dirname $0)/urIp.txt)"
 if [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
@@ -721,14 +717,7 @@ then
 	subNetwork=""
 elif [ "$target" != "" ] && [ "$attacker" != "" ]
 then
-	len=${#target[@]}
-	i=0
-	while [ $i -lt $len ]; do
-		echo -e "${target[$i]}" | sed -z 's/\,/\n/g' >> $(dirname $0)/online.txt
-		ips="$(cat $(dirname $0)/online.txt)"
-		target=""
-		let i++
-	done
+	echo -e "$target" > $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
 	echo -e "$attacker" > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
@@ -736,16 +725,9 @@ then
 	attacker=""
 elif [ "$target" != "" ] && [ "$interface" != "" ]
 then
-	len=${#target[@]}
-	i=0
-	while [ $i -lt $len ]; do
-		echo -e "${target[$i]}" | sed -z 's/\,/\n/g' >> $(dirname $0)/online.txt
-		ips="$(cat $(dirname $0)/online.txt)"
-		target=""
-		let i++
-	done
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
+	echo -e "$target" > $(dirname $0)/online.txt
 	target=""
 	interface=""
 elif [ "$subNetwork" != "" ] && [ "$interface" != "" ]
@@ -777,14 +759,9 @@ then
 	interface=""
 elif [ "$target" != "" ]
 then
-	len=${#target[@]}
-	i=0
-	while [ $i -lt $len ]; do
-		echo -e "${target[$i]}" | sed -z 's/\,/\n/g' >> $(dirname $0)/online.txt
-		ips="$(cat $(dirname $0)/online.txt)"
-		target=""
-		let i++
-	done
+	echo -e "$target" > $(dirname $0)/online.txt
+	ips="$(cat $(dirname $0)/online.txt)"
+	target=""
 else
 	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
