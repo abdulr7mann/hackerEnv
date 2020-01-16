@@ -8,18 +8,17 @@
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
 function updateOptWithVerbose() {
-	pwd="$(pwd)"
+#	pwd="$(pwd)"
 #	cd $SCRIPTPATH
 #	echo "$SCRIPT"
 #	echo "$SCRIPTPATH"
 #	DIRECTORY="$(cd `dirname $0` && $pwd)"
-	pwd="$(pwd)"
 	cd $(dirname $0)
 	git fetch
 	git reset --hard
 	git pull
 	chmod +x "$(basename $0)"
-	cd $pwd
+	cd -
 }
 function self_update() {
 	pwd="$(pwd)"
