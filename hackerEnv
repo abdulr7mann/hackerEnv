@@ -9,11 +9,16 @@
 #####################################################################################
 function updateOptWithVerbose() {
 	pwd="$(pwd)"
-	cd $(dirname $0)
+	# Absolute path to this script. /home/user/bin/foo.sh
+	SCRIPT="$(readlink -f $0)"
+	# Absolute path this script is in. /home/user/bin
+	SCRIPTPATH="$(dirname $SCRIPT)"
+	cd $SCRIPTPATH
+#	DIRECTORY="$(cd `dirname $0` && $pwd)"
 	git fetch
 	git reset --hard > /dev/null 2>&1
 	git pull
-	chmod +x "$(basename $0)"
+	chmod +x "$SCRIPT"
 	cd $pwd
 }
 function self_update() {
