@@ -762,10 +762,9 @@ then
 	interface=""
 elif [ "$target" != "" ]
 then
-	#touch $(dirname $0)/online.txt
 	for multip in "${target[@]}"
 	do
-		echo -e "${multip}\n" >> $(dirname $0)/online.txt
+		echo -e "${multip}" | tr, '\n' >> $(dirname $0)/online.txt
 	done
 	ips="$(cat $(dirname $0)/online.txt)"
 	target=""
