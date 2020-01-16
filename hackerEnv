@@ -772,6 +772,7 @@ else
 	fping -a -g $ip/24 2> /dev/null > $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
 fi
+cat $(dirname $0)/online.txt | sed -e $'s/,/\\\n/g' > $(dirname $0)/online.txt
 echo "Performing a ping sweep is in progress"
 echo -e "Your ip address is \e[1m$ip\e[0m"
 grep -vxFf $(dirname $0)/urIp.txt $(dirname $0)/online.txt > $(dirname $0)/tmp.txt; cat $(dirname $0)/tmp.txt > $(dirname $0)/online.txt; rm $(dirname $0)/tmp.txt
