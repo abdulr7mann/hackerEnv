@@ -764,7 +764,7 @@ then
 	interface=""
 elif [ "$target" != "" ]
 then
-	touch $(dirname $0)/online.txt
+	#touch $(dirname $0)/online.txt
 	for multip in "${target[@]}"
 	do
 		echo -e "${multip}," >> $(dirname $0)/online.txt
