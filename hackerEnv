@@ -727,7 +727,7 @@ then
 elif [ "$target" != "" ] && [ "$interface" != "" ]
 then
 	touch $(dirname $0)/online.txt
-	for ip in "${target[@]}"
+	for multip in "${target[@]}"
 	do
 		echo -n "${ip}," >> $(dirname $0)/online.txt
 	done
@@ -765,9 +765,9 @@ then
 elif [ "$target" != "" ]
 then
 	touch $(dirname $0)/online.txt
-	for ip in "${target[@]}"
+	for multip in "${target[@]}"
 	do
-		echo -n "${ip}," >> $(dirname $0)/online.txt
+		echo -e "${ip}," >> $(dirname $0)/online.txt
 	done
 	ips="$(cat $(dirname $0)/online.txt)"
 	target=""
