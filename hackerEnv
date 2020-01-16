@@ -670,11 +670,11 @@ while getopts 'hzt:i:a:s:e' OPTION; do
       echo "    $(basename $0) -h, --help     	  Display this help message."
       echo "    $(basename $0) --update       	  Update tool."
       echo "    $(basename $0)                	  Scan the entire network."
-      echo "    $(basename $0) -t <ip>		  Pass a specific target's IP."
-      echo "    $(basename $0) -t <'ip\nip'>	  Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
-      echo "    $(basename $0) -i <eth0>          To specify an interface."
-      echo "    $(basename $0) -a <ip>		  Pass attacker's IP."
-      echo "    $(basename $0) -s </24>		  To specify subNetwork 10.10.10.10/24 or /23 etc."
+      echo "    $(basename $0) -t		  Pass a specific target's IP."
+      echo "    $(basename $0) -t	          Pass mutipule targets' IPs. Ex: $(basename $0) -t '10.10.10.10\n20.20.20.20'"
+      echo "    $(basename $0) -i                 To specify an interface."
+      echo "    $(basename $0) -a		  Pass attacker's IP."
+      echo "    $(basename $0) -s	          To specify subNetwork 10.10.10.10/24 or /23 etc."
       echo "    $(basename $0) -e, --aggressive	  Enable aggressive port scan"
       exit 0;;
     z)
