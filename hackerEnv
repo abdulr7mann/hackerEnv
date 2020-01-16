@@ -717,7 +717,7 @@ then
 	touch $(dirname $0)/online.txt
 	for multip in "${target[@]}"
 	do
-		echo -n "${multip}," >> $(dirname $0)/online.txt
+		echo -e "${multip}," >> $(dirname $0)/online.txt
 	done
 	ips="$(cat $(dirname $0)/online.txt)"
 	echo -e "$attacker" > $(dirname $0)/urIp.txt
@@ -729,7 +729,7 @@ then
 	touch $(dirname $0)/online.txt
 	for multip in "${target[@]}"
 	do
-		echo -n "${ip}," >> $(dirname $0)/online.txt
+		echo -e "${multip}," >> $(dirname $0)/online.txt
 	done
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
