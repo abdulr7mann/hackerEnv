@@ -680,7 +680,9 @@ while getopts 'hzt:i:a:s:e' OPTION; do
     z)
       updateOptWithVerbose; exit;;
     t)
-      target="$OPTARG";;
+      set -f # disable glob
+      IFS=, # split on delimiter
+      target=("$OPTARG");;
     i)
       interface="$OPTARG";;
     a)
@@ -712,7 +714,11 @@ then
 	subNetwork=""
 elif [ "$target" != "" ] && [ "$attacker" != "" ]
 then
-	echo -e "$target" > $(dirname $0)/online.txt
+	touch $(dirname $0)/online.txt
+	for ip in "${target[@]}"
+	do
+		echo -e "${ip}," >> $(dirname $0)/online.txt
+	done
 	ips="$(cat $(dirname $0)/online.txt)"
 	echo -e "$attacker" > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
