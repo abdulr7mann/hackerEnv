@@ -9,10 +9,6 @@
 #####################################################################################
 function updateOptWithVerbose() {
 	pwd="$(pwd)"
-	# Absolute path to this script. /home/user/bin/foo.sh
-	SCRIPT="$(readlink -f $0)"
-	# Absolute path this script is in. /home/user/bin
-	SCRIPTPATH="$(dirname $SCRIPT)"
 	cd $SCRIPTPATH
 #	DIRECTORY="$(cd `dirname $0` && $pwd)"
 	git fetch
@@ -617,6 +613,10 @@ function report3(){
 	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
 }
 ############################### Program starts here #####################
+# Absolute path to this script. /home/user/bin/foo.sh
+SCRIPT="$(readlink -f $0)"
+# Absolute path this script is in. /home/user/bin
+SCRIPTPATH="$(dirname $SCRIPT)"
 if ! command -v figlet > /dev/null 2>&1
 then
 	apt install figlet -y > /dev/null 2>&1
