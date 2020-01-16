@@ -15,9 +15,9 @@ function updateOptWithVerbose() {
 #	DIRECTORY="$(cd `dirname $0` && $pwd)"
 	pwd="$(pwd)"
 	cd $(dirname $0)
-	git fetch > /dev/null 2>&1
-	git reset --hard > /dev/null 2>&1
-	git pull > /dev/null 2>&1
+	git fetch
+	git reset --hard
+	git pull
 	chmod +x "$(basename $0)"
 	cd $pwd
 }
