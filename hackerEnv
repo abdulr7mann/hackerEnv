@@ -726,9 +726,13 @@ then
 	attacker=""
 elif [ "$target" != "" ] && [ "$interface" != "" ]
 then
+	touch $(dirname $0)/online.txt
+	for ip in "${target[@]}"
+	do
+		echo -e "${ip}," >> $(dirname $0)/online.txt
+	done
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
-	echo -e "$target" > $(dirname $0)/online.txt
 	target=""
 	interface=""
 elif [ "$subNetwork" != "" ] && [ "$interface" != "" ]
@@ -760,7 +764,11 @@ then
 	interface=""
 elif [ "$target" != "" ]
 then
-	echo -e "$target" > $(dirname $0)/online.txt
+	touch $(dirname $0)/online.txt
+	for ip in "${target[@]}"
+	do
+		echo -e "${ip}," >> $(dirname $0)/online.txt
+	done
 	ips="$(cat $(dirname $0)/online.txt)"
 	target=""
 else
