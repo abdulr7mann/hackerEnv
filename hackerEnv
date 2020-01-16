@@ -766,7 +766,6 @@ then
 	do
 		echo -e "${multip}," >> $(dirname $0)/online.txt
 	done
-	cat $(dirname $0)/online.txt | sed -e $'s/,/\\\n/g' >> $(dirname $0)/online.txt
 	ips="$(cat $(dirname $0)/online.txt)"
 	target=""
 else
