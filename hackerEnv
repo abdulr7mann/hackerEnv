@@ -1565,7 +1565,7 @@ do
 #################   smb Linux      ####################################################################
 				if [ "$ostype" = "Linux" ] || [ "$ostype" = "linux" ] || [ "$ostype" = "embedded" ]
 				then
-					if [ "$smbVersion" = "Samba 3.0.20-Debian" ] && [ "$version" = "3.X - 4.X" ]
+					if [ "$name" = "netbios-ssn" ] && [ "$product" = "Samba smbd" ] && ([ "$version" = "3.X - 4.X" ] || [ "$smbVersion" = "Samba 3.0.20-Debian" ])
 					then
 						usermap_script
 					fi
