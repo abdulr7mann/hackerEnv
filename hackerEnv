@@ -764,7 +764,7 @@ elif [ "$target" != "" ]
 then
 	for multip in "${target[@]}"
 	do
-		echo -e "${multip}" >> $(dirname $0)/online.txt
+		echo -e "${multip}" | sed -i 's/\,/\n/g' >> $(dirname $0)/online.txt
 	done
 	ips="$(cat $(dirname $0)/online.txt)"
 	target=""
