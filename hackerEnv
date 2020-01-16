@@ -781,7 +781,7 @@ do
 	fi
 done < $(dirname $0)/online.txt
 echo "########################################"
-while read ips
+for ips in $(cat $(dirname $0)/online.txt)
 do
 	if [ -d "$ips" ]
 	then
@@ -1614,6 +1614,6 @@ do
 		fi
     done <$ips/name.txt
 	echo "########################################"
-done <$(dirname $0)/online.txt
+done
 report3
 self_update
