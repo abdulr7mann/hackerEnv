@@ -7,7 +7,7 @@
 #This tool can be found at: https://github.com/abdulr7mann                          #
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
-updateOptWithVerbose() {
+function updateOptWithVerbose() {
 	pwd="$(pwd)"
 	cd $(dirname $0)
 	git fetch
@@ -16,7 +16,7 @@ updateOptWithVerbose() {
 	chmod +x "$(basename $0)"
 	cd $pwd
 }
-self_update() {
+function self_update() {
 	pwd="$(pwd)"
 	cd $(dirname $0)
 	git fetch > /dev/null 2>&1
@@ -714,10 +714,10 @@ then
 	subNetwork=""
 elif [ "$target" != "" ] && [ "$attacker" != "" ]
 then
-	for multip in "${target[@]}"
+	while read multip
 	do
 		echo -e "${multip}" | sed -i 's/\,/\n/g' >> $(dirname $0)/online.txt
-	done
+	done < "${target[@]}"
 	ips="$(cat $(dirname $0)/online.txt)"
 	echo -e "$attacker" > $(dirname $0)/urIp.txt
 	ip="$(cat $(dirname $0)/urIp.txt)"
@@ -762,10 +762,10 @@ then
 	interface=""
 elif [ "$target" != "" ]
 then
-	for multip in "${target[@]}"
+	while read multip
 	do
 		echo -e "${multip}" | sed -z 's/\,/\n/g' >> $(dirname $0)/online.txt
-	done
+	done < "${target[@]}"
 	ips="$(cat $(dirname $0)/online.txt)"
 	target=""
 else
@@ -788,7 +788,7 @@ do
 done < $(dirname $0)/online.txt
 echo "########################################"
 #sed -i 's/\,/\n/g' $(dirname $0)/online.txt
-for ips in $(cat $(dirname $0)/online.txt)
+while read ips
 do
 	if [ -d "$ips" ]
 	then
@@ -1623,6 +1623,6 @@ do
 		fi
     done <$ips/name.txt
 	echo "########################################"
-done
+done <$(dirname $0)/online.txt
 report3
 self_update
