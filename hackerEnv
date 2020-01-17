@@ -8,8 +8,6 @@
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
 function updateOptWithVerbose() {
-	echo $full_path
-	echo $dir_path
 	cd $dir_path
 	git fetch
 	git reset --hard
@@ -18,13 +16,12 @@ function updateOptWithVerbose() {
 	cd -
 }
 function self_update() {
-	pwd="$(pwd)"
 	cd $dir_path
 	git fetch > /dev/null 2>&1
 	git reset --hard > /dev/null 2>&1
 	git pull > /dev/null 2>&1
 	chmod +x "$full_path"
-	cd $pwd
+	cd -
 }
 function cleanning(){
 if [ -f $dir_path/online.txt ] && [ -f $dir_path/online.txt ]
