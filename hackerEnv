@@ -323,12 +323,9 @@ function OpenSSH4_7p1(){
 		wget -q -P $dir_path/exploits/ssh/ https://www.exploit-db.com/download/5632
 		wget -q -P $dir_path/exploits/ssh/ https://github.com/offensive-security/exploit-database-bin-sploits/raw/master/bin-sploits/5622.tar.bz2
 		sleep 10
-	fi
-	if [ ! -d $dir_path/exploits/ssh/rsa/ ]
-	then
 		tar -C $dir_path/exploits/ssh/ -xjf $dir_path/exploits/ssh/5622.tar.bz2
+		sleep 30
 	fi
-	sleep 30
 	if [ "$key" != "" ]
 	then
 		if [ "$tmux" = "bash" ]
