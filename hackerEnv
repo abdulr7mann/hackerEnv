@@ -708,7 +708,7 @@ function terminals(){
 	terminal=$t
 }
 ############################### Program starts here #####################
-terminals > /dev/null 2>&1
+terminals 2> /dev/null
 #/home/gabor/work/code-maven.com/examples/shell/absolute.sh
 full_path=$(realpath $0)
 
