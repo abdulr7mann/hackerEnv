@@ -650,7 +650,8 @@ then
 fi
 cleanning
 report
-if [ "$TMUX" = "" ]
+tmux="$(echo $TMUX)"
+if [ "$tmux" = "" ]
 then
 	terminal=$(echo "gnome")
 else
