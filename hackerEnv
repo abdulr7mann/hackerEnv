@@ -631,6 +631,12 @@ then
 else
 	figlet -t -f slant "hackerEnv"
 fi
+
+if ! command -v gnome-terminal > /dev/null 2>&1
+then
+	apt install gnome-terminal -y > /dev/null 2>&1
+fi
+
 if [ ! -d /usr/share/nmap/scripts/nmap-vulners ]
 then
 	cd /usr/share/nmap/scripts/
@@ -644,21 +650,13 @@ then
 fi
 cleanning
 report
-t="$(ps -p$PPID | cut -f13- -d' '| sed '1d'| cut -f1-1 -d':'| cut -f1-1 -d'-')"
-if [ "$t" = "gnome" ]
+if [ "$TMUX" = "" ]
 then
 	terminal=$(echo "gnome")
-elif [ "$t" = "tmux" ]
-then
-	terminal=$(echo "tmux")
-	tmux rename-session Pentesting
-	tmux rename-window -t 0 hackerEnv
-elif [ "$t" != "gnome" ] || [ "$t" != "tmux" ]
-then
-	echo "$t wwwwwwww"
-	echo "Only works in tmux and gnome-terminal"
+else
+	tmux rename-session hackerEnv
+	tmux rename-window -t 0 Pentesting
 fi
-
 ###############################################
 ###############################################
 ###############################################
