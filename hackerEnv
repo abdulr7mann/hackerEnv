@@ -645,7 +645,6 @@ fi
 cleanning
 report
 t="$(ps -p$PPID | cut -f13- -d' '| sed '1d'| cut -f1-1 -d':'| cut -f1-1 -d'-')"
-echo $t
 if [ "$t" = "gnome" ]
 then
 	terminal=$(echo "gnome")
@@ -656,6 +655,7 @@ then
 	tmux rename-window -t 0 hackerEnv
 elif [ "$t" != "gnome" ] || [ "$t" != "tmux" ]
 then
+	echo "$t"
 	echo "Only works in tmux and gnome-terminal"
 fi
 
