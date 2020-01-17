@@ -640,26 +640,26 @@ function terminals(){
 
 	terminaltype () {
 
-#	case "$BASH" in
-#	?*)
-#		read -s -dc -p $'\E[>c' da < /dev/tty
-#		da=${da##$'\E'[>}
-#		set - ${da//;/ }
-#		;;
-#	*)
-#		test -t 0 && stty=`stty -g`
-#		test -t 0 && stty raw -echo min 0 time 5
-#		da=`query "c"`
-#		test -t 0 && stty "$stty"
-#		da=${da#?}
-#		type="${da%%;*}"
-#		rest="${da#*;}"
-#		vers="${rest%%;*}"
-#		rest="${rest#*;}"
-#		rest="${rest%%c}"
-#		set - $type $vers $rest
-#	;;
-#	esac
+	case "$BASH" in
+	?*)
+		read -s -dc -p $'\E[>c' da < /dev/tty
+		da=${da##$'\E'[>}
+		set - ${da//;/ }
+		;;
+	*)
+		test -t 0 && stty=`stty -g`
+		test -t 0 && stty raw -echo min 0 time 5
+		da=`query "c"`
+		test -t 0 && stty "$stty"
+		da=${da#?}
+		type="${da%%;*}"
+		rest="${da#*;}"
+		vers="${rest%%;*}"
+		rest="${rest#*;}"
+		rest="${rest%%c}"
+		set - $type $vers $rest
+	;;
+	esac
 
 	case "$1" in
 	0)    t=VT100
