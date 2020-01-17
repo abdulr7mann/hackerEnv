@@ -10,7 +10,7 @@
 function updateOptWithVerbose() {
 	cd $dir_path
 	git fetch
-	git reset --hard
+	git reset --hard > /dev/null 2>&1
 	git pull
 	chmod +x $full_path
 	cd - > /dev/null 2>&1
