@@ -633,10 +633,10 @@ function terminals(){
 #		;;
 #	esac
 
-	query () {
-	  echo -n "$*" > /dev/tty
-	  dd < /dev/tty 2> /dev/null
-	}
+#	query () {
+#	  echo -n "$*" > /dev/tty
+#	  dd < /dev/tty 2> /dev/null
+#	}
 
 	terminaltype () {
 
