@@ -705,7 +705,6 @@ function terminals(){
 	}
 
 	terminaltype
-	echo $t
 	terminal=$t
 }
 ############################### Program starts here #####################
@@ -716,10 +715,10 @@ full_path=$(realpath $0)
 #/home/gabor/work/code-maven.com/examples/shell
 dir_path=$(dirname $full_path)
 echo "$terminal"
-if [ "$terminal" = "gnome-terminal" ]
-then
-	terminal=$(echo "gnome")
-fi
+#if [ "$terminal" = "gnome-terminal" ]
+#then
+#	terminal=$(echo "gnome")
+#fi
 if [ "$terminal" = "tmux" ]
 then
 	tmux rename-session hackerEnv
