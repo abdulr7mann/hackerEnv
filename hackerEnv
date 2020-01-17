@@ -620,19 +620,6 @@ function report3(){
 	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
 }
 function terminals(){
-	case "$1" in
-	-h)    echo "Usage: $0 [-t|-n|-v|-p]"
-		echo "Query and report the terminal type, using Secondary Device Attribute report."
-		echo
-		echo Arguments:
-		echo "  -t  report numeric type"
-		echo "  -n  report terminal name"
-		echo "  -v  report version"
-		echo "  -p  report 3rd parameter"
-		return
-		;;
-	esac
-
 	query () {
 	  echo -n "$*" > /dev/tty
 	  dd < /dev/tty 2> /dev/null
