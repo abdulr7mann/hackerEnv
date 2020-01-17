@@ -655,7 +655,7 @@ then
 	tmux rename-window -t 0 hackerEnv
 elif [ "$t" != "gnome" ] || [ "$t" != "tmux" ]
 then
-	echo "$t"
+	echo "$t wwwwwwww"
 	echo "Only works in tmux and gnome-terminal"
 fi
 
