@@ -222,6 +222,8 @@ function telnetBruteForce(){
 	count=1
 	while read pass
 	do
+		username="$(echo "$pass"|cut -f7-7 -d' ')"
+		password="$(echo "$pass"|cut -f11-11 -d' ')"
 		if [ "$pass" != "" ]
 		then
 			description="First of all, you should never use telnet. Second, TELNET has a weak password, very easy to guess: <b style="color:red">$pass</b>"
@@ -277,6 +279,8 @@ function smbBruteForce(){
 	count=1
 	while read pass
 	do
+		username="$(echo "$pass"|cut -f7-7 -d' ')"
+		password="$(echo "$pass"|cut -f11-11 -d' ')"
 		if [ "$pass" != "" ]
 		then
 			description="SMB has a weak password, very easy to guess: <b style="color:red">$pass</b>"
