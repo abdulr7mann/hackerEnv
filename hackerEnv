@@ -703,15 +703,11 @@ function terminals(){
 	pc=$3
 
 	}
-	echo $t
 
 	terminaltype
-
+	echo $t
 #	case "$1" in
-#	-t)    echo $tt;;
 #	-n)    echo $t;;
-#	-v)    echo $v;;
-#	-p)    echo $pc;;
 #	esac
 }
 ############################### Program starts here #####################
