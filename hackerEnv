@@ -646,10 +646,10 @@ cleanning
 report
 t="$(ps -p$PPID | cut -f13- -d' '| sed '1d'| cut -f1-1 -d':'| cut -f1-1 -d'-')"
 echo $t
-if [ $t = "gnome" ]
+if [ "$t" = "gnome" ]
 then
 	terminal=$(echo "gnome")
-elif [ $t = "tmux" ]
+elif [ "$t" = "tmux" ]
 then
 	terminal=$(echo "tmux")
 	tmux rename-session Pentesting
