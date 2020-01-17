@@ -645,6 +645,7 @@ fi
 cleanning
 report
 t="$(basename "/"$(ps -f -p $(cat /proc/$(echo $$)/stat | cut -d \  -f 4) | tail -1 | sed 's/^.* //' | cut -f1-1 -d'-'))"
+echo $t
 if [ $t = "gnome" ]
 then
 	terminal=$(echo "gnome")
