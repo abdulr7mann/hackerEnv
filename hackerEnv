@@ -654,7 +654,8 @@ then
 	terminal=$(echo "tmux")
 	tmux rename-session Pentesting
 	tmux rename-window -t 0 hackerEnv
-else
+elif [ "$t" = "gnome" ] || [ "$t" = "tmux" ]
+then
 	echo "Only works in tmux and gnome-terminal"
 fi
 
