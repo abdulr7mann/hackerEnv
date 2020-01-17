@@ -716,8 +716,8 @@ function report3(){
 	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
 }
 ############################### Program starts here #####################
-#/home/gabor/work/code-maven.com/examples/shell/absolute.sh
 terminals
+#/home/gabor/work/code-maven.com/examples/shell/absolute.sh
 full_path=$(realpath $0)
 
 #/home/gabor/work/code-maven.com/examples/shell
