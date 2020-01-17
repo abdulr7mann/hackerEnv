@@ -625,6 +625,15 @@ full_path=$(realpath $0)
 #/home/gabor/work/code-maven.com/examples/shell
 dir_path=$(dirname $full_path)
 
+tmux="$(echo $TMUX)"
+if [ "$TMUX" = "" ]
+then
+	terminal=$(echo "gnome")
+else
+	tmux rename-session hackerEnv
+	tmux rename-window -t 0 Pentesting
+fi
+
 if ! command -v figlet > /dev/null 2>&1
 then
 	apt install figlet -y > /dev/null 2>&1
@@ -650,14 +659,6 @@ then
 fi
 cleanning
 report
-tmux="$(echo $TMUX)"
-if [ "$tmux" = "" ]
-then
-	terminal=$(echo "gnome")
-else
-	tmux rename-session hackerEnv
-	tmux rename-window -t 0 Pentesting
-fi
 ###############################################
 ###############################################
 ###############################################
