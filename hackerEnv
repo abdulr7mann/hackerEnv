@@ -8,102 +8,6 @@
 #Add our hackerEnv.com community server on discord: https://discord.gg/sB5ruJ6      #
 #####################################################################################
 #! /bin/bash
-
-function terminals(){
-#	case "$1" in
-#	-h)    echo "Usage: $0 [-t|-n|-v|-p]"
-#		echo "Query and report the terminal type, using Secondary Device Attribute report."
-#		echo
-#		echo Arguments:
-#		echo "  -t  report numeric type"
-#		echo "  -n  report terminal name"
-#		echo "  -v  report version"
-#		echo "  -p  report 3rd parameter"
-#		return
-#		;;
-#	esac
-
-	query () {
-	  echo -n "$*" > /dev/tty
-	  dd < /dev/tty 2> /dev/null
-	}
-
-	terminaltype () {
-
-	case "$BASH" in
-	?*)
-		read -s -dc -p $'\E[>c' da < /dev/tty
-		da=${da##$'\E'[>}
-		set - ${da//;/ }
-		;;
-	*)
-		test -t 0 && stty=`stty -g`
-		test -t 0 && stty raw -echo min 0 time 5
-		da=`query "c"`
-		test -t 0 && stty "$stty"
-		da=${da#?}
-		type="${da%%;*}"
-		rest="${da#*;}"
-		vers="${rest%%;*}"
-		rest="${rest#*;}"
-		rest="${rest%%c}"
-		set - $type $vers $rest
-	;;
-	esac
-
-	case "$1" in
-	0)    t=VT100
-		case "$2" in
-		95)    t=tmux;;
-		115)    t=qterminal;;
-		136)    t=PuTTY;;
-		304)    t=genome-terminal;;
-		esac;;
-	1)    t=VT220
-		case "$2" in
-		2)    t=openwin-xterm;;
-		96)    t=mlterm;;
-		304)    t=VT241/VT382;;
-		1115)    t=gnome-terminal;;
-		esac
-		if [ 0$2 -ge 2000 ]
-		then    t=gnome-terminal
-		fi
-		;;
-	2)    t=VT240;;
-	24)    t=VT320;;
-	18)    t=VT330;;
-	19)    t=VT340;;
-	41)    t=VT420;;
-	61)    t=VT510;;
-	64)    t=VT520;;
-	65)    t=gnome-terminal;;
-	28)    t=DECterm;;
-	67)    t=cygwin;;
-	77)    t=mintty;;
-	82)    t=rxvt;;
-	83)    t=screen;;
-	84)    t=tmux; set - $1 200;;
-	85)    t=rxvt-unicode;;
-	*)    t=unknown;;
-	esac
-
-	tt=$1
-	v=$2
-	pc=$3
-
-	}
-	echo $t
-
-#	terminaltype
-
-#	case "$1" in
-#	-t)    echo $tt;;
-#	-n)    echo $t;;
-#	-v)    echo $v;;
-#	-p)    echo $pc;;
-#	esac
-}
 function updateOptWithVerbose() {
 	cd $dir_path
 	git fetch
@@ -475,10 +379,10 @@ function trans2open(){
 	fi
 	description="Buffer overflow found in Samba versions 2.2.0 to 2.2.8. This particular module is capable of exploiting the flaw on x86 Linux systems that do not have the noexec stack option set. NOTE: Some older versions of RedHat do not seem to be vulnerable since they apparently do not allow anonymous access to IPC. "
 	remediation="Upgrading to the latest version of Samba or Samba-TNG is the recommended
-   solution to this vulnerability. Samba version 2.2.8a, and Samba-TNG version
-   0.3.2 are not vulnerable. There will be no new releases for the 2.0 line of
-   Samba code. The only fix for Samba 2.0 is to apply the patches that Samba is
-   providing."
+	solution to this vulnerability. Samba version 2.2.8a, and Samba-TNG version
+	0.3.2 are not vulnerable. There will be no new releases for the 2.0 line of
+	Samba code. The only fix for Samba 2.0 is to apply the patches that Samba is
+	providing."
 	references="https://seclists.org/bugtraq/2003/Apr/103"
 	report2
 }
@@ -501,17 +405,17 @@ function usermap_script(){
 		sleep 10
 	fi
 	description="This bug was originally reported against the anonymous calls
-to the SamrChangePassword() MS-RPC function in combination
-with the 'username map script' smb.conf option (which is not
-enabled by default).
-After further investigation by Samba developers, it was
-determined that the problem was much broader and impacts
-remote printer and file share management as well.  The root
-cause is passing unfiltered user input provided via MS-RPC
-calls to /bin/sh when invoking externals scripts defined
-in smb.conf.  However, unlike the 'username map script'
-vulnerability, the remote file and printer management scripts
-require an authenticated user session."
+	to the SamrChangePassword() MS-RPC function in combination
+	with the 'username map script' smb.conf option (which is not
+	enabled by default).
+	After further investigation by Samba developers, it was
+	determined that the problem was much broader and impacts
+	remote printer and file share management as well.  The root
+	cause is passing unfiltered user input provided via MS-RPC
+	calls to /bin/sh when invoking externals scripts defined
+	in smb.conf.  However, unlike the 'username map script'
+	vulnerability, the remote file and printer management scripts
+	require an authenticated user session."
 	remediation="Upgrading to the latest version"
 	references="https://www.samba.org//samba/security/CVE-2007-2447.html"
 	report2
@@ -714,6 +618,101 @@ function report3(){
 		</html>
 	report3
 	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
+}
+function terminals(){
+#	case "$1" in
+#	-h)    echo "Usage: $0 [-t|-n|-v|-p]"
+#		echo "Query and report the terminal type, using Secondary Device Attribute report."
+#		echo
+#		echo Arguments:
+#		echo "  -t  report numeric type"
+#		echo "  -n  report terminal name"
+#		echo "  -v  report version"
+#		echo "  -p  report 3rd parameter"
+#		return
+#		;;
+#	esac
+
+	query () {
+	  echo -n "$*" > /dev/tty
+	  dd < /dev/tty 2> /dev/null
+	}
+
+	terminaltype () {
+
+	case "$BASH" in
+	?*)
+		read -s -dc -p $'\E[>c' da < /dev/tty
+		da=${da##$'\E'[>}
+		set - ${da//;/ }
+		;;
+	*)
+		test -t 0 && stty=`stty -g`
+		test -t 0 && stty raw -echo min 0 time 5
+		da=`query "c"`
+		test -t 0 && stty "$stty"
+		da=${da#?}
+		type="${da%%;*}"
+		rest="${da#*;}"
+		vers="${rest%%;*}"
+		rest="${rest#*;}"
+		rest="${rest%%c}"
+		set - $type $vers $rest
+	;;
+	esac
+
+	case "$1" in
+	0)    t=VT100
+		case "$2" in
+		95)    t=tmux;;
+		115)    t=qterminal;;
+		136)    t=PuTTY;;
+		304)    t=genome-terminal;;
+		esac;;
+	1)    t=VT220
+		case "$2" in
+		2)    t=openwin-xterm;;
+		96)    t=mlterm;;
+		304)    t=VT241/VT382;;
+		1115)    t=gnome-terminal;;
+		esac
+		if [ 0$2 -ge 2000 ]
+		then    t=gnome-terminal
+		fi
+		;;
+	2)    t=VT240;;
+	24)    t=VT320;;
+	18)    t=VT330;;
+	19)    t=VT340;;
+	41)    t=VT420;;
+	61)    t=VT510;;
+	64)    t=VT520;;
+	65)    t=gnome-terminal;;
+	28)    t=DECterm;;
+	67)    t=cygwin;;
+	77)    t=mintty;;
+	82)    t=rxvt;;
+	83)    t=screen;;
+	84)    t=tmux; set - $1 200;;
+	85)    t=rxvt-unicode;;
+	*)    t=unknown;;
+	esac
+
+	tt=$1
+	v=$2
+	pc=$3
+
+	}
+	echo $t
+
+	terminaltype
+
+#	case "$1" in
+#	-t)    echo $tt;;
+#	-n)    echo $t;;
+#	-v)    echo $v;;
+#	-p)    echo $pc;;
+#	esac
 }
 ############################### Program starts here #####################
 terminals
