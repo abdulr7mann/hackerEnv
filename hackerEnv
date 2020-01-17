@@ -644,12 +644,11 @@ then
 fi
 cleanning
 report
-if [ t="$(basename "/"$(ps -f -p $(cat /proc/$(echo $$)/stat | cut -d \  -f 4) | tail -1 | sed 's/^.* //' | cut -f1-1 -d'-'))"
- = "gnome" ]
+t="$(basename "/"$(ps -f -p $(cat /proc/$(echo $$)/stat | cut -d \  -f 4) | tail -1 | sed 's/^.* //' | cut -f1-1 -d'-'))"
+if [ $t = "gnome" ]
 then
 	terminal=$(echo "gnome")
-elif [ t="$(basename "/"$(ps -f -p $(cat /proc/$(echo $$)/stat | cut -d \  -f 4) | tail -1 | sed 's/^.* //' | cut -f1-1 -d'-'))"
-= "tmux" ]
+elif [ $t = "tmux" ]
 then
 	terminal=$(echo "tmux")
 	tmux rename-session Pentesting
