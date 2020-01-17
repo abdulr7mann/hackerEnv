@@ -702,11 +702,11 @@ full_path=$(realpath $0)
 #/home/gabor/work/code-maven.com/examples/shell
 dir_path=$(dirname $full_path)
 echo "$terminal" > t.txt
-if [ "$terminal" = "gnome-terminal" ]
+if [ "$(cat t.txt)" = "gnome-terminal" ]
 then
 	terminal=$(echo "gnome")
 fi
-if [ "$terminal" = "tmux" ]
+if [ "$(cat t.txt)" = "tmux" ]
 then
 	tmux rename-session hackerEnv
 	tmux rename-window -t 0 Pentesting
