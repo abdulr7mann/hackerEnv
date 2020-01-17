@@ -1,5 +1,5 @@
 
-# Plz add our HackerEnv.com community server on discord: https://discord.gg/sB5ruJ6
+# Plz add our hackerEnv server on discord: https://discord.gg/sB5ruJ6
 
 # hackerEnv
 This tool uses other tools in kali linux and it performs ip sweep, port, vulernablities scan, exploit vulernablities and generates a report.
@@ -8,7 +8,7 @@ By running this program, you are agreeing on NOT running it aginst any public, c
 Performed only when you have authorization to do.
 # Update Kali
 ```
-apt update; apt dist-upgrade -y
+apt update; apt upgrade -y
 ```
 # Donwload hackerEnv
 ```
@@ -44,8 +44,7 @@ Flages:
 ```
 # in Gnome terminal
 ![alt text](https://i.imgur.com/uHk0Ypt.png)
-# Report
-![alt text](https://i.imgur.com/CCbcKMJ.png)
-
 # in tmux
 ![alt text](https://i.imgur.com/ppCLMUw.png)
+# Report
+![alt text](https://i.imgur.com/CCbcKMJ.png)
