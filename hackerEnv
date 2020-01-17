@@ -706,7 +706,7 @@ function terminals(){
 
 	terminaltype
 	echo $t
-	terminal="$(echo $t)"
+	terminal=$t
 #	case "$1" in
 #	-n)    echo $t;;
 #	esac
