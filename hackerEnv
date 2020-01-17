@@ -93,7 +93,7 @@ function terminals(){
 	pc=$3
 
 	}
-
+	echo $t
 
 #	terminaltype
 
