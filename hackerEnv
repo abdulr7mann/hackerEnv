@@ -13,7 +13,7 @@ function updateOptWithVerbose() {
 	git reset --hard
 	git pull
 	chmod +x $full_path
-	cd -
+	cd - /dev/null 2>&1
 }
 function self_update() {
 	cd $dir_path
@@ -21,7 +21,7 @@ function self_update() {
 	git reset --hard > /dev/null 2>&1
 	git pull > /dev/null 2>&1
 	chmod +x "$full_path"
-	cd -
+	cd - /dev/null 2>&1
 }
 function cleanning(){
 if [ -f $dir_path/online.txt ] && [ -f $dir_path/online.txt ]
