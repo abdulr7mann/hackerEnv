@@ -707,9 +707,14 @@ function terminals(){
 	terminaltype
 	echo $t
 	terminal=$t
-#	case "$1" in
-#	-n)    echo $t;;
-#	esac
+	if [ "$terminal" = "gnome-terminal" ]
+	then
+		terminal=$(echo "gnome")
+	elif [ "$terminal" = "tmux" ]
+	then
+		tmux rename-session hackerEnv
+		tmux rename-window -t 0 Pentesting
+	fi
 }
 ############################### Program starts here #####################
 terminals
@@ -718,15 +723,8 @@ full_path=$(realpath $0)
 
 #/home/gabor/work/code-maven.com/examples/shell
 dir_path=$(dirname $full_path)
+echo "$terminal"
 
-if [ "$terminal" = "gnome-terminal" ]
-then
-	terminal=$(echo "gnome")
-elif [ "$terminal" = "tmux" ]
-then
-	tmux rename-session hackerEnv
-	tmux rename-window -t 0 Pentesting
-fi
 
 if ! command -v figlet > /dev/null 2>&1
 then
