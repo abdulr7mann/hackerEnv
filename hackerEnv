@@ -31,7 +31,8 @@ function logo {
 
 function updateOptWithVerbose {
 	echo -e "+ -- --=[Checking for updates... "
-	if [ $(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags) = "" ]
+	noConnection=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags)
+	if [ "$noConnection" = "" ]
 	then
     	echo -e "$RED+ -- --=[Error: no active internet connection $RESET"
     	echo ""
