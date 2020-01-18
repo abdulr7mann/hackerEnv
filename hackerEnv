@@ -619,7 +619,81 @@ function report3(){
 	report3
 	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
 }
+function terminals(){
+	query () {
+	  echo -n "$*" > /dev/tty
+	  dd < /dev/tty 2> /dev/null
+	}
 
+	terminaltype () {
+
+	case "$BASH" in
+	?*)
+		read -s -dc -p $'\E[>c' da < /dev/tty
+		da=${da##$'\E'[>}
+		set - ${da//;/ }
+		;;
+	*)
+		test -t 0 && stty=`stty -g`
+		test -t 0 && stty raw -echo min 0 time 5
+		da=`query "c"`
+		test -t 0 && stty "$stty"
+		da=${da#?}
+		type="${da%%;*}"
+		rest="${da#*;}"
+		vers="${rest%%;*}"
+		rest="${rest#*;}"
+		rest="${rest%%c}"
+		set - $type $vers $rest
+	;;
+	esac
+
+	case "$1" in
+	0)    t=VT100
+		case "$2" in
+		95)    t=tmux;;
+		115)    t=qterminal;;
+		136)    t=PuTTY;;
+		304)    t=genome-terminal;;
+		esac;;
+	1)    t=VT220
+		case "$2" in
+		2)    t=openwin-xterm;;
+		96)    t=mlterm;;
+		304)    t=VT241/VT382;;
+		1115)    t=gnome-terminal;;
+		esac
+		if [ 0$2 -ge 2000 ]
+		then    t=gnome-terminal
+		fi
+		;;
+	2)    t=VT240;;
+	24)    t=VT320;;
+	18)    t=VT330;;
+	19)    t=VT340;;
+	41)    t=VT420;;
+	61)    t=VT510;;
+	64)    t=VT520;;
+	65)    t=gnome-terminal;;
+	28)    t=DECterm;;
+	67)    t=cygwin;;
+	77)    t=mintty;;
+	82)    t=rxvt;;
+	83)    t=screen;;
+	84)    t=tmux; set - $1 200;;
+	85)    t=rxvt-unicode;;
+	*)    t=unknown;;
+	esac
+
+	tt=$1
+	v=$2
+	pc=$3
+
+	}
+
+	terminaltype
+	terminal=$t
+}
 ############################### Program starts here #####################
 #/home/gabor/work/code-maven.com/examples/shell/absolute.sh
 full_path=$(realpath $0)
@@ -627,14 +701,12 @@ full_path=$(realpath $0)
 #/home/gabor/work/code-maven.com/examples/shell
 dir_path=$(dirname $full_path)
 echo "$terminal"
-if [ "$TMUX" = "" ]
+if [ "$terminal" = "tmux" ]
 then
-	terminal=$(echo "gnome-terminal")
-else
-	tmux rename-session Pentesting
-	tmux rename-window -t 0 hackerEnv
+	tmux rename-session hackerEnv
+	tmux rename-window -t 0 Pentesting
 fi
-sudo echo "$TMUX"
+
 
 if ! command -v figlet > /dev/null 2>&1
 then
