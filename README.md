@@ -3,7 +3,7 @@
 
 # hackerEnv
 This tool uses other tools in kali linux and it performs ip sweep, port, vulernablities scan, exploit vulernablities and generates a report.
-This tool, was NOT coded by a professional, "I do not know what i am doing", tested in kali-linux-2019.3a & kali-linux-2019.4.
+This tool, was NOT coded by a professional, "I do not know what i am doing", works in kali-linux-2019.3a. Does not work in kali-linux-2019.4 yet.
 By running this program, you are agreeing on NOT running it aginst any public, corporate or unauthorized networks.
 Performed only when you have authorization to do.
 # Update Kali
