@@ -634,7 +634,7 @@ else
 	tmux rename-session Pentesting
 	tmux rename-window -t 0 hackerEnv
 fi
-echo "$TMUX"
+sudo echo "$TMUX"
 
 if ! command -v figlet > /dev/null 2>&1
 then
