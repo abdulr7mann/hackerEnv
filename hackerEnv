@@ -700,6 +700,7 @@ full_path=$(realpath $0)
 
 #/home/gabor/work/code-maven.com/examples/shell
 dir_path=$(dirname $full_path)
+terminals
 echo "$terminal"
 if [ "$terminal" = "tmux" ]
 then
