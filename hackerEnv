@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.2.6'
+VER='0.2.7'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -41,7 +41,7 @@ function updateOptWithVerbose {
     	exit 1
   	fi
 	LATEST_VERSION=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags | grep -Po '"name":.*?[^\\]",'| head -1 |cut -c11-15)
-  	if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ] || ([ git checkout master ])
+  	if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ] || ([ git checkout master != "" ])
   	then
    		echo -e "+ -- --=[hackerEnv v$LATEST_VERSION is available to download."
    		echo -e "+ -- --=[Do you want to update hackerEnv [Y/n]:" read -r answer
