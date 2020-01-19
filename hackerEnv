@@ -836,9 +836,8 @@ fi
 
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $dir_path/urIp.txt
 ip="$(cat $dir_path/urIp.txt)"
-if [[ $OPTARG =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-	:
-else
+if ! [[ $OPTARG =~ "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" ]]
+then
 	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
 fi
 
