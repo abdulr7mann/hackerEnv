@@ -6,7 +6,7 @@
 # By running this program, you are agreeing on NOT running it aginst any public, corporate or unauthorized networks. Performed only when you have authorization to do.
 
 #version major.minor.patch
-VER='0.2.1'
+VER='0.2.2'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -38,7 +38,6 @@ function updateOptWithVerbose {
     	echo ""
     	exit 1
   	fi
-  	LATEST_VERSION=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags | grep -Po '"name":.*?[^\\]",'| head -1 |cut -c11-15)
   	if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ]
   	then
    		echo -e "+ -- --=[hackerEnv v$LATEST_VERSION is available to download."
@@ -748,7 +747,11 @@ function terminals(){
 ############################### Program starts here #####################
 logo
 terminals
-updateOptWithVerbose
+LATEST_VERSION=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags | grep -Po '"name":.*?[^\\]",'| head -1 |cut -c11-15)
+if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ]
+then
+	updateOptWithVerbose
+fi
 cleanning
 report
 if [ "$terminal" = "tmux" ]
