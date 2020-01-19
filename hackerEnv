@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.2'
+VER='0.1.4'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -827,13 +827,13 @@ ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $dir_path/urIp.
 ip="$(cat $dir_path/urIp.txt)"
 if ! [[ $target =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
 then
-	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
+	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message 1."
 	exit
 fi
 
 if [[ "$subNetwork" -le 0 ]] && [[ "$subNetwork" -ge 30 ]]
 then
-	echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message."
+	echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message 2."
 	exit
 fi
 
@@ -845,7 +845,7 @@ then
 	target=""
 	interface=""
 	subNetwork=""
-elif [ "$target" != "" ] && [ "$attacker" != "" ]
+elif [ $target != "" ] && [ $attacker != "" ]
 then
 	echo -e "$target" > $dir_path/online.txt
 	ips="$(cat $dir_path/online.txt)"
