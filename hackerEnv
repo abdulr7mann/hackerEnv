@@ -787,7 +787,7 @@ while getopts 'hzt:i:a:s:e' OPTION; do
 	  	target="$OPTARG"
 	  else
 	  	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
-		exit
+		exit 1
 	  fi;;
     i)
       interface="$OPTARG";;
@@ -797,7 +797,7 @@ while getopts 'hzt:i:a:s:e' OPTION; do
 	  	attacker="$OPTARG"
 	  else
 	  	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
-		exit
+		exit 1
 	  fi;;
     s)
       if [ "$OPTARG" -ge 0 ] && [ "$OPTARG" -le 30 ]
@@ -805,7 +805,7 @@ while getopts 'hzt:i:a:s:e' OPTION; do
 	  	subNetwork="$OPTARG"
 	  else
 	  	echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message."
-		exit
+		exit 1
 	  fi;;
     e)
       aggressive=true;;
