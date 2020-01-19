@@ -836,12 +836,12 @@ fi
 
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $dir_path/urIp.txt
 ip="$(cat $dir_path/urIp.txt)"
-if ! [[ $target =~ "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" ]]
+if ! [[ $target =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
 then
 	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
 fi
 
-if [ "$target" -le 0 ] && [ "$target" -ge 30 ]
+if [ "$subNetwork" -le 0 ] && [ "$subNetwork" -ge 30 ]
 then
 	echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message."
 	exit
@@ -851,7 +851,7 @@ if [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
 then
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/urIp.txt || { echo -e "${RED}Invalid interface!${resetStyle}" }
 	ip="$(cat $dir_path/urIp.txt)"
-	fping -a -g $target$subNetwork 2> /dev/null > $dir_path/online.txt
+	fping -a -g $target/$subNetwork 2> /dev/null > $dir_path/online.txt
 	target=""
 	interface=""
 	subNetwork=""
@@ -874,13 +874,13 @@ elif [ "$subNetwork" != "" ] && [ "$interface" != "" ]
 then
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/urIp.txt
 	ip="$(cat $dir_path/urIp.txt)"
-	fping -a -g $ip$subNetwork 2> /dev/null > $dir_path/online.txt
+	fping -a -g $ip/$subNetwork 2> /dev/null > $dir_path/online.txt
 	subNetwork=""
 	interface=""
 elif [ "$subNetwork" != "" ] && [ "$attacker" != "" ]
 then
 	ip="$(cat $dir_path/urIp.txt)"
-	fping -a -g $attacker$subNetwork 2> /dev/null > $dir_path/online.txt
+	fping -a -g $attacker/$subNetwork 2> /dev/null > $dir_path/online.txt
 	subNetwork=""
 	attacker=""
 elif [ "$interface" != "" ] && [ "$attacker" != "" ]
