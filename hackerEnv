@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.2.7'
+VER='0.2.8'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -32,7 +32,6 @@ function logo {
 
 function updateOptWithVerbose {
 	echo -e "+ -- --=[Checking for updates... "
-	cd $dir_path
 	noConnection=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags)
 	if [ "$noConnection" = "" ]
 	then
@@ -41,7 +40,7 @@ function updateOptWithVerbose {
     	exit 1
   	fi
 	LATEST_VERSION=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags | grep -Po '"name":.*?[^\\]",'| head -1 |cut -c11-15)
-  	if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ] || ([ git checkout master != "" ])
+  	if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ]
   	then
    		echo -e "+ -- --=[hackerEnv v$LATEST_VERSION is available to download."
    		echo -e "+ -- --=[Do you want to update hackerEnv [Y/n]:"
@@ -52,6 +51,7 @@ function updateOptWithVerbose {
 			git fetch; git reset --hard; git pull || { echo -e "$RED+ -- --=[Couldn't download latest version $RESET" ; exit 1; }
 			git checkout $LATEST_VERSION 2> /dev/null
 			chmod +x $full_path
+			cd - > /dev/null 2>&1
   		else
      		exit 1
   		fi
@@ -59,7 +59,6 @@ function updateOptWithVerbose {
   		echo -e "+ -- --=[hackerEnv is already the latest version."
   		echo ""
 	fi
-	cd - > /dev/null 2>&1
 }
 function cleanning(){
 if [ -f $dir_path/online.txt ] && [ -f $dir_path/online.txt ]
