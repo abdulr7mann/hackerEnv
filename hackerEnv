@@ -47,7 +47,7 @@ function updateOptWithVerbose {
   		if [ "$answer" = "Y" ] || [ "$answer" = "y" ]
   		then
   			cd $dir_path || { echo -e "$COLOR1+ -- --=[Update Failed $RESET" ; exit 1 ; }
-			git fetch; git reset --hard; git pull || { echo -e "$RED+ -- --=[Couldn't download latest version $RESET" ; exit 1; }
+			git fetch; git reset --hard; git pull origin v$LATEST_VERSION; git pull origin master || { echo -e "$RED+ -- --=[Couldn't download latest version $RESET" ; exit 1; }
 			git checkout $LATEST_VERSION 2> /dev/null
 			chmod +x $full_path
 			cd - > /dev/null 2>&1
@@ -733,6 +733,7 @@ function terminals(){
 ############################### Program starts here #####################
 logo
 terminals
+
 
 	# Transform long options to short ones
 for arg in "$@"; do
