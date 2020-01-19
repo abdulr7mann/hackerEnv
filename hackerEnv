@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.1'
+VER='0.1.2'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -786,7 +786,7 @@ while getopts 'hzt:i:a:s:e' OPTION; do
 done
 shift "$(($OPTIND -1))"
 LATEST_VERSION=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags | grep -Po '"name":.*?[^\\]",'| head -1 |cut -c11-15)
-if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ]
+if [ "$LATEST_VERSION" != "$VER" ]
 then
 	updateOptWithVerbose
 fi
