@@ -5,8 +5,9 @@
 # HackerEnv is an automation tool that quickly and easily sweep ips and scan, ports, vulnerablities and exploit vulnerabilities. 
 # By running this program, you are agreeing on NOT running it aginst any public, corporate or unauthorized networks. Performed only when you have authorization to do.
 
-#version major.minor.patch
-VER='0.2.3'
+#major.minor.patch
+#    0.X.X = beta
+VER='0.2.4'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -42,7 +43,7 @@ function updateOptWithVerbose {
   	then
    		echo -e "+ -- --=[hackerEnv v$LATEST_VERSION is available to download."
    		echo -e "+ -- --=[Do you want to update hackerEnv [Y/n]:"
-    	read answer
+    	read -r answer
   		if [ "$answer" = "Y" ] || [ "$answer" = "y" ]
   		then
   			cd $dir_path || { echo -e "$COLOR1+ -- --=[Update Failed $RESET" ; exit 1 ; }
@@ -58,22 +59,6 @@ function updateOptWithVerbose {
   		echo ""
 	fi
 }
-#function updateOptWithVerbose() {
-#	cd $dir_path
-#	git fetch
-#	git reset --hard > /dev/null 2>&1
-#	git pull
-#	chmod +x $full_path
-#	cd - > /dev/null 2>&1
-#}
-#function self_update() {
-#	cd $dir_path
-#	git fetch > /dev/null 2>&1
-#	git reset --hard > /dev/null 2>&1
-#	git pull > /dev/null 2>&1
-#	chmod +x "$full_path"
-#	cd - > /dev/null 2>&1
-#}
 function cleanning(){
 if [ -f $dir_path/online.txt ] && [ -f $dir_path/online.txt ]
 then
@@ -747,41 +732,6 @@ function terminals(){
 ############################### Program starts here #####################
 logo
 terminals
-LATEST_VERSION=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags | grep -Po '"name":.*?[^\\]",'| head -1 |cut -c11-15)
-if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ]
-then
-	updateOptWithVerbose
-fi
-cleanning
-report
-if [ "$terminal" = "tmux" ]
-then
-	tmux rename-session hackerEnv
-	tmux rename-window -t 0 Pentesting
-fi
-
-
-if ! command -v gnome-terminal > /dev/null 2>&1
-then
-	apt install gnome-terminal -y > /dev/null 2>&1
-fi
-
-if [ ! -d /usr/share/nmap/scripts/nmap-vulners ]
-then
-	cd /usr/share/nmap/scripts/
-	git clone https://github.com/vulnersCom/nmap-vulners.git
-	cd -
-elif [ ! -d /usr/share/nmap/scripts/vulscan ]
-then
-	cd /usr/share/nmap/scripts/
-	git clone https://github.com/scipag/vulscan.git
-	cd -
-fi
-
-###############################################
-###############################################
-###############################################
-
 # Transform long options to short ones
 for arg in "$@"; do
   shift
@@ -835,6 +785,42 @@ while getopts 'hzt:i:a:s:e' OPTION; do
   esac
 done
 shift "$(($OPTIND -1))"
+LATEST_VERSION=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags | grep -Po '"name":.*?[^\\]",'| head -1 |cut -c11-15)
+if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ]
+then
+	updateOptWithVerbose
+fi
+cleanning
+report
+if [ "$terminal" = "tmux" ]
+then
+	tmux rename-session hackerEnv
+	tmux rename-window -t 0 Pentesting
+fi
+
+echo "Performing ping sweep is in progress"
+if ! command -v gnome-terminal > /dev/null 2>&1
+then
+	apt install gnome-terminal -y > /dev/null 2>&1
+fi
+
+if [ ! -d /usr/share/nmap/scripts/nmap-vulners ]
+then
+	cd /usr/share/nmap/scripts/
+	git clone https://github.com/vulnersCom/nmap-vulners.git
+	cd -
+elif [ ! -d /usr/share/nmap/scripts/vulscan ]
+then
+	cd /usr/share/nmap/scripts/
+	git clone https://github.com/scipag/vulscan.git
+	cd -
+fi
+
+###############################################
+###############################################
+###############################################
+
+
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $dir_path/urIp.txt
 ip="$(cat $dir_path/urIp.txt)"
 if [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
@@ -896,7 +882,6 @@ else
 	fping -a -g $ip/24 2> /dev/null > $dir_path/online.txt
 	ips="$(cat $dir_path/online.txt)"
 fi
-echo "Performing ping sweep is in progress"
 echo -e "Your ip address is $BOLD $ip $resetStyle"
 grep -vxFf $dir_path/urIp.txt $dir_path/online.txt > $dir_path/tmp.txt; cat $dir_path/tmp.txt > $dir_path/online.txt; rm $dir_path/tmp.txt
 while read ips
