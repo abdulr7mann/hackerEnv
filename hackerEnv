@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.2'
+VER='0.1.3'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -782,13 +782,28 @@ while getopts 'hzt:i:a:s:e' OPTION; do
     z)
       updateOptWithVerbose; exit;;
     t)
-      if [[ $OPTARG =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then target="$OPTARG"; else echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message." fi;;
+      if [[ $OPTARG =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]];
+	  then
+	  	target="$OPTARG"
+	  else
+	  	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
+	  fi;;
     i)
       interface="$OPTARG";;
     a)
-      if [[ $OPTARG =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then attacker="$OPTARG" else echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message." fi;;
+      if [[ $OPTARG =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]];
+	  then
+	  	attacker="$OPTARG"
+	  else
+	  	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
+	  fi;;
     s)
-      if [ "$OPTARG" -ge 0 ] && [ "$OPTARG" -le 30 ] ; then subNetwork="$OPTARG" else echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message." fi;;
+      if [ "$OPTARG" -ge 0 ] && [ "$OPTARG" -le 30 ]
+	  then
+	  	subNetwork="$OPTARG"
+	  else
+	  	echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message."
+	  fi;;
     e)
       aggressive=true;;
  	\?)
