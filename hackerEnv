@@ -836,12 +836,12 @@ fi
 
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $dir_path/urIp.txt
 ip="$(cat $dir_path/urIp.txt)"
-if ! [[ $OPTARG =~ "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" ]]
+if ! [[ $target =~ "^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$" ]]
 then
 	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
 fi
 
-if [ "$OPTARG" -le 0 ] && [ "$OPTARG" -ge 30 ]
+if [ "$target" -le 0 ] && [ "$target" -ge 30 ]
 then
 	echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message."
 	exit
