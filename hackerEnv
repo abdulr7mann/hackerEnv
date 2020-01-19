@@ -48,6 +48,7 @@ function updateOptWithVerbose {
   		then
   			cd $dir_path || { echo -e "$COLOR1+ -- --=[Update Failed $RESET" ; exit 1 ; }
 			git fetch; git reset --hard; git pull origin master || { echo -e "$RED+ -- --=[Couldn't download latest version $RESET" ; exit 1; }
+			git checkout origin master
 			chmod +x $full_path
 			cd - > /dev/null 2>&1
 			echo ""
