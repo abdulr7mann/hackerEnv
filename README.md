@@ -2,8 +2,8 @@
 # Plz add our hackerEnv server on discord: https://discord.gg/sB5ruJ6
 
 # hackerEnv
-This tool uses other tools in kali linux and it performs ip sweep, port, vulernablities scan, exploit vulernablities and generates a report.
-This tool, was NOT coded by a professional, "I do not know what i am doing", works in kali-linux-2019.3a. Does not work in kali-linux-2019.4 yet.
+HackerEnv is an automation tool that quickly and easily sweep ips and scan ports, vulnerablities and exploit them and generates a report.
+It uses other tools such as nmap, nikto, metasploit and hydra. It was NOT coded by a professional, "I do not know what i am doing", works in kali-linux-2019.3a. Does not work in kali-linux-2019.4 yet.
 By running this program, you are agreeing on NOT running it aginst any public, corporate or unauthorized networks.
 Performed only when you have authorization to do.
 # Update Kali

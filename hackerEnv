@@ -2,7 +2,7 @@
 # HackerEnv by @abdulr7mann
 # https://hackerEnv.com
 # Discord server: https://discord.gg/sB5ruJ6
-# HackerEnv is an automation tool that quickly and easily sweep ips and scan, ports, vulnerablities and exploit vulnerabilities. 
+# HackerEnv is an automation tool that quickly and easily sweep ips and scan, ports, vulnerablities and exploit them. 
 # By running this program, you are agreeing on NOT running it aginst any public, corporate or unauthorized networks. Performed only when you have authorization to do.
 
 #major.minor.patch
@@ -51,6 +51,7 @@ function updateOptWithVerbose {
 			git checkout $LATEST_VERSION 2> /dev/null
 			chmod +x $full_path
 			cd - > /dev/null 2>&1
+			echo ""
   		else
      		exit 1
   		fi
@@ -797,7 +798,6 @@ then
 	tmux rename-session hackerEnv
 	tmux rename-window -t 0 Pentesting
 fi
-echo -e ""
 echo "Performing ping sweep is in progress"
 if ! command -v gnome-terminal > /dev/null 2>&1
 then
