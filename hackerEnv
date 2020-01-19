@@ -830,7 +830,7 @@ then
 	exit
 fi
 
-if ! [[ $subNetwork =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && [[ $subNetwork -le 0 ]] && [[ $subNetwork -ge 30 ]] || ([ $subNetwork = "" ])
+if ! [[ $subNetwork =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && [[ $subNetwork -le 0 ]] && [[ $subNetwork -ge 30 ]] || ([ $subNetwork = "↓" ])
 then
 	echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message 2."
 	exit
