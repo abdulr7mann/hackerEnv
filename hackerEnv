@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.1'
+VER='0.1.2'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -733,7 +733,19 @@ function terminals(){
 ############################### Program starts here #####################
 logo
 terminals
-# Transform long options to short ones
+if [[ $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+	:
+else
+	echo -e "${RED}Invalid IP!${resetStyle}"
+	echo "Usage:"
+	echo "    $(basename $0) <flag> <argument>"
+	echo ""
+	echo "Example:"
+	echo "    $(basename $0) -t 10.10.10.10"
+	echo "    $(basename $0) -h, --help     	  Display help message."
+fi
+
+	# Transform long options to short ones
 for arg in "$@"; do
   shift
   case "$arg" in
@@ -770,13 +782,13 @@ while getopts 'hzt:i:a:s:e' OPTION; do
     z)
       updateOptWithVerbose; exit;;
     t)
-      target="$OPTARG";;
+      if [ "$OPTARG" = ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]; then target="$OPTARG"; else echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message." fi;;
     i)
       interface="$OPTARG";;
     a)
-      attacker="$OPTARG";;
+      if [ "$OPTARG" = ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]; then attacker="$OPTARG" else echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message." fi;;
     s)
-      subNetwork="$OPTARG";;
+      if [ "$OPTARG" -ge 0 ] && [ "$OPTARG" -le 30 ] ; then subNetwork="$OPTARG" else echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message." fi;;
     e)
       aggressive=true;;
  	\?)
@@ -786,6 +798,7 @@ while getopts 'hzt:i:a:s:e' OPTION; do
   esac
 done
 shift "$(($OPTIND -1))"
+
 LATEST_VERSION=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags | grep -Po '"name":.*?[^\\]",'| head -1 |cut -c11-15)
 if [ "$LATEST_VERSION" != "$VER" ]
 then
@@ -825,7 +838,7 @@ ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $dir_path/urIp.
 ip="$(cat $dir_path/urIp.txt)"
 if [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
 then
-	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/urIp.txt
+	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/urIp.txt || { echo -e "${RED}Invalid interface!${resetStyle}" }
 	ip="$(cat $dir_path/urIp.txt)"
 	fping -a -g $target$subNetwork 2> /dev/null > $dir_path/online.txt
 	target=""
