@@ -829,9 +829,10 @@ ip="$(cat $dir_path/urIp.txt)"
 if ! [[ $target =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
 then
 	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
+	exit
 fi
 
-if [ "$subNetwork" -le 0 ] && [ "$subNetwork" -ge 30 ]
+if [[ "$subNetwork" -le 0 ]] && [[ "$subNetwork" -ge 30 ]]
 then
 	echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message."
 	exit
