@@ -43,8 +43,7 @@ function updateOptWithVerbose {
   	if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ]
   	then
    		echo -e "+ -- --=[hackerEnv v$LATEST_VERSION is available to download."
-   		echo -e "+ -- --=[Do you want to update hackerEnv [Y/n]:"
-		read -r answer
+   		read -p "+ -- --=[Do you want to update hackerEnv [Y/n]:" answer
   		if [ "$answer" = "Y" ] || [ "$answer" = "y" ]
   		then
   			cd $dir_path || { echo -e "$COLOR1+ -- --=[Update Failed $RESET" ; exit 1 ; }
