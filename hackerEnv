@@ -782,31 +782,13 @@ while getopts 'hzt:i:a:s:e' OPTION; do
     z)
       updateOptWithVerbose; exit;;
     t)
-      if [[ $OPTARG =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]];
-	  then
-	  	target="$OPTARG"
-	  else
-	  	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
-		exit 1
-	  fi;;
+	  target="$OPTARG";;
     i)
       interface="$OPTARG";;
     a)
-      if [[ $OPTARG =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]];
-	  then
-	  	attacker="$OPTARG"
-	  else
-	  	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
-		exit 1
-	  fi;;
+	  attacker="$OPTARG";;
     s)
-      if [ "$OPTARG" -ge 0 ] && [ "$OPTARG" -le 30 ]
-	  then
-	  	subNetwork="$OPTARG"
-	  else
-	  	echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message."
-		exit 1
-	  fi;;
+	  subNetwork="$OPTARG";;
     e)
       aggressive=true;;
  	\?)
@@ -854,6 +836,18 @@ fi
 
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $dir_path/urIp.txt
 ip="$(cat $dir_path/urIp.txt)"
+if [[ $OPTARG =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+	:
+else
+	echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message."
+fi
+
+if [ "$OPTARG" -le 0 ] && [ "$OPTARG" -ge 30 ]
+then
+	echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message."
+	exit
+fi
+
 if [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
 then
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/urIp.txt || { echo -e "${RED}Invalid interface!${resetStyle}" }
