@@ -733,17 +733,6 @@ function terminals(){
 ############################### Program starts here #####################
 logo
 terminals
-if [[ $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-	:
-else
-	echo -e "${RED}Invalid IP!${resetStyle}"
-	echo "Usage:"
-	echo "    $(basename $0) <flag> <argument>"
-	echo ""
-	echo "Example:"
-	echo "    $(basename $0) -t 10.10.10.10"
-	echo "    $(basename $0) -h, --help     	  Display help message."
-fi
 
 	# Transform long options to short ones
 for arg in "$@"; do
