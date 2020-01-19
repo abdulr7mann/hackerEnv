@@ -47,7 +47,7 @@ function updateOptWithVerbose {
   		if [ "$answer" = "Y" ] || [ "$answer" = "y" ]
   		then
   			cd $dir_path || { echo -e "$COLOR1+ -- --=[Update Failed $RESET" ; exit 1 ; }
-			git fetch; git reset --hard; git pull || { echo -e "$RED+ -- --=[Couldn't download latest version $RESET" ; exit 1; }
+			git fetch; git reset --hard; git pull origin master || { echo -e "$RED+ -- --=[Couldn't download latest version $RESET" ; exit 1; }
 			git checkout $LATEST_VERSION 2> /dev/null
 			chmod +x $full_path
 			cd - > /dev/null 2>&1
@@ -782,11 +782,11 @@ while getopts 'hzt:i:a:s:e' OPTION; do
     z)
       updateOptWithVerbose; exit;;
     t)
-      if [ "$OPTARG" = ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]; then target="$OPTARG"; else echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message." fi;;
+      if [[ $OPTARG =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then target="$OPTARG"; else echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message." fi;;
     i)
       interface="$OPTARG";;
     a)
-      if [ "$OPTARG" = ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]; then attacker="$OPTARG" else echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message." fi;;
+      if [[ $OPTARG =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then attacker="$OPTARG" else echo -e "${RED}Invalid IP!${resetStyle}\n$(basename $0) -h, --help   Display help message." fi;;
     s)
       if [ "$OPTARG" -ge 0 ] && [ "$OPTARG" -le 30 ] ; then subNetwork="$OPTARG" else echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message." fi;;
     e)
