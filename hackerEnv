@@ -50,7 +50,7 @@ function updateOptWithVerbose {
 			git fetch; git reset --hard; git pull || { echo -e "$RED+ -- --=[Couldn't download latest version $RESET" ; exit 1; }
 			git checkout $LATEST_VERSION 2> /dev/null
 			chmod +x $full_path
-			cd - 2> /dev/null
+			cd - > /dev/null 2>&1
   		else
      		exit 1
   		fi
