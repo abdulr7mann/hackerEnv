@@ -865,7 +865,7 @@ fi
 
 if [[ ! ${subNetwork} =~ ^[0-9]+$ ]]
 then
-    if [[ ! ${subNetwork} -ge 0 ]] && [[ ! ${subNetwork} -le 30  ]]
+    if ! [[ ${subNetwork} -ge 0 ]] && [[ ${subNetwork} -le 30  ]]
     then
         echo -e "${RED}Invalid subnet IP: $ip ${resetStyle}\n$(basename $0) -h, --help   Display help message."
         echo "Please enter in a number within range of (0-30)"
