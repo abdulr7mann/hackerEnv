@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.1'
+VER='0.1.2'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -47,8 +47,8 @@ function updateOptWithVerbose {
   		then
   			cd ${dir_path} || { echo -e "$COLOR1+ -- --=[Update Failed $RESET" ; exit 1 ; }
 			git fetch; git reset --hard; git pull origin master |pv > /dev/null || { echo -e "${RED}+ -- --=[Couldn't download latest version $RESET" ; exit 1; }
-			git switch -c origin/master /dev/null 2>&1
-			git checkout origin/master /dev/null 2>&1
+			git switch -c origin/master > /dev/null
+			git checkout origin/master > /dev/null
 			chmod +x $full_path
 			cd - > /dev/null 2>&1
 			echo ""
