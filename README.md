@@ -5,7 +5,7 @@
 HackerEnv is an automation tool that quickly and easily sweep ips and scan ports, vulnerablities and exploit them and generates a report.
 It uses other tools such as nmap, nikto, metasploit and hydra. Works in kali-linux-2019.3a and Parrot OS. It has some problems in kali-linux-2019.4 still working in fixing them.
 I am adding features and vulnerablities exploits consistently. Also, soon there will be a GUI version.
-It was NOT coded by a professional, "I do not know what i am doing".
+This tool was NOT coded by a professional, "I do not know what i am doing".
 By running this program, you are agreeing on NOT running it aginst any public, corporate or unauthorized networks.
 Performed only when you have authorization to do.
 Greetz to @R2k4n
