@@ -806,8 +806,6 @@ while getopts 'hzt:i:a:s:e' OPTION; do
   esac
 done
 shift "$(($OPTIND -1))"
-AR-36415
-CR-99960
 LATEST_VERSION=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags | grep -Po '"name":.*?[^\\]",'| head -1 |cut -c11-15)
 if [ "$LATEST_VERSION" != "$VER" ]
 then
