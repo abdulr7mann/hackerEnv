@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.2'
+VER='0.1.1'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -907,13 +907,13 @@ elif [ "$subNetwork" != "" ] && [ "$interface" != "" ]
 then
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/urIp.txt
 	ip="$(cat $dir_path/urIp.txt)"
-	fping -a -g $ip$subNetwork 2> /dev/null > $dir_path/online.txt
+	fping -a -g $ip/$subNetwork 2> /dev/null > $dir_path/online.txt
 	subNetwork=""
 	interface=""
 elif [ "$subNetwork" != "" ] && [ "$attacker" != "" ]
 then
 	ip="$(cat $dir_path/urIp.txt)"
-	fping -a -g $attacker$subNetwork 2> /dev/null > $dir_path/online.txt
+	fping -a -g $attacker/$subNetwork 2> /dev/null > $dir_path/online.txt
 	subNetwork=""
 	attacker=""
 elif [ "$interface" != "" ] && [ "$attacker" != "" ]
@@ -930,6 +930,10 @@ then
 	ip="$(cat $dir_path/urIp.txt)"
 	fping -a -g $ip/24 2> /dev/null > $dir_path/online.txt
 	interface=""
+elif [ "$subNetwork" != "" ]
+then
+	fping -a -g $ip/$subNetwork 2> /dev/null > $dir_path/online.txt
+	subNetwork=""
 elif [ "$target" != "" ]
 then
 	echo -e "$target" > $dir_path/online.txt
