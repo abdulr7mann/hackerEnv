@@ -862,6 +862,11 @@ then
         exit
     fi
 fi
+if [[ ! ${attacker} =~ ^[0-9]+$ ]] && [[ ${attacker} -ge 1 && ${attacker} -le 30  ]]; do
+    echo -e "${RED}Invalid subnet IP: $ip ${resetStyle}\n$(basename $0) -h, --help   Display help message."
+    echo "Please enter in a number within range of (0-30)"
+    exit
+fi
 echo "Performing ping sweep is in progress"
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $dir_path/urIp.txt
 ip="$(cat $dir_path/urIp.txt)"
@@ -869,7 +874,7 @@ if [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
 then
 	ifconfig $interface| grep -oP 'inet \K[^ ]+' > $dir_path/urIp.txt
 	ip="$(cat $dir_path/urIp.txt)"
-	fping -a -g $target$subNetwork 2> /dev/null > $dir_path/online.txt
+	fping -a -g $target/$subNetwork 2> /dev/null > $dir_path/online.txt
 	target=""
 	interface=""
 	subNetwork=""
