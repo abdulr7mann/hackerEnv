@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.2'
+VER='0.1.1'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -572,10 +572,10 @@ function smbScan(){
 	sleep 40
 	if [ "${terminal}" = "gnome-terminal" ]
 	then
-		msfconsole -r ${dir_path}/exploits/smb/smb_version.rc; exit; &
+		msfconsole -r ${dir_path}/exploits/smb/smb_version.rc &
         wait
 	else
-		msfconsole -r ${dir_path}/exploits/smb/smb_version.rc; exit; &
+		msfconsole -r ${dir_path}/exploits/smb/smb_version.rc &
         wait
 	fi
 	sleep 30
