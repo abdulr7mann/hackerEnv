@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.1'
+VER='0.1.2'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -950,9 +950,9 @@ do
 	packets=$(ping -c 1 ${ips}|grep 64|cut -f1-2 -d' ')
 	if [ "$packets" = "64 bytes" ]
 	then
-		echo -e "${BOLD}${ips}${resetStyle}is${BLUE} Online ${resetStyle}"
+		echo -e "${BOLD}${ips}${resetStyle} is${BLUE} Online ${resetStyle}"
 	else
-		echo -e "${BOLD}${ips}${resetStyle}is${RED} Offline ${resetStyle}"
+		echo -e "${BOLD}${ips}${resetStyle} is${RED} Offline ${resetStyle}"
 		sed -i "/${ips}/d" ${dir_path}/online.txt
 	fi
 done < ${dir_path}/online.txt
