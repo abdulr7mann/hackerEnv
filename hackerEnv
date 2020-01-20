@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.2'
+VER='0.1.1'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -586,7 +586,7 @@ function smbScan(){
 	smbOS=$(cat ${ips}/smbOS.xml | grep -oP 'key="os">\K[^<]+')
 	sleep 30
 }
-##################   rpcbind       ###############################################################
+################## rpcbind ###############################################################
 function smbclient(){
 	tmux new-window -n smbclient "bash -c 'smbclient -L //${ips} -N; read; bash'" \; 2> /dev/null
 }
@@ -672,6 +672,7 @@ function report3(){
 	report3
 	echo "Report was generated => $(echo 'file://'$(pwd)'/report.html')"
 }
+################################ Find out what kind of terminal ######################
 function terminals(){
 	query () {
 	  echo -n "$*" > /dev/tty
@@ -748,11 +749,10 @@ function terminals(){
 	terminal=$t
 }
 ############################### Program starts here #####################
+clear
 logo
 terminals
-
-
-	# Transform long options to short ones
+# Transform long options to short ones
 for arg in "$@"; do
   shift
   case "$arg" in
