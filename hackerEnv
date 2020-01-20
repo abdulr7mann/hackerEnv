@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.2.0'
+VER='0.2.1'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -795,17 +795,19 @@ while getopts 'hzt:i:a:s:e' OPTION; do
     a)
 	  attacker="$OPTARG";;
     s)
+    
 	  subNetwork="$OPTARG";;
     e)
       aggressive=true;;
  	\?)
      echo "Invalid Option: -$OPTION" 1>&2
-     echo "Display help message: $full_path -h" 1>&2
+     echo "$(basename $0) -h, --help   Display help message." 1>&2
      exit 1;;
   esac
 done
 shift "$(($OPTIND -1))"
-
+AR-36415
+CR-99960
 LATEST_VERSION=$(curl -s https://api.github.com/repos/abdulr7mann/hackerEnv/tags | grep -Po '"name":.*?[^\\]",'| head -1 |cut -c11-15)
 if [ "$LATEST_VERSION" != "$VER" ]
 then
@@ -818,7 +820,6 @@ then
 	tmux rename-session hackerEnv
 	tmux rename-window -t 0 Pentesting
 fi
-echo "Performing ping sweep is in progress"
 if ! command -v gnome-terminal > /dev/null 2>&1
 then
 	apt install gnome-terminal -y > /dev/null 2>&1
@@ -840,31 +841,29 @@ fi
 ###############################################
 ###############################################
 
-if [ "$target" = "" ]
+if [ "$target" != "" ]
 then
-    echo "No IP was provided "
-    exit
-fi
-    if [ "$target" != "" ]
+    for ip in $target
+    do
+        if valid_ip $ip
+        then
+            stat='good'
+        else
+            echo -e "${RED}Invalid Target IP: $ip ${resetStyle}\n$(basename $0) -h, --help   Display help message."
+            exit
+        fi
+    done
+elif [ "$attacker" != "" ]
+then
+    if valid_ip $attacker
     then
-        for ip in $target
-        do
-            if valid_ip $ip
-            then
-                stat='good'
-            else
-                echo -e "${RED}Invalid IP: $ip ${resetStyle}\n$(basename $0) -h, --help   Display help message 1."
-                exit
-            fi
-        done
+        stat='good'
+    else
+        echo -e "${RED}Invalid attacker IP: $ip ${resetStyle}\n$(basename $0) -h, --help   Display help message."
+        exit
     fi
-
-#if ! [[ $subNetwork =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] && [[ $subNetwork -le 0 ]] && [[ $subNetwork -ge 30 ]] || ([ $subNetwork = "" ])
-#then
-#	echo -e "${RED}Invalid subnets!${resetStyle}\n$(basename $0) -h, --help   Display help message 2."
-#	exit
-#fi
-
+fi
+echo "Performing ping sweep is in progress"
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $dir_path/urIp.txt
 ip="$(cat $dir_path/urIp.txt)"
 if [ "$target" != "" ] && [ "$interface" != "" ] && [ "$subNetwork" != "" ]
