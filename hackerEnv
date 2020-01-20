@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.2.4'
+VER='0.2.5'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -43,7 +43,7 @@ function updateOptWithVerbose {
   	if [ "$LATEST_VERSION" != "$VER" ] && [ "$LATEST_VERSION" != "" ]
   	then
    		echo -e "+ -- --=[hackerEnv v$LATEST_VERSION is available to download."
-   		read -p "+ -- --=[Do you want to update hackerEnv [Y/n]:" answer
+   		read -p "+ -- --=[Do you want to update hackerEnv [Y/n]: " answer
   		if [ "$answer" = "Y" ] || [ "$answer" = "y" ]
   		then
   			cd $dir_path || { echo -e "$COLOR1+ -- --=[Update Failed $RESET" ; exit 1 ; }
@@ -862,7 +862,8 @@ then
         exit
     fi
 fi
-if [[ ! ${attacker} =~ ^[0-9]+$ ]] && [[ ${attacker} -ge 1 && ${attacker} -le 30  ]]; do
+
+if [[ ! ${subNetwork} =~ ^[0-9]+$ ]] && [[ ${subNetwork} -ge 1 && ${subNetwork} -le 30  ]]; do
     echo -e "${RED}Invalid subnet IP: $ip ${resetStyle}\n$(basename $0) -h, --help   Display help message."
     echo "Please enter in a number within range of (0-30)"
     exit
