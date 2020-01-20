@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.1'
+VER='0.1.2'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
