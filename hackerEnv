@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.1'
+VER='0.1.2'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -863,11 +863,19 @@ then
 fi
 if [ "$subNetwork" != "" ]
 then
-    if [[ "$subNetwork" =~ ^[^0-9]+$ ]] && (($subNetwork >= 0 && $subNetwork <= 30)); then
-        echo -e "${RED}Invalid subnet: ${subNetwork} ${resetStyle}\n$(basename $0) -h, --help   Display help message."
-        echo "Please enter in a number within range of (0-30)"
-        exit
-    fi
+    case "$subNetwork" in
+        ("" | *[!0-9]*)
+            echo -e "${RED}Invalid subnet: ${subNetwork} ${resetStyle}\n$(basename $0) -h, --help   Display help message." >&2
+            echo "Please enter in a number within range of (0-30) exclued /" >&2
+            exit 1
+            ;;
+        *)
+            if [ "$subNetwork" -lt 0 ] || [ "$subNetwork" -gt 30 ]; then
+                echo -e "${RED}Invalid subnet: ${subNetwork} ${resetStyle}\n$(basename $0) -h, --help   Display help message." >&2
+                echo "Please enter in a number within range of (0-30) exclued /" >&2
+                exit 1
+            fi
+    esac
 fi
 echo "Performing ping sweep is in progress"
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > $dir_path/urIp.txt
