@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.1'
+VER='0.1.2'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -572,17 +572,20 @@ function smbScan(){
 	sleep 40
 	if [ "${terminal}" = "gnome-terminal" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r ${dir_path}/exploits/smb/smb_version.rc; exit; bash'" 2> /dev/null &
+		msfconsole -r ${dir_path}/exploits/smb/smb_version.rc; exit; &
+        wait
 	else
-		tmux new-window -n smbScan "bash -c 'msfconsole -r ${dir_path}/exploits/smb/smb_version.rc; exit; bash'" \; 2> /dev/null &
+		msfconsole -r ${dir_path}/exploits/smb/smb_version.rc; exit; &
+        wait
 	fi
 	sleep 30
 	smbVersion=$(cat ${ips}/smbVersion.txt |grep "Samba" |grep -oP '\(\K[^\)]+')
 	nmap -v0 --script vuln -p139,445 ${ips} -Pn -oA ${ips}/nmapSMBVuln &
+    wait
 	smbvulnID=$(cat ${ips}/nmapSMBVuln.xml | grep -oP '\"title">\K[^\<]+'|grep -oP '\(\K[^\)]+'> ${ips}/nmapSMBVuln.txt)
 	nmap -v0 --script smb-os-discovery.nse -p139,445 ${ips} -Pn -n -oA ${ips}/smbOS &
+    wait
 	smbOS=$(cat ${ips}/smbOS.xml | grep -oP 'key="os">\K[^<]+')
-	wait
 }
 ################## rpcbind ###############################################################
 function smbclient(){
