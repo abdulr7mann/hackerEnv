@@ -783,7 +783,7 @@ while getopts 'hzt:i:a:s:e' OPTION; do
       echo "    $(basename $0) -t	          Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
       echo "    $(basename $0) -i                  To specify an interface."
       echo "    $(basename $0) -a		  Pass attacker's IP."
-      echo "    $(basename $0) -s	          To specify subNetwork 10.10.10.10/24 or /23 etc."
+      echo "    $(basename $0) -s	          To specify subNetwork 10.10.10.10/24 or /23 etc, exclude </> only enter number"
       echo "    $(basename $0) -e, --aggressive	  Enable aggressive port scan"
       exit 0;;
     z)
@@ -866,13 +866,13 @@ then
     case "$subNetwork" in
         ("" | *[!0-9]*)
             echo -e "${RED}Invalid subnet: ${subNetwork} ${resetStyle}\n$(basename $0) -h, --help   Display help message." >&2
-            echo "Please enter in a number within range of (0-30) exclued /" >&2
+            echo "Please enter in a number within range of (0-30) exclude /" >&2
             exit 1
             ;;
         *)
             if [ "$subNetwork" -lt 0 ] || [ "$subNetwork" -gt 30 ]; then
                 echo -e "${RED}Invalid subnet: ${subNetwork} ${resetStyle}\n$(basename $0) -h, --help   Display help message." >&2
-                echo "Please enter in a number within range of (0-30) exclued /" >&2
+                echo "Please enter in a number within range of (0-30) exclude /" >&2
                 exit 1
             fi
     esac
