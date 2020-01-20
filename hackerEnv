@@ -572,17 +572,17 @@ function smbScan(){
 	sleep 40
 	if [ "${terminal}" = "gnome-terminal" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r ${dir_path}/exploits/smb/smb_version.rc; exit; bash'" 2> /dev/null
+		gnome-terminal -e "bash -c 'msfconsole -r ${dir_path}/exploits/smb/smb_version.rc; exit; bash'" 2> /dev/null &
 	else
-		tmux new-window -n smbScan "bash -c 'msfconsole -r ${dir_path}/exploits/smb/smb_version.rc; exit; bash'" \; 2> /dev/null
+		tmux new-window -n smbScan "bash -c 'msfconsole -r ${dir_path}/exploits/smb/smb_version.rc; exit; bash'" \; 2> /dev/null &
 	fi
 	sleep 30
 	smbVersion=$(cat ${ips}/smbVersion.txt |grep "Samba" |grep -oP '\(\K[^\)]+')
-	nmap -v0 --script vuln -p139,445 ${ips} -Pn -oA ${ips}/nmapSMBVuln
+	nmap -v0 --script vuln -p139,445 ${ips} -Pn -oA ${ips}/nmapSMBVuln &
 	smbvulnID=$(cat ${ips}/nmapSMBVuln.xml | grep -oP '\"title">\K[^\<]+'|grep -oP '\(\K[^\)]+'> ${ips}/nmapSMBVuln.txt)
-	nmap -v0 --script smb-os-discovery.nse -p139,445 ${ips} -Pn -n -oA ${ips}/smbOS
+	nmap -v0 --script smb-os-discovery.nse -p139,445 ${ips} -Pn -n -oA ${ips}/smbOS &
 	smbOS=$(cat ${ips}/smbOS.xml | grep -oP 'key="os">\K[^<]+')
-	sleep 30
+	wait
 }
 ################## rpcbind ###############################################################
 function smbclient(){
