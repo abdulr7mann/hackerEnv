@@ -1,8 +1,8 @@
 
-# Join us on hackerEnv server discord:
+# Join us on hackerEnv server on discord:
 https://discord.gg/sB5ruJ6
 
-# hackerEnv
+# hackerEnv [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=hackerEnv%20-%20an%20automation%20tool%20that%20quickly%20and%20easily%20sweep%20ips%20and%20scan%20ports,%20vulnerablities%20and%20exploit%20them%20and%20generates%20a%20report.%20by%20@abdulr7mann%20https://github.com/abdulr7mann/hackerEnv.git&hashtags=security,hacking,redteam,pentester,pentest,kali,kali-linux)
 HackerEnv is an automation tool that quickly and easily sweep ips and scan ports, vulnerablities and exploit them and generates a report.
 It uses other tools such as nmap, nikto, metasploit and hydra. Works in kali-linux-2019.3a and Parrot OS. It has some problems in kali-linux-2019.4 still working in fixing them.
 I am adding features and vulnerablities exploits consistently. Also, soon there will be a GUI version.
