@@ -1,5 +1,6 @@
 
-# Plz add our hackerEnv server on discord: https://discord.gg/sB5ruJ6
+# Join us on hackerEnv server discord:
+https://discord.gg/sB5ruJ6
 
 # hackerEnv
 HackerEnv is an automation tool that quickly and easily sweep ips and scan ports, vulnerablities and exploit them and generates a report.
