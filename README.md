@@ -32,7 +32,7 @@ ln -s /opt/hackerEnv/hackerEnv /usr/local/bin/
 
 ### Or if you want to do all of the above at once:
 ```
-apt update && upgrade -y if [ -d /opt/ ]; then cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv else mkdir /opt/; cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv fi; ln -s /opt/hackerEnv/hackerEnv /usr/local/bin/;
+apt update && apt upgrade -y if [ -d /opt/ ]; then cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv else mkdir /opt/; cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv fi; ln -s /opt/hackerEnv/hackerEnv /usr/local/bin/;
 ```
 
 ### Usage:
