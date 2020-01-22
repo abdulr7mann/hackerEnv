@@ -1,4 +1,3 @@
-
 ### Reach me at:
 - [![Twitter](https://img.shields.io/twitter/follow/abdulr7mann?style=social)](https://twitter.com/intent/follow?screen_name=abdulr7mann)
 - [![Discord](https://user-images.githubusercontent.com/7288322/34429152-141689f8-ecb9-11e7-8003-b5a10a5fcb29.png?label=Join&amp;style=social)](https://discord.gg/sB5ruJ6)
@@ -24,7 +23,10 @@ git clone https://github.com/abdulr7mann/hackerEnv.git
 cd /opt/hackerEnv
 chmod +x hackerEnv
 ```
-
+## Or if you want to do all of the above at once:
+```
+apt update && upgrade -y if [ -d /opt/ ]; then cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv else mkdir /opt/; cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv fi; ln -s /opt/hackerEnv/hackerEnv /usr/local/bin/;
+```
 ## If you want to use it anywhere on the system, create a shortcut using:
 ```
 ln -s /opt/hackerEnv/hackerEnv /usr/local/bin/
@@ -46,12 +48,13 @@ Flages:
     hackerEnv --update            Update tool.
     hackerEnv                     Scan the entire network.
     hackerEnv -t                  Pass a specific target's IP.
-    hackerEnv -t                  Pass mutipule targets' IPs separated by comma Ex: hackerEnv -t 10.10.10.10,20.20.20.20
+    hackerEnv -t                  Pass mutipule targets' IPs separated by comma Ex: hackerEnv -t "10.10.10.10\n20.20.20.20"
     hackerEnv -i                  To specify an interface.
     hackerEnv -a                  Pass attacker's IP.
-    hackerEnv -s                  To specify subNetwork 10.10.10.10/24 or /23 etc exclude /
+    hackerEnv -s                  To specify subNetwork 10.10.10.10/24 or 23 etc exclude /
     hackerEnv -e, --aggressive    Enable aggressive port scan
 ```
+[![YouTube video](https://i.imgur.com/cwJ80Pa.png)](https://youtu.be/SNM5u2j5Y2Y)
 ## in Gnome terminal
 ![alt text](https://i.imgur.com/uHk0Ypt.png)
 ## in tmux
