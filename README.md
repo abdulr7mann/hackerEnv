@@ -16,23 +16,26 @@ Greetz to @R2k4n
 ```
 apt update; apt upgrade -y
 ```
-## Donwload hackerEnv
+
+### Donwload hackerEnv
 ```
 cd /opt/
 git clone https://github.com/abdulr7mann/hackerEnv.git
 cd /opt/hackerEnv
 chmod +x hackerEnv
 ```
-## Or if you want to do all of the above at once:
-```
-apt update && upgrade -y if [ -d /opt/ ]; then cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv else mkdir /opt/; cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv fi; ln -s /opt/hackerEnv/hackerEnv /usr/local/bin/;
-```
-## If you want to use it anywhere on the system, create a shortcut using:
+
+### If you want to use it anywhere on the system, create a shortcut using:
 ```
 ln -s /opt/hackerEnv/hackerEnv /usr/local/bin/
 ```
 
-## Usage:
+### Or if you want to do all of the above at once:
+```
+apt update && apt upgrade -y if [ -d /opt/ ]; then cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv else mkdir /opt/; cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv fi; ln -s /opt/hackerEnv/hackerEnv /usr/local/bin/;
+```
+
+### Usage:
 ```
 Usage:
     hackerEnv <flag> <argument>
@@ -55,9 +58,9 @@ Flages:
     hackerEnv -e, --aggressive    Enable aggressive port scan
 ```
 [![YouTube video](https://i.imgur.com/cwJ80Pa.png)](https://youtu.be/SNM5u2j5Y2Y)
-## in Gnome terminal
+### in Gnome terminal
 ![alt text](https://i.imgur.com/uHk0Ypt.png)
-## in tmux
+### in tmux
 ![alt text](https://i.imgur.com/ppCLMUw.png)
-## Report
+### Report
 ![alt text](https://i.imgur.com/CCbcKMJ.png)
