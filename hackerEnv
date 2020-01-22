@@ -7,7 +7,7 @@
 
 #major.minor.patch
 #    0.X.X = beta
-VER='0.1.2'
+VER='0.1.1'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -25,8 +25,8 @@ function logo {
 		figlet -t -f slant "hackerEnv"
 	fi
 	echo ""
-	echo -e "+ -- --=[hackerEnv v$VER by @abdulr7mann"
-    echo -e "+ -- --=[https://hackerEnv.com"
+	echo -e "${RED}+ -- --=[hackerEnv v$VER by @abdulr7mann"
+    echo -e "${RED}+ -- --=[https://hackerEnv.com${resetStyle}"
 	echo ""
 }
 function updateOptWithVerbose {
