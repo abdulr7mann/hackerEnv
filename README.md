@@ -43,6 +43,7 @@ Example:
     hackerEnv -t "10.10.10.10\n20.20.20.20"
     hackerEnv -t 10.10.10.10 -i eth0
     hackerEnv -i eth0 -s 24
+    hackerEnv -s 24
     
 Flages:
     hackerEnv -h, --help          Display this help message.
@@ -52,7 +53,7 @@ Flages:
     hackerEnv -t                  Pass mutipule targets' IPs separated by comma Ex: hackerEnv -t "10.10.10.10\n20.20.20.20"
     hackerEnv -i                  To specify an interface.
     hackerEnv -a                  Pass attacker's IP.
-    hackerEnv -s                  To specify subNetwork 10.10.10.10/24 or 23 etc exclude /
+    hackerEnv -s                  To specify subNetwork 24 or 23 etc exclude /
     hackerEnv -e, --aggressive    Enable aggressive port scan
 ```
 [![YouTube video](https://i.imgur.com/cwJ80Pa.png)](https://youtu.be/SNM5u2j5Y2Y)

