@@ -3,7 +3,7 @@
 - [![Discord](https://user-images.githubusercontent.com/7288322/34429152-141689f8-ecb9-11e7-8003-b5a10a5fcb29.png?label=Join&amp;style=social)](https://discord.gg/pN5dPYu)
 
 # hackerEnv [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?label=Tweet%20it&amp;style=social)](https://twitter.com/intent/tweet?text=hackerEnv%20-%20an%20automation%20tool%20that%20quickly%20and%20easily%20sweep%20ips%20and%20scan%20ports,%20vulnerablities%20and%20exploit%20them%20and%20generates%20a%20report.%20by%20@abdulr7mann%20https://github.com/abdulr7mann/hackerEnv.git&hashtags=security,hacking,redteam,pentester,pentest,kali,kali-linux)
-hackerEnv is an automation tool that quickly and easily sweep IPs and scan ports, vulnerabilities and exploit them and generates a report.
+hackerEnv is an automation tool that quickly and easily sweep IPs and scan ports, vulnerabilities and exploit them. Then, it hands you an interactive shell for further testing. Also, it generates HTML and docx reports.
 It uses other tools such as nmap, nikto, metasploit and hydra. Works in kali-linux-2019.3a and Parrot OS. It has some problems in kali-linux-2019.4 still working in fixing them.
 I am adding features and vulnerabilities exploits consistently. Also, soon there will be a GUI version.
 This tool was NOT coded by a professional, "I do not know what i am doing".
