@@ -999,7 +999,7 @@ do
 		nmap -v0 -Pn -n -sV -T4 -A -O -oA "${ips}"/"${ips}" ${ips} > /dev/null 2>&1
 	fi
 	echo "PORT	 STATE SERVICE	   VERSION"
-	grep "open" ${ips}/${ips}.nmap |sed '1d'
+    grep "open" ${ips}/${ips}.nmap |grep -v "Warning"
 
 	cat ${ips}/${ips}.xml | grep -oP 'name="\K[^"]+' > ${ips}/nameTmp.txt
 	<${ips}/nameTmp.txt awk '!seen[$0]++' >${ips}/name.txt; rm ${ips}/nameTmp.txt
