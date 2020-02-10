@@ -55,6 +55,7 @@ Flages:
     hackerEnv -a                  Pass attacker's IP.
     hackerEnv -s                  To specify subNetwork 24 or 23 etc exclude /
     hackerEnv -e, --aggressive    Enable aggressive port scan
+    hackerEnv -oA                 genetrate report in HTML and DOCX format
 ```
 [![YouTube video](https://i.imgur.com/cwJ80Pa.png)](https://youtu.be/SNM5u2j5Y2Y)
 ### in Gnome terminal
