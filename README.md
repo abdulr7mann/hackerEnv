@@ -15,7 +15,7 @@ Greetz to @R2k4n
 apt update; apt upgrade -y
 ```
 
-### Donwload hackerEnv
+### Download hackerEnv
 ```
 cd /opt/
 git clone https://github.com/abdulr7mann/hackerEnv.git
