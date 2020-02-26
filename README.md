@@ -10,7 +10,7 @@ This tool was NOT coded by a professional, "I do not know what i am doing".
 By running this program, you are agreeing on NOT running it against any public, corporate or unauthorized networks.
 Performed only when you have authorization to do.
 Greetz to @R2k4n
-## Update Kali
+## Update Kali/Parrot
 ```
 apt update; apt upgrade -y
 ```
@@ -28,17 +28,12 @@ chmod +x hackerEnv
 ln -s /opt/hackerEnv/hackerEnv /usr/local/bin/
 ```
 
-### Or if you want to do all of the above at once:
-```
-apt update && apt upgrade -y; if [ -d /opt/ ]; then cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv else mkdir /opt/; cd /opt/; git clone https://github.com/abdulr7mann/hackerEnv.git; cd /opt/hackerEnv; chmod +x hackerEnv fi; ln -s /opt/hackerEnv/hackerEnv /usr/local/bin/;
-```
-
 ### Usage:
 ```
 Usage:
     hackerEnv <flag> <argument>
 
-Example:
+Examples:
     hackerEnv -t 10.10.10.10
     hackerEnv -t "10.10.10.10\n20.20.20.20"
     hackerEnv -t 10.10.10.10 -i eth0
@@ -50,10 +45,10 @@ Flages:
     hackerEnv --update            Update tool.
     hackerEnv                     Scan the entire network.
     hackerEnv -t                  Pass a specific target's IP.
-    hackerEnv -t                  Pass mutipule targets' IPs separated by comma Ex: hackerEnv -t "10.10.10.10\n20.20.20.20"
+    hackerEnv -t                  Pass mutipule targets' IPs e.g. hackerEnv -t "10.10.10.10\n20.20.20.20"
     hackerEnv -i                  To specify an interface.
     hackerEnv -a                  Pass attacker's IP.
-    hackerEnv -s                  To specify subNetwork 24 or 23 etc exclude /
+    hackerEnv -s                  To specify subNetwork 24 or 23 etc. exclude /
     hackerEnv -e, --aggressive    Enable aggressive port scan
     hackerEnv -oA                 genetrate report in HTML and DOCX format
 ```
