@@ -5,7 +5,7 @@
 # HackerEnv is an automation tool that quickly and easily sweep ips and scan, ports, vulnerablities and exploit them. 
 # By running this program, you are agreeing on NOT running it aginst any public, corporate or unauthorized networks. Performed only when you have authorization to do.
 
-VER='0.1.5'
+VER='0.1.6'
 full_path=$(realpath $0) #/opt/hackerEnv/hackerEnv.sh
 dir_path=$(dirname $full_path) #/opt/hackerEnv
 BLUE='\e[1;34m'
