@@ -14,29 +14,18 @@ GREEN='\e[32m'
 BOLD='\e[1m'
 resetStyle='\e[0m'
 function logo {
-    if ! command -v coreutils > /dev/null 2>&1
-    then
-        apt install coreutils -y > /dev/null 2>&1
-    fi
-    if [ ! -d /usr/share/figlet/figlet-fonts ]
-    then
-        cd /usr/share/figlet/ > /dev/null 2>&1
-		git clone https://github.com/xero/figlet-fonts.git > /dev/null 2>&1
-        mv /usr/share/figlet/figlet-fonts/*.flf ../figlet/
-        cd - > /dev/null 2>&1
-    fi
-    if ! command -v figlet > /dev/null 2>&1
-	then
-		apt install figlet -y > /dev/null 2>&1
-		figlet -t -f slant "hackerEnv"
-	else
-        figletFont=$(ls /usr/share/figlet/ | grep -v -e "mini.flf" -e "ivrit.flf" -e "term.flf" -e "smscript.flf" -e "smshadow.flf" -e "small.flf" -e "digital.flf" -e "smslant.flf" | shuf -n 1)
-		figlet -t -f "${figletFont}" "hackerEnv" 2> /dev/null || { figlet -t -f slant "hackerEnv" ; }
-	fi
-	echo ""
-	echo -e "${RED}+ -- --=[hackerEnv v$VER by @abdulr7mann"
-    echo -e "${RED}+ -- --=[https://hackerEnv.com${resetStyle}"
-	echo ""
+cat <<'EOF'
+ _    _               _                ______              
+| |  | |             | |              |  ____|             
+| |__| |  __ _   ___ | | __ ___  _ __ | |__    _ __ __   __
+|  __  | / _` | / __|| |/ // _ \| '__||  __|  | '_ \\ \ / /
+| |  | || (_| || (__ |   <|  __/| |   | |____ | | | |\ V / 
+|_|  |_| \__,_| \___||_|\_\\___||_|   |______||_| |_| \_/  
+EOF
+echo ""
+echo -e "${RED}+ -- --=[hackerEnv v$VER by @abdulr7mann"
+echo -e "${RED}+ -- --=[https://hackerEnv.com${resetStyle}"
+echo ""
 }
 function updateOptWithVerbose {
 	echo -e "+ -- --=[Checking for updates... "
