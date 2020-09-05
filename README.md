@@ -6,9 +6,13 @@
 hackerEnv is an automation tool that quickly and easily sweep IPs and scan ports, vulnerabilities and exploit them. Then, it hands you an interactive shell for further testing. Also, it generates HTML and docx reports.
 It uses other tools such as nmap, nikto, metasploit and hydra. Works in kali linux and Parrot OS. Do not run it in Qterminal, works in gnome-terminal, terminator and tmux.
 This tool was NOT coded by a professional, I do not know what i am doing. 
+<br />
+```diff
+- By running this program, you are agreeing on NOT running it against any public, corporate or unauthorized networks.
+- Performed only when you have authorization to do.
+```
+<br /><br />
 **This was a school project, which means i am not gonna work on it any more. However, In the faaaaaaaaaaar future, I will make a python framework that does better job than this shitshow.**
-By running this program, you are agreeing on NOT running it against any public, corporate or unauthorized networks.
-Performed only when you have authorization to do.
 Greetz to @R2k4n
 ## Update Kali/Parrot
 ```
