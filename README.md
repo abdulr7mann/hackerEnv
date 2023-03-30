@@ -61,3 +61,11 @@ Flages:
 ![alt text](https://i.imgur.com/ppCLMUw.png)
 ### Report
 ![alt text](https://i.imgur.com/CCbcKMJ.png)
+
+## License
+-------
+This tool is released under the GNU General Public License v3.0. You can find a copy of the license in the LICENSE file.
+
+### Disclaimer
+- This tool is provided as-is and without any warranty. The author assumes no responsibility or liability for any errors or omissions that may occur while using this tool. Use at your own risk.
+- This tool is intended for legal and authorized use only. Misuse of this tool can result in criminal charges and/or damage to systems. The author is not responsible for any misuse or damage caused by this tool. Use at your own risk.
